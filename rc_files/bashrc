@@ -51,9 +51,9 @@ fi
 ##################
 
 # Display the hostname at login.
-[[ -d "${HOME}/bin/share/figlet-fonts" ]] && {
+[[ -d "${HOME}/.fonts/figlet" ]] && {
     type toilet >/dev/null 2>&1 && {
-        uname -n | toilet -d "${HOME}/bin/share/figlet-fonts" -f elite --filter metal
+        uname -n | toilet -d "${HOME}/.fonts/figlet" -f elite --filter metal
     }
 }
 
