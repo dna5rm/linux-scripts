@@ -1,5 +1,5 @@
 #!/bin/env -S bash
-# F5 Tools: Iterative Network Map.
+# F5 Tools: Iterative Network Map by node.
 
 # Verify script requirements.
 for req in fmt jq ssh tput; do
@@ -42,8 +42,17 @@ echo "status: \${_status}"
 ## If Active: Collect info on all virual servers
 if [[ "\${_status,,}" == "active" ]]; then
 
-    ## Build an array of all virual servers
-    _virtuals=( \$(awk '/^ltm virtual .*'''${1}'''.*{$/{print \$(NF-1)}' "/config/bigip.conf") )
+    # Fetch matching nodes...
+    _nodes=( \$(tmsh list ltm node address | sed ':a;N;\$!ba;s/\n//g;s/}/ }\n/g' | awk '/^ltm.*${1}/{print \$3}') )
+    echo -e "nodes:\n\$(printf '  - %s\n' "\${_nodes[@]}")"
+
+    # Fetch pools...
+    _pools=( \$(for n in \${_nodes[@]}; do tmsh list ltm pool one-line | awk '/^ltm.*'''\${n}'''/{print \$3}'; done) )
+    echo -e "pools:\n\$(printf '  - %s\n' "\${_pools[@]}")"
+
+    # Fetch virtuals...
+    _virtuals=( \$(for p in \${_pools[@]}; do tmsh list ltm virtual pool | sed ':a;N;\$!ba;s/\n//g;s/}/ }\n/g' | awk '/^ltm.*'''\${p}'''/{print \$3}'; done) )
+    echo -e "virtuals:\n\$(printf '  - %s\n' "\${_virtuals[@]}")"
 
     echo "virtual:"
 
@@ -79,6 +88,7 @@ if [[ "\${_status,,}" == "active" ]]; then
             }
         END {}'
     done
+
 fi
 EOF
 )"
@@ -125,20 +135,9 @@ function _indicatorIcon ()
 ### MAIN ###
 
 # Prompt if no user input filter.
-[[ -z "${1}" ]] && {
-    echo "Running with no search input can take a while to complete."
-    read -p "Are you sure? (y/n) " -n 1 -r
-    echo
-    [[ ! $REPLY =~ ^[Yy]$ ]] && { RUN="${REPLY,,}"; }
-} || {
-    RUN="y"
-}
-
-# Run Main loop if $RUN var is "y"
-[[ ! "${RUN:-n}" == "y" ]] && {
-    echo
-    echo "$(basename "${0}") - Iterative Network Map on all F5 systems." | sed "1 s,.*,$(tput setaf 0; tput setab 7)&$(tput sgr0),"
-    echo "Search: \${1} (${1:-optinal})
+[[ "${1}" == "${1#*[0-9].[0-9]}" ]] && {
+    echo "$(basename "${0}") - Iterative Network Map by node IP on all F5 systems." | sed "1 s,.*,$(tput setaf 0; tput setab 7)&$(tput sgr0),"
+    echo "Search: \${1} (${1:-required})
 
     Aborting..." | sed 's/^[ \t]*//g'
 } || {
