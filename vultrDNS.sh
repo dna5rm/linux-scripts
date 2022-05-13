@@ -1,3 +1,4 @@
+#!/bin/env -S bash
 ## Vultr DNS updater.
 #
 # crontab> SHELL=/bin/bash
