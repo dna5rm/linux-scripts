@@ -1,0 +1,44 @@
+### Tab bar ###
+hardstatus off
+hardstatus alwayslastline
+hardstatus string "%{kw} ${USER}@%H [ %{rw}%-w%{.rw}%n*%t%{-}%+w%{kw} ] %= %{W}(%l)%{-} %D,%c "
+
+### Misc Options ###
+activity 'Activity on screen %n ^G'
+altscreen on
+autodetach on
+defutf8 on
+defencoding utf8
+defscrollback 8000
+shelltitle ''
+startup_message off
+vbell off
+shell -$SHELL
+defutf8 on
+
+### Programs opening by default ###
+screen    -t '' 1
+screen    -t '' 2
+screen    -t '' 3
+#screen    -t '' 4
+#screen    -t '' 5
+#screen    -t '' 6
+#screen    -t '' 7
+#screen    -t '' 8
+#screen    -t '' 9
+
+### Keys ###
+bind	c	screen 1	# Window numbering starts at 1, not 0.
+
+bindkey "[C"	next            # CTRL+Right
+bindkey "[D"	prev            # CTRL+Left
+#bindkey -k k8	log             # F8	
+#bindkey -k k9	screen          # F9
+#bindkey -k k;	kill            # F10
+#bindkey -k F1	windowlist -b   # F11
+#bindkey -k F2	title           # F12
+
+### COLORS! and some useful terminfo ###
+term screen-256color
+terminfo rxvt-unicode 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+termcapinfo xterm ti@:te@

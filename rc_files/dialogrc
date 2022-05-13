@@ -1,0 +1,26 @@
+#
+# Run-time configuration file for dialog
+#
+# Types of values:
+#
+# Number     -  <number>
+# String     -  "string"
+# Boolean    -  <ON|OFF>
+# Attribute  -  (foreground,background,highlight?,underline?,reverse?)
+#
+# Colors: BLACK,RED,GREEN,YELLOW,BLUE,MAGENTA,CYAN,WHITE
+
+border_color = (WHITE,WHITE,ON,OFF,OFF)
+button_active_color = (BLACK,BLUE,OFF,OFF,OFF)
+button_key_inactive_color = (YELLOW,WHITE,ON,ON,ON)
+button_label_active_color = (YELLOW,BLUE,OFF,OFF,OFF)
+button_label_inactive_color = (BLACK,WHITE,ON,OFF,OFF)
+dialog_color = (BLACK,WHITE,OFF,OFF,OFF)
+form_item_readonly_color = (CYAN,WHITE,ON,OFF,OFF)
+form_text_color = (WHITE,CYAN,ON,OFF,OFF)
+itemhelp_color = (WHITE,BLACK,OFF,OFF,OFF)
+screen_color = (MAGENTA,BLACK,OFF,OFF,OFF)
+shadow_color = (BLACK,BLACK,ON,OFF,ON)
+tag_key_selected_color = (YELLOW,BLUE,ON,OFF,ON)
+title_color = (RED,WHITE,OFF,OFF,OFF)
+uarrow_color = (GREEN,WHITE,ON,OFF,OFF)

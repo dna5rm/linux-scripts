@@ -1,0 +1,1 @@
+while true; do echo -e "HTTP/1.1 200 OK\n\n<html><head><title>$(hostname -s)</title></head><body bgcolor=#$(openssl rand -hex 3)><h1>$(hostname -s)</h1><pre>$(netstat -an | grep :8080)</pre><br /><p>$(date)</p></body></html>" | nc -l 8080; done

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+
+  <menu id="apps-termux" label="Termux...">
+    <item label="dosbox">
+      <action name="Execute">
+        <command>dosbox</command>
+        <startupnotify>
+          <enabled>yes</enabled>
+        </startupnotify>
+      </action>
+    </item>
+    <item label="geany">
+      <action name="Execute">
+        <command>geany</command>
+        <startupnotify>
+          <enabled>yes</enabled>
+        </startupnotify>
+      </action>
+    </item>
+    <item label="hexchat">
+      <action name="Execute">
+        <command>hexchat</command>
+        <startupnotify>
+          <enabled>yes</enabled>
+        </startupnotify>
+      </action>
+    </item>
+    <item label="keepassxc">
+      <action name="Execute">
+        <command>keepassxc</command>
+        <startupnotify>
+          <enabled>yes</enabled>
+        </startupnotify>
+      </action>
+    </item>
+    <item label="netsurf">
+      <action name="Execute">
+        <command>netsurf</command>
+        <startupnotify>
+          <enabled>yes</enabled>
+        </startupnotify>
+      </action>
+    </item>
+    <item label="wireshark-gtk">
+      <action name="Execute">
+        <command>wireshark-gtk</command>
+        <startupnotify>
+          <enabled>yes</enabled>
+        </startupnotify>
+      </action>
+    </item>
+  </menu>
+
+  <menu id="root-menu" label="Openbox">
+    <separator label="Applications" />
+    <menu id="apps-termux"/>
+
+    <separator />
+    <item label="xfce4-terminal">
+      <action name="Execute">
+        <command>xfce4-terminal</command>
+        <startupnotify>
+          <enabled>yes</enabled>
+        </startupnotify>
+      </action>
+    </item>
+
+    <separator />
+                <menu id="client-list-menu"/>
+                <menu id="openbox-menu" label="Openbox">
+                        <item label="obconf">
+                                <action name="Execute">
+                                        <execute>obconf</execute>
+                                </action>
+                        </item>
+                        <item label="Restart">
+                                <action name="Restart"/>
+                        </item>
+                </menu>
+                <separator/>
+                <item label="Exit">
+                        <action name="Exit"/>
+                </item>
+  </menu>
+</openbox_menu>
