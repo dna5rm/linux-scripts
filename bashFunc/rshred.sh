@@ -33,7 +33,6 @@ function rshred ()
 
         # Continue if confirmed.
         if [[ "${reply,,}" == "y" ]]; then
-
             # Shred all file/directory input.
             for i in ${@}; do
                 # Recursively shred all files in path.
