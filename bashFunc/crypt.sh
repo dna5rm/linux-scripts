@@ -43,10 +43,10 @@ function crypt ()
             [[ "${1##*.}" != "enc" ]] && {
                 openssl enc -aes-256-cbc -e -md sha512 -pbkdf2 -iter 100000 -salt -in "${1}" -k "${2:-pass}" -out "${1}.enc" && {
                     shred --force --zero --iterations 3 "${1}" && rm "${1}"
-                    echo "Successfully encrypted!"
+                    printf "[crypt:%s] %s\n" "$(basename "${1}")" "Successfully encrypted!"
                 } || {
                     rm "${1}.enc"
-                    echo "Something went wrong!";
+                    printf "[crypt:%s] %s\n" "$(basename "${1}")" "Something went wrong!"
                     return 1
                 }
 
@@ -54,17 +54,17 @@ function crypt ()
             } || {
                 openssl enc -aes-256-cbc -d -md sha512 -pbkdf2 -iter 100000 -salt -in "${1}" -k "${2:-pass}" -out "${1%%.enc}" && {
                     shred --force --zero --iterations 3 "${1}" && rm "${1}"
-                    echo "Successfully decrypted!"
+                    printf "[crypt:%s] %s\n" "$(basename "${1}")" "Successfully decrypted!"
                 } || {
                     rm "${1%%.enc}"
-                    echo "Something went wrong!";
+                    printf "[crypt:%s] %s\n" "$(basename "${1}")" "Something went wrong!";
                     return 1
                 }
             }
 
         # Input is not a file.
         } || {
-            echo "Input not a file!"
+            printf "[crypt:%s] %s\n" "$(basename "${1}")" "Input not a file!"
             return 1
         }
 
