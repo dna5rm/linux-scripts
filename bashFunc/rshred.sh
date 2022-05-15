@@ -36,7 +36,6 @@ function rshred ()
 
             # Shred all file/directory input.
             for i in ${@}; do
-                echo "${i}"
                 # Recursively shred all files in path.
                 find "${i}" -type f -exec bash -c "shred --force --verbose --zero --iterations 3 \"{}\" && rm -rf \"{}\"" \;
 
