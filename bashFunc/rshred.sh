@@ -27,18 +27,23 @@ function rshred ()
         Aborting..." | sed 's/^[ \t]*//g'
     else
 
-        echo -n "shred: ${1} (y/n)? "
+        echo -n "shred: ${@} (y/n)? "
         read -n 1 reply
         echo
 
+        # Continue if confirmed.
         if [[ "${reply,,}" == "y" ]]; then
-            # Recursively shred all files in path.
-            find "${1}" -type f -exec bash -c "shred --force --verbose --zero --iterations 3 {} && rm -rf {}" \;
 
-            # Recursively delete path if directory.
-            [[ -e "${1}" ]] && {
-                find "${1}" -type d -empty -delete
-            }
+            # Shred all file/directory input.
+            for i in ${@}; do
+                # Recursively shred all files in path.
+                find "${i}" -type f -exec bash -c "shred --force --verbose --zero --iterations 3 {} && rm -rf {}" \;
+
+                # Recursively delete path if directory.
+                [[ -e "${i}" ]] && {
+                    find "${i}" -type d -empty -delete
+                }
+            done
         fi
 
     fi
