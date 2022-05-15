@@ -1,0 +1,1 @@
+../bashFunc/crypt.sh
