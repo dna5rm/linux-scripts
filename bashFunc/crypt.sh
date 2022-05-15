@@ -18,7 +18,7 @@ function crypt ()
     # Print reference if conditions missing
     if [[ ${?} -eq 0 ]] && [[ -z "${1}" ]]; then
         # Skip basename if shell function
-        [[ "${?}" -ne 0 ]] && {
+        [[ "${0}" != "-baseh" ]] && {
             echo -n "$(basename "${0}"):"
         }
         echo "${FUNCNAME[0]} - Encrypt/Decrypt a file."
