@@ -1,3 +1,1 @@
-# Linux/Bash Scripts
-
-My Linux scripts.
+# My Linux Scripts & Environment
