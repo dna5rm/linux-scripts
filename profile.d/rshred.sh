@@ -1,1 +1,0 @@
-../bashFunc/rshred.sh

@@ -1,1 +1,0 @@
-../bashFunc/crc32.sh

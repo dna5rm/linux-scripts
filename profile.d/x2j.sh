@@ -1,1 +1,0 @@
-../bashFunc/x2j.sh

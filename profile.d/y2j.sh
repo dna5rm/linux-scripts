@@ -1,1 +1,0 @@
-../bashFunc/y2j.sh
