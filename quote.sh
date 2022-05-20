@@ -1,10 +1,10 @@
 #!/bin/env -S bash
 ## Inspirational quote.
 
-function quote()
-{
-    input="$(dirname "${0}")/share/quotes.json"
+QUOTES="${RCPATH}/../share/quotes.json"
 
+function quote ()
+{
     # Verify script requirements.
     for req in fmt jq shuf; do
         type ${req} >/dev/null 2>&1 || {
@@ -15,13 +15,13 @@ function quote()
 
     # Select random author/category.
     if [[ -z "${1}" ]]; then
-        category="$(jq -r 'keys[]' "${input}" | shuf -n1)"
+        category="$(jq -r 'keys[]' "${QUOTES}" | shuf -n1)"
     else
         category="${1^^}"
     fi
 
     # Query the total number of quotes.
-    count="$(jq -r --arg key "${category}" '.[$key]|length' "${input}")"
+    count="$(jq -r --arg key "${category}" '.[$key]|length' "${QUOTES}")"
 
     # Select a random quote.
     if [[ "${count}" -gt "1" ]]; then
@@ -29,10 +29,13 @@ function quote()
         quote=$(( ( RANDOM % ${count} )  + 0 ))
 
         # Display formated quote.
-        fmt <(jq -r --arg key "${category}" --arg val "${quote}" '.[$key][$val|fromjson] | "\n" + .quote, "\n-" + .source + "\n"' "${input}")
+        fmt <(jq -r --arg key "${category}" --arg val "${quote}" '.[$key][$val|fromjson] | "\n" + .quote, "\n-" + .source + "\n"' "${QUOTES}")
     else
         echo "$(basename "${0}"): Unable to find \"${1}\" quote."
     fi
 }
 
-quote "${1}"
+
+[[ -f "${QUOTES}" ]] && {
+    quote "${1}"
+}
