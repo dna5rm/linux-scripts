@@ -49,8 +49,12 @@ function nattable ()
 
 ### BEGIN ###
 
+# ARP Cache
+if [[ "${1}" == "arp" ]]; then
+    /sbin/arp -a | awk 'BEGIN{print "Address", "HWtype", "HWaddress", "Iface"}/ether/{gsub(/[)|(|\]|\[]/, ""); print $(NF-5), $(NF-2), $(NF-3), $NF}' | column -t
+
 # IP passthrough to vtysh
-if [[ "${1}" == "ip" ]]; then
+elif [[ "${1}" == "ip" ]]; then
     echo "$(basename "${0}"): show ${@}"
     sudo vtysh -c "show ${1} ${2} ${3} ${4} ${5}"
 
@@ -108,6 +112,7 @@ Linux script for creating a network report for visibility and debuging.
 Usage: $(basename "${0}") [command]
 
 Command:
+  arp            Show arp
   ip             vtysh "show ip ..." cmd pass
   ipsec          Show ipsec ... [detail|ike|log|vti]
   in*            vtysh "show interface ... " cmd pass
