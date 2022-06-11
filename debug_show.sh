@@ -32,6 +32,15 @@
 #}
 
 # Script Functions..
+function geoip ()
+{
+    [[ -f "/opt/GeoLite2-Country.mmdb" ]] && {
+        mmdblookup --file "/opt/GeoLite2-Country.mmdb" --ip "${1}" country iso_code 2> /dev/null | awk '/utf8/{gsub(/"/, ""); print $1}'
+    } || {
+        echo "??"
+    }
+}
+
 function nattable ()
 {
     # Return a formatted nat translation table
@@ -72,18 +81,17 @@ elif [[ "${1}" == "listen" ]]; then
 
 # NAT Table
 elif [[ "${1}" == "nat" ]]; then
-    nattable | awk 'BEGIN{printf("%-12s %-6s %-18s %-23s %s\n", "ID", "Proto", "Source", "Destination", "Use" )}//{printf("%-12s %-6s %-18s %-23s %s\n", $1, $2, $3, $4, $5)}'
 
-# NAT: Top destinations
-elif [[ "${1}" == "natdst" ]]; then
-    nattable | awk '/^[0-9]/{print $4}' | sort | uniq -c | sort -nr | while read line; do
-        echo "${line} $(awk '/[\t| ]'''${line##*:}'''\//{print $1; exit}' /etc/services)"
-    done | awk 'BEGIN{printf("%6s %-23s %-15s\n", "Hits", "Destination", "Service")}//{printf("%6s %-23s %-15s\n", $1, $2, $3)}'
-
-# NAT: Top sources
-elif [[ "${1}" == "natsrc" ]]; then
-    nattable | awk '/^[0-9]/{print $3}' | sort | uniq -c | sort -nr |\
-        awk 'BEGIN{printf("%6s %-18s\n", "Hits", "Source")}//{printf("%6s %-18s\n", $1, $2)}'
+    if [[ "${2}" == "dst" ]]; then
+        nattable | awk '/^[0-9]/{print $4}' | sort | uniq -c | sort -nr | while read line; do
+            echo "${line} $(geoip "$(awk '{print $NF}' <<< ${line%%:*})") $(awk '/[\t| ]'''${line##*:}'''\//{print $1; exit}' /etc/services)"
+        done | awk 'BEGIN{printf("%6s %-23s %-8s %-15s\n", "Hits", "Destination", "Country", "Service")}//{printf("%6s %-23s %-8s %-15s\n", $1, $2, $3, $4)}'
+    elif [[ "${2}" == "src" ]]; then
+        nattable | awk '/^[0-9]/{print $3}' | sort | uniq -c | sort -nr |\
+            awk 'BEGIN{printf("%6s %-18s\n", "Hits", "Source")}//{printf("%6s %-18s\n", $1, $2)}'
+    else
+        nattable | awk 'BEGIN{printf("%-12s %-6s %-18s %-23s %s\n", "ID", "Proto", "Source", "Destination", "Use" )}//{printf("%-12s %-6s %-18s %-23s %s\n", $1, $2, $3, $4, $5)}'
+    fi
 
 # LLDP: show neighbors
 elif [[ "${1}" == "lldp" ]]; then
@@ -92,7 +100,7 @@ elif [[ "${1}" == "lldp" ]]; then
 
 # VLAN
 elif [[ "${1}" == "vlan" ]]; then
-    sudo awk -F'|' 'BEGIN{printf "%-16s %-7s %s\n", "Name", "ID", "Dev     "}/\|.*\|/{printf "%-15s %-7s %s\n", $1, $2, $3}' /proc/net/vlan/config
+    sudo awk -F'|' 'BEGIN{printf "%-16s %-7s %s\n", "Name", "ID", "Interface"}/\|.*\|/{printf "%-15s %-7s %s\n", $1, $2, $3}' /proc/net/vlan/config
 
 # Print Help
 else cat << EOF
@@ -105,9 +113,7 @@ Command:
   in*            vtysh "show interface ... " cmd pass
   listen         show listening ports
   lldp           show lldp neighbors
-  nat            Show current nat table
-  natdst         Show top destinations in nat table
-  natsrc         Show top sources in nat table
+  nat            Show current nat table ... [dst|src]
   vlan           Show configured vlans
 
 EOF
