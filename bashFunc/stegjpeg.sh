@@ -45,7 +45,9 @@ function stegjpeg ()
 
             # steghide <STDIN> -- embed
             [[ ! -z "${stdin}" ]] && {
-                echo "${stdin}" | steghide embed --quiet --passphrase "${passphrase}" --compress 9 --encryption rijndael-256 --coverfile "${1}" --embedfile - --force || {
+                echo "${stdin}" | steghide embed --quiet --passphrase "${passphrase}" --compress 9 --encryption rijndael-256 --coverfile "${1}" --embedfile - --force && {
+                    steghide info --passphrase "${passphrase}" "${1}"
+                } || {
                     printf "[stegjpeg:%s] %s\n" "$(basename "${1}")" "Something went wrong!"
                     return 1
                 }
