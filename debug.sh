@@ -114,6 +114,10 @@ elif [[ "${1}" == "lldp" ]]; then
 elif [[ "${1}" == "vlan" ]]; then
     awk -F'|' 'BEGIN{printf "%-16s %-7s %s\n", "Name", "ID", "Interface"}/\|.*\|/{printf "%-15s %-7s %s\n", $1, $2, $3}' /proc/net/vlan/config
 
+# LOG count
+elif [[ "${1}" == "syslog" ]]; then
+    journalctl -o json | jq -r 'if .SYSLOG_IDENTIFIER | contains("ansible") | not then .SYSLOG_IDENTIFIER else empty end' | sort | uniq -c | sort -nr | awk 'BEGIN{printf("%6s %-25s\n", "Hits", "Service")}//{printf("%6s %-25s\n", $1, $2)}'
+
 # Print Help
 else cat << EOF
 Linux script for creating a network report for visibility and debuging.
