@@ -235,15 +235,53 @@ tput sgr0
 # display help
 tput sgr0 && boxText "No domain specified..."
 cat <<EOF
+This openssl helper script requires the hostnames to create a certificate pair.
 
-Usage:
+It will help manage the creation of the following:
 
-Create a ssl private key & csr for certificate.
-$ $(tput bold)${0}$(tput sgr0) example.local
+  - Private Certificate Key
+  - Certificate Signing Request (CSR)
+  - Self-Signed Certificate
+  - Creation of PFX bundles if certificate is available
 
-Create a ssl private key & csr for SAN certificate.
-The certificate will be named server01.example.local in the following example.
-$ $(tput bold)${0}$(tput sgr0) server01.example.local server02.example.local
+$(tput sgr 1 1)Usage Scenarios$(tput sgr0):
+
+  This script can be adapted to handle different types of certificate generation.
+
+  $(tput sgr 0 1)Host Certificate$(tput sgr0):
+
+    Append the single domain to the end of the script.
+
+    $ $(tput bold)${0}$(tput sgr0) $(hostname -A 2>/dev/null || hostname -f)
+
+  $(tput sgr 0 1)SAN Certificate$(tput sgr0):
+
+    Append a list of hostnames to the command.
+    The first domain in the list will also be the cert name.
+    The second example will add a wildcard to the SAN certificate.
+    Because "*" is a special character make sure you suround it with quotes.
+
+    $ $(tput bold)${0}$(tput sgr0) $(hostname -A 2>/dev/null || hostname -f) $(hostname -s | tr 'A-Za-z' 'N-ZA-Mn-za-m').$(hostname -A 2>/dev/null|| hostname -f | sed '/\..*\./s/^[^.]*\.//')
+    $ $(tput bold)${0}$(tput sgr0) $(hostname -A 2>/dev/null || hostname -f | sed '/\..*\./s/^[^.]*\.//') "*.$(hostname -A 2>/dev/null || hostname -f | sed '/\..*\./s/^[^.]*\.//')"
+
+  $(tput sgr 0 1)Wildcard Certificate$(tput sgr0):
+
+    $ $(tput bold)${0}$(tput sgr0) $(hostname -A 2>/dev/null || hostname -f | sed '/\..*\./s/^[^.]*\.//')
+
+    When generating the CSR, add a "*." before the "Common Name".
+
+  $(tput sgr 0 1)Creating a new CSR for an expiring certificate$(tput sgr0):
+
+    The script will recreate any missing files at runtime.
+    If a certificate is about to expire if you delete the CSR and re-run the script it will rerun the step to create the CSR.
+
+    $ $(tput bold)rm$(tput sgr0) $(echo "${cert_path}/$(hostname -A 2>/dev/null || hostname -f)/request.pem" | tr -d ' ')
+    $ $(tput bold)${0}$(tput sgr0) $(hostname -A 2>/dev/null || hostname -f)
+
+  $(tput sgr 0 1)Creating a PFX certificate bundle$(tput sgr0):
+
+    When you receive a certificate file from a CA, store the PEM file as "certificate.pem" in the working directory.
+    Re-running the script will create a pkcs12 bundle (PFX file) and update the README.
 
 EOF
 }
