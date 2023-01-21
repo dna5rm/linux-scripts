@@ -32,7 +32,7 @@ fi
 function DEVLIST ()
 {
     ### HOSTNAME IPADDR ###
-    host -l routers.citco.com | awk '/'''$SITE'''/{print $1,$NF}'
+    host -l network.consoto.com | awk '/'''$SITE'''/{print $1,$NF}'
 }
 
 # Determine the state of each host entry.

@@ -13,7 +13,7 @@ function getOrganizations ()
         }
     done
 
-    if [[ -z "${meraki_uri}" ]] || [[ -z "${auth_key}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${meraki_uri}" ]] || [[ -z "${auth_key}" ]] || [[ ! -z "${1}" ]]; then
 	cat  <<-EOF
 	$(basename "${0}"):${FUNCNAME[0]} - Missing Variable or Input...
 	Meraki API Base URI: \${meraki_uri} (${meraki_uri:-missing})
