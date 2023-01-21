@@ -20,7 +20,7 @@ bashFunc=(
     "y2j"
     "apiMeraki/getOrganizationNetworks"
     "apiMeraki/getNetworkDevices"
-    "apiMeraki/getDeviceSwitchPort"
+    "apiMeraki/getDeviceSwitchPorts"
     "apiMeraki/getDeviceSwitchPortsStatuses"
 )
 
@@ -95,7 +95,12 @@ organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_i
             } || {
 
                 # Query switch port configuration & store in array.
-                IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed ';s/\"//g')
+
+                ## Get individual port on each loop itteration. [SLOW/lots of small get requests]
+                #IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
+
+                ## Get all ports and select the port; rely on cacheExec. [FAST/single get request]
+                IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPorts ${serial} | jq -r --arg portId "${portId}" '.[] | select(.portId == $portId) | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
 
                 # Select status indicator icon [DIAMOND]
                 if [[ "${discovery,,}" == "true" ]]; then
