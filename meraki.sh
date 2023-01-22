@@ -1,22 +1,15 @@
 #!/bin/env -S bash
-## Meraki Script
+## Meraki show interfaces script.
 # Ref >> https://developer.cisco.com/meraki/api-v1/
 
 # Enable for debuging
-# set -x
+#set -x
 
-## Verify core script requirements
-for req in curl jq python3
- do type ${req} >/dev/null 2>&1 || {
-     echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
-     exit 1
-    }
-done && umask 002
-
-# Bash functions to load.
+## Bash functions to load.
 bashFunc=(
     "boxText"
     "cacheExec"
+    "containsElement"
     "y2j"
     "apiMeraki/getOrganizationNetworks"
     "apiMeraki/getNetworkDevices"
@@ -24,23 +17,41 @@ bashFunc=(
     "apiMeraki/getDeviceSwitchPortsStatuses"
 )
 
-# Load bash functions.
+## Load bash functions.
 for func in ${bashFunc[@]}; do
     [[ ! -e "$(dirname "${0}")/bashFunc/${func}.sh" ]] && {
         echo "$(basename "${0}"): ${func} not found!"
         exit 1
     } || {
-        #echo "Loading: $(dirname "${0}")/bashFunc/${func}.sh"
         . "$(dirname "${0}")/bashFunc/${func}.sh"
     }
 done || exit 1
 
-# Set script variables.
+## Verify required commands & function requirements.
+for req in curl jq python3 boxText cacheExec containsElement y2j
+ do type ${req} >/dev/null 2>&1 || {
+     echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
+     exit 1
+    }
+done && umask 002
+
+## Set script variables.
 meraki_uri="https://api.meraki.com/api/v1"
 auth_key="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.auth_key')"
 organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_id')"
 
-# Display help if no arguments provided.
+## Define each TAG policy as ( "TAG" "VAR" "VALUE" )
+POLICY_000001=( "NETWORK" "port[0]" "trunk" )
+POLICY_000002=( "NETWORK" "port[4]" "all" )
+POLICY_000003=( "NETWORK" "port[5]" "loop guard" )
+POLICY_000004=( "INFRASTRUCTURE" "status" "Connected" )
+
+## Load TAG policies into a netsted dirty array.
+for i in $(set | awk -F'=' '/^POLICY_/{print $1}'); do
+    POLICY+=( "${i}[@]" )
+done
+
+## Display help if no arguments provided.
 [[ "${#1}" -lt "4" ]] && {
 
     # Display Script Banner
@@ -83,7 +94,7 @@ organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_i
 
         ### HEADER ###
         boxText "${switch} - ${serial}"
-        printf "%-4s %-26s %-15s %-7s %-16s %-8s %-10s %-35s\n" "PORT" "DESCRIPTION" "STATUS" "TYPE" "VLAN(s)" "DUPLEX" "SPEED" "TAGS" | sed "1 s,.*,$(tput smso)&$(tput sgr0),"
+        printf "%-4s %-15s %-7s %-16s %-8s %-10s %-35s\n" "PORT" "STATUS" "TYPE" "VLAN(s)" "DUPLEX" "SPEED" "DESCRIPTION" | sed "1 s,.*,$(tput smso)&$(tput sgr0),"
 
         # Get device switch ports and store in array.
         cacheExec getDeviceSwitchPortsStatuses ${serial} | jq -rc '.[] | [.portId,.enabled,.status,.isUplink,.speed,.duplex,(.cdp or .lldp)] | @csv' | sed ';s/\"//g' | while IFS=, read -r portId enabled status isUplink speed duplex discovery; do
@@ -129,7 +140,32 @@ organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_i
             }
 
             ### BODY ###
-            printf "%s %02g %-26s %-15s %-7s %-16s %-8s %-10s %s\n" "${icon}" "${portId##*_}" "${port[1]:0:25}" "${status}" "${port[0]:--}" "$([[ "${port[0]}" == "trunk" ]] && { echo "${port[4]:0:16}"; } || { echo "${port[2]:--}/${port[3]:--}"; })" "${duplex:--}" "${speed:--}" "$(echo "[$(for i in $(echo {7..15}); do [[ ! -z "${port[${i}]}" ]] && { printf "%s " "${port[${i}]^^}"; }; done | sed 's/ $//g;s/ /,/g')]" | sed '/\[]/d')"
+            printf "%s %02g %-15s %-7s %-16s %-8s %-10s %s\n" "${icon}" "${portId##*_}" "${status}" "${port[0]:--}" "$([[ "${port[0]}" == "trunk" ]] && { echo "${port[4]:0:16}"; } || { echo "${port[2]:--}/${port[3]:--}"; })" "${duplex:--}" "${speed:--}" "${port[1]:0:34}"
+
+            ### Meraki TAG policy reporting ###
+            [[ "${enabled,,}" != "false" ]] && {
+
+                [[ ! -z "${POLICY}" ]] && {
+                    echo "${port[@]:7}" | xargs -n1 | while read TAG; do
+
+                        # Loop through nested array.
+                        for ((i=0; i<${#POLICY[@]}; i++)); do
+
+                            # Notify of policy mismatch.
+                            if [[ "${TAG^^}" == "${!POLICY[i]:0:1}" ]] && [[ "$(eval echo \${${!POLICY[i]:1:1}})" != "${!POLICY[i]:2:1}" ]]; then
+                                printf "     [$(tput setaf 1)%s:$(tput bold)%s$(tput sgr0)] \"%s\" != \"%s\"\n" "${POLICY[i]%%[*}" "${!POLICY[i]:0:1}" "${!POLICY[i]:1:1}" "${!POLICY[i]:2:1}"
+                            fi
+
+                        done
+
+                        # Notify if TAG has no policy.
+                        containsElement "${TAG^^}" "${port[@]:7}" || {
+                            printf "     [$(tput setaf 3)INFO:$(tput setaf 4)${TAG^^}$(tput sgr0)] Missing TAG policy\n"
+                        }
+
+                    done
+                }
+            }
 
         done
     }
