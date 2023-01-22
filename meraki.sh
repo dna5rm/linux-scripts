@@ -42,9 +42,11 @@ organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_i
 
 ## Define each TAG policy as ( "TAG" "VAR" "VALUE" )
 POLICY_000001=( "NETWORK" "port[0]" "trunk" )
-POLICY_000002=( "NETWORK" "port[4]" "all" )
-POLICY_000003=( "NETWORK" "port[5]" "loop guard" )
-POLICY_000004=( "INFRASTRUCTURE" "status" "Connected" )
+POLICY_000002=( "NETWORK" "port[5]" "loop guard" )
+POLICY_000003=( "INFRASTRUCTURE" "status" "Connected" )
+POLICY_000004=( "USERS" "port[0]" "access" )
+POLICY_000005=( "USERS" "port[5]" "bpdu guard" )
+POLICY_000006=( "USERS" "port[6]" "true" )
 
 ## Load TAG policies into a netsted dirty array.
 for i in $(set | awk -F'=' '/^POLICY_/{print $1}'); do
@@ -153,7 +155,7 @@ done
 
                             # Notify of policy mismatch.
                             if [[ "${TAG^^}" == "${!POLICY[i]:0:1}" ]] && [[ "$(eval echo \${${!POLICY[i]:1:1}})" != "${!POLICY[i]:2:1}" ]]; then
-                                printf "     [$(tput setaf 1)%s:$(tput bold)%s$(tput sgr0)] \"%s\" != \"%s\"\n" "${POLICY[i]%%[*}" "${!POLICY[i]:0:1}" "${!POLICY[i]:1:1}" "${!POLICY[i]:2:1}"
+                                printf "     [$(tput setaf 1)%s:$(tput bold)%s$(tput sgr0)] \"%s\" != \"%s\" (%s)\n" "${POLICY[i]%%[*}" "${!POLICY[i]:0:1}" "${!POLICY[i]:1:1}" "${!POLICY[i]:2:1}" "$(eval echo \${${!POLICY[i]:1:1}})"
                             fi
 
                         done
