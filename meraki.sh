@@ -41,7 +41,6 @@ auth_key="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.auth_key')"
 organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_id')"
 
 ## Define each TAG policy as ( "TAG" "VAR" "VALUE" )
-<<<<<<< HEAD
 # Common TAG: INFRASTRUCTURE
 POLICY_000001=( "INFRASTRUCTURE" "status" "Connected" )
 # Common TAG: FACILITIES
@@ -66,14 +65,6 @@ POLICY_000601=( "VISITORS" "port[0]" "access" )
 POLICY_000602=( "VISITORS" "port[2]" "920" )
 POLICY_000603=( "VISITORS" "port[5]" "bpdu guard" )
 POLICY_000604=( "VISITORS" "port[6]" "true" )
-=======
-POLICY_000001=( "NETWORK" "port[0]" "trunk" )
-POLICY_000002=( "NETWORK" "port[5]" "loop guard" )
-POLICY_000003=( "INFRASTRUCTURE" "status" "Connected" )
-POLICY_000004=( "USERS" "port[0]" "access" )
-POLICY_000005=( "USERS" "port[5]" "bpdu guard" )
-POLICY_000006=( "USERS" "port[6]" "true" )
->>>>>>> 12cbc240c946483cd9054fb496380f50661d85d4
 
 ## Load TAG policies into a netsted dirty array.
 for i in $(set | awk -F'=' '/^POLICY_/{print $1}'); do
@@ -138,17 +129,10 @@ done
                 # Query switch port configuration & store in array.
 
                 ## Get individual port on each loop itteration. [SLOW/lots of small get requests]
-<<<<<<< HEAD
                 #IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
 
                 ## Get all ports and select the port; rely on cacheExec. [FAST/single get request]
                 IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPorts ${serial} | jq -r --arg portId "${portId}" '.[] | select(.portId == $portId) | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
-=======
-                #IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
-
-                ## Get all ports and select the port; rely on cacheExec. [FAST/single get request]
-                IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPorts ${serial} | jq -r --arg portId "${portId}" '.[] | select(.portId == $portId) | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
->>>>>>> 12cbc240c946483cd9054fb496380f50661d85d4
 
                 # Select status indicator icon [DIAMOND]
                 if [[ "${discovery,,}" == "true" ]]; then
@@ -183,11 +167,7 @@ done
             [[ "${enabled,,}" != "false" ]] && {
 
                 [[ ! -z "${POLICY}" ]] && {
-<<<<<<< HEAD
                     echo "${port[@]:8}" | xargs -n1 | while read TAG; do
-=======
-                    echo "${port[@]:7}" | xargs -n1 | while read TAG; do
->>>>>>> 12cbc240c946483cd9054fb496380f50661d85d4
 
                         # Loop through nested array.
                         for ((i=0; i<${#POLICY[@]}; i++)); do
@@ -200,11 +180,7 @@ done
                         done
 
                         # Notify if TAG has no policy.
-<<<<<<< HEAD
                         containsElement "${TAG^^}" "${port[@]:8}" || {
-=======
-                        containsElement "${TAG^^}" "${port[@]:7}" || {
->>>>>>> 12cbc240c946483cd9054fb496380f50661d85d4
                             printf "     [$(tput setaf 3)INFO:$(tput setaf 4)${TAG^^}$(tput sgr0)] Missing TAG policy\n"
                         }
 
