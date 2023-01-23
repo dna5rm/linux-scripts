@@ -165,11 +165,12 @@ done
                             printf "     [$(tput setaf 3)INFO:$(tput setaf 4)${TAG^^}$(tput sgr0)] Missing TAG policy\n"
                         }
 
-                    done
+                    done | sort
                 }
             }
 
         done
     }
+
     done
 }
