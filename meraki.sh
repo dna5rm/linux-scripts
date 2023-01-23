@@ -86,6 +86,7 @@ done
 } || {
 
     # Get the network id for the site.
+    # Switch site names are always uppercase with "_sw" appended.
     network_id="$(jq --arg site "$(awk '{print toupper($1)"_sw"}' <<< ${1:0:4})" -r '.[] | select( .name == $site ).id' <(cacheExec getOrganizationNetworks ${organization_id}))"
 
     # Get network devices and store in array.
