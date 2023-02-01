@@ -44,27 +44,33 @@ organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_i
 # Common TAG: INFRASTRUCTURE
 POLICY_000001=( "INFRASTRUCTURE" "status" "Connected" )
 # Common TAG: FACILITIES
+POLICY_000100=( "FACILITIES" "port[5]" "true" )
 POLICY_000101=( "FACILITIES" "port[0]" "access" )
-POLICY_000102=( "FACILITIES" "port[5]" "loop guard" )
-POLICY_000102=( "FACILITIES" "port[7]" "Enforce" )
+POLICY_000102=( "FACILITIES" "port[6]" "loop guard" )
+#POLICY_000102=( "FACILITIES" "port[8]" "Enforce" )
 # Common TAG: NETWORK
-POLICY_000201=( "NETWORK" "port[5]" "loop guard" )
-POLICY_000202=( "NETWORK" "port[6]" "false" )
-POLICY_000102=( "NETWORK" "port[7]" "Enforce" )
+POLICY_000200=( "NETWORK" "port[5]" "true" )
+POLICY_000201=( "NETWORK" "port[6]" "loop guard" )
+POLICY_000202=( "NETWORK" "port[7]" "false" )
+#POLICY_000203=( "NETWORK" "port[8]" "Enforce" )
 # Common TAG: USERS
+POLICY_000300=( "USERS" "port[5]" "true" )
 POLICY_000301=( "USERS" "port[0]" "access" )
-POLICY_000302=( "USERS" "port[5]" "bpdu guard" )
-POLICY_000303=( "USERS" "port[6]" "true" )
+POLICY_000302=( "USERS" "port[6]" "bpdu guard" )
+POLICY_000303=( "USERS" "port[7]" "true" )
 # Common TAG: SERVERS
-POLICY_000401=( "SERVERS" "port[0]" "access" )
+POLICY_000400=( "SERVERS" "port[5]" "true" )
+#POLICY_000401=( "SERVERS" "port[0]" "access" )
 POLICY_000402=( "SERVERS" "duplex" "full" )
 # Common TAG: PRINTERS
+POLICY_000500=( "PRINTERS" "port[5]" "true" )
 POLICY_000501=( "PRINTERS" "port[0]" "access" )
 # Common TAG: VISITORS
+POLICY_000600=( "VISITORS" "port[5]" "true" )
 POLICY_000601=( "VISITORS" "port[0]" "access" )
 POLICY_000602=( "VISITORS" "port[2]" "920" )
-POLICY_000603=( "VISITORS" "port[5]" "bpdu guard" )
-POLICY_000604=( "VISITORS" "port[6]" "true" )
+POLICY_000603=( "VISITORS" "port[6]" "bpdu guard" )
+POLICY_000604=( "VISITORS" "port[7]" "true" )
 
 ## Load TAG policies into a netsted dirty array.
 for i in $(set | awk -F'=' '/^POLICY_/{print $1}'); do
@@ -129,10 +135,10 @@ done
                 # Query switch port configuration & store in array.
 
                 ## Get individual port on each loop itteration. [SLOW/lots of small get requests]
-                #IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
+                #IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.rstpEnabled,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
 
                 ## Get all ports and select the port; rely on cacheExec. [FAST/single get request]
-                IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPorts ${serial} | jq -r --arg portId "${portId}" '.[] | select(.portId == $portId) | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
+                IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPorts ${serial} | jq -r --arg portId "${portId}" '.[] | select(.portId == $portId) | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.rstpEnabled,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
 
                 # Select status indicator icon [DIAMOND]
                 if [[ "${discovery,,}" == "true" ]]; then
@@ -167,7 +173,7 @@ done
             [[ "${enabled,,}" != "false" ]] && {
 
                 [[ ! -z "${POLICY}" ]] && {
-                    echo "${port[@]:8}" | xargs -n1 | while read TAG; do
+                    echo "${port[@]:9}" | xargs -n1 | while read TAG; do
 
                         # Loop through nested array.
                         for ((i=0; i<${#POLICY[@]}; i++)); do
@@ -180,7 +186,7 @@ done
                         done
 
                         # Notify if TAG has no policy.
-                        containsElement "${TAG^^}" "${port[@]:8}" || {
+                        containsElement "${TAG^^}" "${port[@]:9}" || {
                             printf "     [$(tput setaf 3)INFO:$(tput setaf 4)${TAG^^}$(tput sgr0)] Missing TAG policy\n"
                         }
 
