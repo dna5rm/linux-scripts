@@ -1,9 +1,9 @@
-## Get Network Switch Qos Rules
-# List quality of service rules
+## Get Device Wireless Bluetooth Settings
+# Return the bluetooth settings for a wireless device
 #
-# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-qos-rules
+# Ref: https://developer.cisco.com/meraki/api-latest/#!get-device-wireless-bluetooth-settings
 
-function getNetworkSwitchQosRules ()
+function getDeviceWirelessBluetoothSettings ()
 {
     # Verify function requirements
     for req in curl
@@ -18,9 +18,9 @@ function getNetworkSwitchQosRules ()
 	$(basename "${0}"):${FUNCNAME[0]} - Missing Variable or Input...
 	Meraki API Base URI: \${meraki_uri} (${meraki_uri:-missing})
 	API Authorization Key: \${auth_key} (${auth_key:-missing})
-	Network ID: \${1} (${1:-missing})
+	Serial: \${1} (${1:-missing})
 	EOF
     else
-	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/qosRules" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
+	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/wireless/bluetooth/settings" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
     fi
 }

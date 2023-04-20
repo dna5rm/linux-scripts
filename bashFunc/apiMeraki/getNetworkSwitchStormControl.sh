@@ -1,9 +1,9 @@
-## Get Network Switch Qos Rules
-# List quality of service rules
+## Get Network Switch Storm Control
+# Return the storm control configuration for a switch network
 #
-# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-qos-rules
+# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-storm-control
 
-function getNetworkSwitchQosRules ()
+function getNetworkSwitchStormControl ()
 {
     # Verify function requirements
     for req in curl
@@ -21,6 +21,6 @@ function getNetworkSwitchQosRules ()
 	Network ID: \${1} (${1:-missing})
 	EOF
     else
-	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/qosRules" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
+	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/stormControl" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
     fi
 }

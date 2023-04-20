@@ -1,9 +1,9 @@
-## Get Network Switch Qos Rules
-# List quality of service rules
+## Get Network Switch Access Policies
+# List the access policies for a switch network. Only returns access policies with 'my RADIUS server' as authentication method
 #
-# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-qos-rules
+# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-access-policies
 
-function getNetworkSwitchQosRules ()
+function getNetworkSwitchAccessPolicies ()
 {
     # Verify function requirements
     for req in curl
@@ -21,6 +21,6 @@ function getNetworkSwitchQosRules ()
 	Network ID: \${1} (${1:-missing})
 	EOF
     else
-	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/qosRules" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
+	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/accessPolicies" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
     fi
 }

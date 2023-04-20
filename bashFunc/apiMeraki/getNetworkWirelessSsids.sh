@@ -1,9 +1,9 @@
-## Get Network Switch Qos Rules
-# List quality of service rules
+## Get Network Wireless Ssids
+# List the MR SSIDs in a network
 #
-# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-qos-rules
+# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-wireless-ssids
 
-function getNetworkSwitchQosRules ()
+function getNetworkWirelessSsids ()
 {
     # Verify function requirements
     for req in curl
@@ -21,6 +21,6 @@ function getNetworkSwitchQosRules ()
 	Network ID: \${1} (${1:-missing})
 	EOF
     else
-	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/qosRules" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
+	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/wireless/ssids" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
     fi
 }

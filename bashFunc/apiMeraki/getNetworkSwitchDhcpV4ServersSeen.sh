@@ -1,9 +1,9 @@
-## Get Network Switch Qos Rules
-# List quality of service rules
+## Get Network Switch Dhcp V4 Servers Seen
+# Return the network's DHCPv4 servers seen within the selected timeframe (default 1 day)
 #
-# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-qos-rules
+# Ref: https://developer.cisco.com/meraki/api-latest/#!get-network-switch-dhcp-v-4-servers-seen
 
-function getNetworkSwitchQosRules ()
+function getNetworkSwitchDhcpV4ServersSeen ()
 {
     # Verify function requirements
     for req in curl
@@ -21,6 +21,6 @@ function getNetworkSwitchQosRules ()
 	Network ID: \${1} (${1:-missing})
 	EOF
     else
-	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/qosRules" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
+	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/dhcp/v4/servers/seen" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
     fi
 }

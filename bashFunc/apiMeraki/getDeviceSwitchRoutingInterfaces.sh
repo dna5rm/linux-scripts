@@ -1,9 +1,9 @@
 ## Get Device Switch Routing Interfaces
 # List layer 3 interfaces for a switch. Those for a stack may be found under switch stack routing.
 #
-# Ref: https://developer.cisco.com/meraki/api-v1/#!get-device-switch-routing-interfaces
+# Ref: https://developer.cisco.com/meraki/api-latest/#!get-device-switch-routing-interfaces
 
-function getDeviceSwitchPortsStatuses ()
+function getDeviceSwitchRoutingInterfaces ()
 {
     # Verify function requirements
     for req in curl
@@ -18,9 +18,9 @@ function getDeviceSwitchPortsStatuses ()
 	$(basename "${0}"):${FUNCNAME[0]} - Missing Variable or Input...
 	Meraki API Base URI: \${meraki_uri} (${meraki_uri:-missing})
 	API Authorization Key: \${auth_key} (${auth_key:-missing})
-	Device Serial Number: \${1} (${1:-missing})
+	Network ID: \${1} (${1:-missing})
 	EOF
     else
-	curl --silent --location --request GET --url "${meraki_uri}/devices/${1}/switch/routing/interfaces" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
+	curl --silent --location --request GET --url "${meraki_uri}/networks/${1}/switch/routing/interfaces" --header "Content-Type: application/json" --header "Accept: application/json" --header "X-Cisco-Meraki-API-Key: ${auth_key}"
     fi
 }
