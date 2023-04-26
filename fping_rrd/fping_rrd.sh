@@ -64,9 +64,15 @@ function rrd_update ()
 
         (( rrd_rev-- ))
     done
-    rrd_median=$(printf ${rrd_median} | calc_median)
 
-    rrdtool update "${fping_rrd}" --template $(echo ${rrd_name}:median:loss ${rrd_value}:${rrd_median}:${rrd_loss} | sed 's/-/U/g')
+    rrd_median="$(printf ${rrd_median} | calc_median 2> /dev/null)"
+
+    if [[ ${?} -eq 0 ]]; then
+        rrdtool update "${fping_rrd}" --template $(echo ${rrd_name}:median:loss ${rrd_value}:${rrd_median}:${rrd_loss} | sed 's/-/U/g')
+    else
+        echo "[ERROR] $(basename "${0}"):${FUNCNAME[0]} - Host may not be reachable!"
+    fi
+
     unset rrd_loss rrd_median rrd_rev rrd_name rrd_value
 }
 
