@@ -2,17 +2,14 @@
 ## FPing data collector for RRDTOOL
 #
 # Crontab:
-#   */5 * * * *     ${HOME}/fping_rrd.sh
+#   */5 * * * *     ${HOME}/fping_rrd.sh 192.0.2.1 192.0.2.2
 #
-
-# Enable for debuging
-# set -x
 
 STEP=300 # 5min
 PINGS=20 # 20 pings
 
 # The first ping is usually an outlier so I add an extra ping.
-fping_hosts="172.31.4.1 172.31.4.4"
+fping_hosts="${@}"
 fping_opts="-C $((PINGS+1)) -q -B1 -r1 -i10"
 rrd_path="${HOME}/public_html"
 rrd_timestamp=$(date +%s)
@@ -25,15 +22,13 @@ for req in fping rrdtool; do
     }
 done
 
-funcion calc_median ()
+function calc_median ()
 {
-    awk '{ if ( $1 != "-" ) { fping[NR] = $1 }
-           else { NR-- }
-         }
-     END { asort(fping);
-           if (NR % 2) { print fping[(NR + 1) / 2] }
-           else { print (fping[(NR / 2)] + fping[(NR / 2) + 1]) / 2.0 }
-         }'
+    sort -n | awk '{ count[NR] = $1; }
+        END {
+            if (NR % 2) { print count[(NR + 1) / 2] }
+            else { print (count[(NR / 2)] + count[(NR / 2) + 1]) / 2.0 }
+        }'
 }
 
 function rrd_create ()
@@ -77,7 +72,7 @@ function rrd_update ()
 
 fping ${fping_opts} ${fping_hosts} 2>&1 | while read fping_line; do
     fping_array=( ${fping_line} )
-    fping_rrd="${rrd_path}/fping_${fping_array[0],,}.rrd"
+    fping_rrd="${rrd_path}/fping_$(hostname -s)-${fping_array[0],,}.rrd"
 
     # Create RRD file.
     if [ ! -f "${fping_rrd}" ]; then

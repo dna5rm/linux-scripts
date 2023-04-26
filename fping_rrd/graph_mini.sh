@@ -1,9 +1,6 @@
 #!/bin/env -S bash
 ## Create a  mini graph from a RRD file
 
-# Enable for debuging
-#set -x
-
 fping_rrd="${1}"
 COLOR=( "FF5500" )
 
@@ -18,7 +15,7 @@ done
 function rrd_graph_cmd ()
 {
 cat << EOF
-rrdtool graph "$(basename ${fping_rrd%.*})_mini.png"
+rrdtool graph "$(dirname "${fping_rrd}")/$(basename "${fping_rrd%.*}")_mini.png"
 --start "${START}" --end "${END}"
 --title "$(date -d "${START}") ($(awk -v TIME=$TIME 'BEGIN {printf "%.1f hr", TIME/3600}'))"
 --height 65 --width 600
@@ -58,7 +55,7 @@ CDEF:dmlow$((rrd_idx))=dm$((rrd_idx)),sdev$((rrd_idx)),2,/,-
 CDEF:s2d$((rrd_idx))=sdev$((rrd_idx))
 AREA:dmlow$((rrd_idx))
 AREA:s2d$((rrd_idx))#${COLOR}30:STACK
-LINE1:dm$((rrd_idx))#${COLOR}:"$(basename ${fping_rrd%.*} | awk -F'_' '{print $NF}')\t"
+LINE1:dm$((rrd_idx))#${COLOR}:"$(basename "${fping_rrd%.*}" | awk -F'-' '{print $NF}')\t"
 VDEF:avmed$((rrd_idx))=median$((rrd_idx)),AVERAGE
 VDEF:avsd$((rrd_idx))=sdev$((rrd_idx)),AVERAGE
 CDEF:msr$((rrd_idx))=median$((rrd_idx)),POP,avmed$((rrd_idx)),avsd$((rrd_idx)),/
@@ -68,7 +65,7 @@ GPRINT:ploss$((rrd_idx)):AVERAGE:"Loss\: %5.1lf%%"
 GPRINT:avsd$((rrd_idx)):"Std Dev\: %5.2lfms"
 GPRINT:avmsr$((rrd_idx)):"Ratio\: %5.1lfms\\j"
 COMMENT:"Probe\: $((PINGS)) pings every $((STEP)) seconds"
-COMMENT:"${fping_rrd}\\j"
+COMMENT:"$(basename "${fping_rrd}")\\j"
 EOF
 }
 

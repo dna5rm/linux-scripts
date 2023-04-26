@@ -1,9 +1,6 @@
 #!/bin/env -S bash
 ## Create a mini graph from multiple RRDs
 
-# Enable for debuging
-#set -x
-
 START="-9 hours"
 END="now"
 
@@ -65,7 +62,7 @@ CDEF:dmlow$((rrd_idx))=dm$((rrd_idx)),sdev$((rrd_idx)),2,/,-
 CDEF:s2d$((rrd_idx))=sdev$((rrd_idx))
 AREA:dmlow$((rrd_idx))
 AREA:s2d$((rrd_idx))#${COLOR}30:STACK
-LINE1:dm$((rrd_idx))#${COLOR}:"$(basename ${fping_rrd%.*} | awk -F'_' '{print $NF}')\t"
+LINE1:dm$((rrd_idx))#${COLOR}:"$(basename ${fping_rrd%.*} | awk -F'-' '{print $NF}')\t"
 VDEF:avmed$((rrd_idx))=median$((rrd_idx)),AVERAGE
 VDEF:avsd$((rrd_idx))=sdev$((rrd_idx)),AVERAGE
 CDEF:msr$((rrd_idx))=median$((rrd_idx)),POP,avmed$((rrd_idx)),avsd$((rrd_idx)),/

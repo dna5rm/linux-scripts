@@ -19,9 +19,9 @@ done
 function rrd_graph_cmd ()
 {
 cat << EOF
-rrdtool graph "$(basename ${fping_rrd%.*})_smoke.png"
+rrdtool graph "$(dirname "${fping_rrd}")/$(basename "${fping_rrd%.*}")_smoke.png"
 --start "${START}" --end "${END}"
---title "$(basename ${fping_rrd%.*} | awk -F'_' '{print $NF}')"
+--title "$(basename "${fping_rrd%.*}" | awk -F'_' '{print $NF}')"
 --height 95 --width 600
 --vertical-label "Seconds"
 --color BACK#F3F3F3

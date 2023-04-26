@@ -14,5 +14,5 @@ Latency mesuring & visualization scripts that use fping and rrdtool.
 ## Crontab Example
 
 ```crontab
-*/5 * * * *     ${HOME}/fping_rrd.sh
+*/5 * * * *     ${HOME}/fping_rrd.sh 192.0.2.1 192.0.2.2
 ```
