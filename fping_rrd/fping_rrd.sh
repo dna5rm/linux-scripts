@@ -65,7 +65,7 @@ function rrd_update ()
         (( rrd_rev-- ))
     done
 
-    rrd_median="$(printf ${rrd_median} | calc_median 2> /dev/null)"
+    rrd_median="$(printf "${rrd_median}" 2> /dev/null | calc_median)"
 
     if [[ ${?} -eq 0 ]]; then
         rrdtool update "${fping_rrd}" --template $(echo ${rrd_name}:median:loss ${rrd_value}:${rrd_median}:${rrd_loss} | sed 's/-/U/g')
