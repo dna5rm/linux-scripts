@@ -1,0 +1,1 @@
+networks/getNetworkAlertsSettings.sh
