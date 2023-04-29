@@ -1,4 +1,7 @@
 #!/bin/env -S bash
+##### WARNING #####
+# This, run only once, script was used to scrape & create all the bash functions against the documentation on the server.
+###################
 
 [[ -z "${1}" ]] && {
     echo "$(basename "${0}"): Missing server name."
