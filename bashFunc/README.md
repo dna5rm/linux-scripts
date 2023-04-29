@@ -16,7 +16,7 @@ bashFunc=(
     "cacheExec"
 )
 
-# Load bash functions.
+# Load Bash functions.
 for func in ${bashFunc[@]}; do
     [[ ! -e "$(dirname "${0}")/bashFunc/${func}.sh" ]] && {
         echo "$(basename "${0}"): ${func} not found!"
