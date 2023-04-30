@@ -5,9 +5,9 @@ function showNAT ()
 {
 
     # Verify function requirements.
-    for req in conntrack tput xq; do
+    for req in "/usr/sbin/conntrack" tput xq; do
         type ${req} >/dev/null 2>&1 || {
-            echo >&2 "$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - ${req} is not installed. Aborting."
+            echo >&2 "$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - ${req##*/} is not installed. Aborting."
             exit 1
         }
     done
