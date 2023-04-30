@@ -7,8 +7,10 @@ function showNAT ()
     # Verify function requirements.
     for req in "/usr/sbin/conntrack" tput xq; do
         type ${req} >/dev/null 2>&1 || {
-            echo >&2 "$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - ${req##*/} is not installed. Aborting."
-            exit 1
+            ERR="${?}"
+            echo -en >&2 "[${ERR}] $(basename "$(test "${0}" == "-bash" && echo "${FUNCNAME[0]}" || echo "${0}")" 2> /dev/null)"
+            echo " - \"${req}\" is not installed or found. Aborting."
+            exit ${ERR}
         }
     done
 
