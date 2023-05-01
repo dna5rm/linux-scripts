@@ -8,9 +8,11 @@
 STEP=300 # 5min
 PINGS=20 # 20 pings
 
-# The first ping is usually an outlier so I add an extra ping.
 fping_hosts="${@}"
-fping_opts="-C $((PINGS+1)) -q -B1 -r1 -i10"
+# Try to find the LAN interface and set as the source (fping broken, returns no data).
+#fping_source="$(ip address show up | awk 'BEGIN{CIDR=128} /global.*[0-9]$/ {if($0 !~ "dynamic") {gsub("/", " ", $0); if($3 < CIDR) {CIDR=$3; INT=$NF}}} END{print INT}')"
+# The first ping is usually an outlier so I add an extra ping.
+fping_opts="-C $((PINGS+1)) -q -B1 -r1 -i10" #-I ${fping_source}"
 rrd_path="${HOME}/public_html"
 rrd_timestamp=$(date +%s)
 
