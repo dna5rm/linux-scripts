@@ -6,10 +6,10 @@
 function askAlpaca()
 {
     # Variable of where this function is being called from.
-    FUNC_SOURCE="$(basename "${0}" 2> dev/null)$([[ ! -z "${FUNCNAME[0]}" ]] && { echo "/${FUNCNAME[0]}"; })"
+    FUNC_SOURCE="$(basename "${0}" 2> /dev/null)$([[ ! -z "${FUNCNAME[0]}" ]] && { echo "/${FUNCNAME[0]}"; })"
 
     # Verify function requirements
-    for req in aalpaca md5sum; do
+    for req in alpaca md5sum; do
         type ${req} >/dev/null 2>&1 || {
             ERR="${?}"
             echo >&2 "[${ERR}] ${FUNC_SOURCE} - \"${req}\" is not installed or found. Aborting."
