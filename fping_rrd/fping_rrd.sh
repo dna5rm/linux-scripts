@@ -78,10 +78,7 @@ function rrd_update ()
     unset rrd_loss rrd_median rrd_rev rrd_name rrd_value
 }
 
-echo fping ${fping_opts} ${fping_hosts}
-
-exit 0;
- 2>&1 | while read fping_line; do
+fping ${fping_opts} ${fping_hosts} 2>&1 | while read fping_line; do
     fping_array=( ${fping_line} )
     fping_rrd="${rrd_path}/fping_$(hostname -s)-${fping_array[0],,}.rrd"
 
