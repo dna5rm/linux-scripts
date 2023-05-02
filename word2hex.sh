@@ -16,20 +16,37 @@ for func in ${bashFunc[@]}; do
     }
 done || exit 1
 
+[[ ! -f "${1}" ]] && {
+    echo "$(basename "${0}"): Munge an input wordlist into HexColorWords."
+    echo "Missing \"language.txt\" wordlist file as \"\${1}\" input..."
+    exit 1
+}
+
+# Variables.
 alpaca_model="${HOME}/opt/ggml-alpaca-7b-q4.bin"
-output="${HOME}/$(basename "${0}")/${1,,}.json"
+words=( $(tac "${1}" | tr '[:upper:]' '['lower']' | sed -n '/^[0-9,a,b,c,d,e,f,g,i,l,o,s,t,z]\{6\}$/p' | sort) )
 
-if [[ "${#1}" -eq 6 ]] && [[ ! -f "${output}" ]]; then
-    hex="$(str2Hex "${1,,}")"
-    [[ "${#hex}" -eq "${#1}" ]] && {
-        echo "${1,,} > #${hex}"
-        def="$(askAlpaca "Provide me a single sentence definition of the english word \"${1,,}\" in english.")"
+# Main Script.
+for word in ${words[@],,}; do
 
-        JSON="{}"
-        JSON="$(jq --arg word "${1,,}" '. + {"word": $word}' <<<${JSON})"
-        JSON="$(jq --arg hex "#${hex}" '. + {"hex": $hex}' <<<${JSON})"
-        JSON="$(jq --arg definition "${def}" '. + {"definition": $definition}' <<<${JSON})"
+    language="$(basename "${1}" | sed 's/\..*$//')"
+    output="${HOME}/$(basename "${0}" | sed 's/\..*$//')/${language}/${word,,}.json"
 
-        install -m 644 -D  <(jq -c --sort-keys '.' <<<${JSON}) "${output}"
-    }
-fi
+    if [[ ! -z "${word,,}.json" ]] && [[ "${#word}" -eq 6 ]] && [[ ! -f "${output}" ]]; then
+        hex="$(str2Hex "${word,,}")"
+        [[ "${#hex}" -eq "${#word}" ]] && {
+
+            echo "[$((${count:0}+1))/${#words[@]}] ${word,,} > #${hex}"
+            def="$(askAlpaca "Provide me a single sentence definition of the ${language,,} word \"${word,,}\" in english.")"
+
+            JSON="{}"
+            JSON="$(jq --arg word "${word,,}" '. + {"word": $word}' <<<${JSON})"
+            JSON="$(jq --arg hex "#${hex}" '. + {"hex": $hex}' <<<${JSON})"
+            JSON="$(jq --arg definition "${def}" '. + {"definition": $definition}' <<<${JSON})"
+
+            install -m 644 -D  <(jq -c --sort-keys '.' <<<${JSON}) "${output}"
+            let count++
+        }
+    fi
+
+done
