@@ -24,12 +24,13 @@ done || exit 1
 
 # Variables.
 alpaca_model="${HOME}/opt/ggml-alpaca-7b-q4.bin"
-words=( $(tac "${1}" | tr '[:upper:]' '['lower']' | sed -n '/^[0-9,a,b,c,d,e,f,g,i,l,o,s,t,z]\{6\}$/p' | sort) )
+language="$(basename "${1}" | sed 's/\..*$//')"
+#words=( $(tac "${1}" | tr '[:upper:]' '['lower']' | sed -n '/^[0-9,a,b,c,d,e,f,g,i,l,o,s,t,z]\{6\}$/p' | sort) )
+words=( $(sed -n '/^.\{6\}$/p' "${1}" | tr '[:upper:]' '['lower']' | sort | uniq) )
 
 # Main Script.
 for word in ${words[@],,}; do
 
-    language="$(basename "${1}" | sed 's/\..*$//')"
     output="${HOME}/$(basename "${0}" | sed 's/\..*$//')/${language}/${word,,}.json"
 
     if [[ ! -z "${word,,}.json" ]] && [[ "${#word}" -eq 6 ]] && [[ ! -f "${output}" ]]; then
@@ -45,8 +46,8 @@ for word in ${words[@],,}; do
             JSON="$(jq --arg definition "${def}" '. + {"definition": $definition}' <<<${JSON})"
 
             install -m 644 -D  <(jq -c --sort-keys '.' <<<${JSON}) "${output}"
-            let count++
         }
     fi
+    let count++
 
 done
