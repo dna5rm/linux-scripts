@@ -3,6 +3,8 @@
 ## Make sure Alpaca is compiled and executable from a system path.
 ## rename "chat" to "${PATH}/alpaca"
 
+# Ref: https://github.com/antimatter15/alpaca.cpp
+
 function askAlpaca()
 {
     # Variable of where this function is being called from.
