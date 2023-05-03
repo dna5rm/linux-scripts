@@ -33,7 +33,7 @@ function askAlpaca()
                 install -m 644 -D  <(printf "[ $(date) ]\n\n${FUNCNAME[0]}:task: \"${1}\"\n\n") "${cachePath}/${cacheHash}"
                 alpaca -m "${alpaca_model}" --color --temp 0.9 \
                  --prompt "Write a brief response that appropriately completes the request." \
-                 --file <(echo "${1}") 2>> "${HOME}/${FUNCNAME[0]}.log" | tee -a "${cachePath}/${cacheHash}"
+                 --file <(echo "${1}") 2>> "/dev/null" | tee -a "${cachePath}/${cacheHash}"
             } || {
                 # Return the last query.
                 awk 'END{print}' "${cachePath}/${cacheHash}"
