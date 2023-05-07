@@ -11,10 +11,12 @@ function createNewStickerSet ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to create a new sticker set owned by a user.
 	Ref: https://core.telegram.org/bots/api#createnewstickerset
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to create a new sticker set owned by a user. The bot
 	will be able to edit the sticker set thus created. Returns *True* on
@@ -23,7 +25,7 @@ function createNewStickerSet ()
 	  Parameter          Type                    Required   Description
 	  ------------------ ----------------------- ---------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	  user_id            Integer                 Yes        User identifier of created sticker set owner
-	  name               String                  Yes        Short name of sticker set, to be used in `t.me/addstickers/` URLs (e.g., *animals*). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in `"_by_<bot_username>"`. `<bot_username>` is case insensitive. 1-64 characters.
+	  name               String                  Yes        Short name of sticker set, to be used in \`t.me/addstickers/\` URLs (e.g., *animals*). Can contain only English letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in \`"_by_<bot_username>"\`. \`<bot_username>\` is case insensitive. 1-64 characters.
 	  title              String                  Yes        Sticker set title, 1-64 characters
 	  stickers           Array of InputSticker   Yes        A JSON-serialized list of 1-50 initial stickers to be added to the sticker set
 	  sticker_format     String                  Yes        Format of stickers in the set, must be one of "static", "animated", "video"
@@ -35,6 +37,6 @@ function createNewStickerSet ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/createNewStickerSet" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

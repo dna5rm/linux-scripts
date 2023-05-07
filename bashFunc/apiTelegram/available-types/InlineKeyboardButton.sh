@@ -11,10 +11,12 @@ function InlineKeyboardButton ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents one button of an inline keyboard.
 	Ref: https://core.telegram.org/bots/api#inlinekeyboardbutton
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents one button of an inline keyboard. You **must**
 	use exactly one of the optional fields.
@@ -27,7 +29,7 @@ function InlineKeyboardButton ()
 	  url                                String                        *Optional*. HTTP or tg://
 	                                                                   URL to be opened when the
 	                                                                   button is pressed. Links
-	                                                                   `tg://user?id=<user_id>`
+	                                                                   \`tg://user?id=<user_id>\`
 	                                                                   can be used to mention a
 	                                                                   user by their ID without
 	                                                                   using a username, if this
@@ -137,6 +139,6 @@ function InlineKeyboardButton ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineKeyboardButton" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

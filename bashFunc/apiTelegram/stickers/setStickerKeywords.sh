@@ -11,10 +11,12 @@ function setStickerKeywords ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to change search keywords assigned to a regular or custom emoji sticker.
 	Ref: https://core.telegram.org/bots/api#setstickerkeywords
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to change search keywords assigned to a regular or
 	custom emoji sticker. The sticker must belong to a sticker set created
@@ -30,6 +32,6 @@ function setStickerKeywords ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setStickerKeywords" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

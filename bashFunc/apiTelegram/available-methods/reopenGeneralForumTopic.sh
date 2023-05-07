@@ -11,10 +11,12 @@ function reopenGeneralForumTopic ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to reopen a closed 'General' topic in a forum supergroup chat.
 	Ref: https://core.telegram.org/bots/api#reopengeneralforumtopic
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to reopen a closed 'General' topic in a forum
 	supergroup chat. The bot must be an administrator in the chat for this
@@ -24,13 +26,13 @@ function reopenGeneralForumTopic ()
 	
 	  Parameter   Type                Required   Description
 	  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/reopenGeneralForumTopic" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

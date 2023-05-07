@@ -11,10 +11,12 @@ function setChatTitle ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to change the title of a chat.
 	Ref: https://core.telegram.org/bots/api#setchattitle
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to change the title of a chat. Titles can't be changed
 	for private chats. The bot must be an administrator in the chat for this
@@ -23,7 +25,7 @@ function setChatTitle ()
 	
 	  Parameter   Type                Required   Description
 	  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  title       String              Yes        New chat title, 1-128 characters
 	EOF
     else
@@ -31,6 +33,6 @@ function setChatTitle ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setChatTitle" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

@@ -11,10 +11,12 @@ function Contact ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents a phone contact.
 	Ref: https://core.telegram.org/bots/api#contact
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents a phone contact.
 	
@@ -31,6 +33,6 @@ function Contact ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/Contact" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

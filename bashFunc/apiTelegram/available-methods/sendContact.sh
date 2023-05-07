@@ -11,17 +11,19 @@ function sendContact ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to send phone contacts.
 	Ref: https://core.telegram.org/bots/api#sendcontact
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to send phone contacts. On success, the sent Message is
 	returned.
 	
 	  Parameter                     Type                                                                               Required   Description
 	  ----------------------------- ---------------------------------------------------------------------------------- ---------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_thread_id             Integer                                                                            Optional   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
 	  phone_number                  String                                                                             Yes        Contact's phone number
 	  first_name                    String                                                                             Yes        Contact's first name
@@ -38,6 +40,6 @@ function sendContact ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendContact" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

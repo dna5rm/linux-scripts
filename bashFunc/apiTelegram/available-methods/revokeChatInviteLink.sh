@@ -11,10 +11,12 @@ function revokeChatInviteLink ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to revoke an invite link created by the bot.
 	Ref: https://core.telegram.org/bots/api#revokechatinvitelink
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to revoke an invite link created by the bot. If the
 	primary link is revoked, a new link is automatically generated. The bot
@@ -24,7 +26,7 @@ function revokeChatInviteLink ()
 	
 	  Parameter     Type                Required   Description
 	  ------------- ------------------- ---------- -----------------------------------------------------------------------------------------------------------
-	  chat_id       Integer or String   Yes        Unique identifier of the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id       Integer or String   Yes        Unique identifier of the target chat or username of the target channel (in the format \`@channelusername\`)
 	  invite_link   String              Yes        The invite link to revoke
 	EOF
     else
@@ -32,6 +34,6 @@ function revokeChatInviteLink ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/revokeChatInviteLink" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

@@ -11,10 +11,12 @@ function setGameScore ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to set the score of the specified user in a game message.
 	Ref: https://core.telegram.org/bots/api#setgamescore
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to set the score of the specified user in a game
 	message. On success, if the message is not an inline message, the
@@ -37,6 +39,6 @@ function setGameScore ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setGameScore" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

@@ -11,10 +11,12 @@ function Audio ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents an audio file to be treated as music by the Telegram clients.
 	Ref: https://core.telegram.org/bots/api#audio
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents an audio file to be treated as music by the
 	Telegram clients.
@@ -36,6 +38,6 @@ function Audio ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/Audio" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

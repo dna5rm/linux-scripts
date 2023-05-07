@@ -11,17 +11,19 @@ function sendLocation ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to send point on the map.
 	Ref: https://core.telegram.org/bots/api#sendlocation
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to send point on the map. On success, the sent Message
 	is returned.
 	
 	  Parameter                     Type                                                                               Required   Description
 	  ----------------------------- ---------------------------------------------------------------------------------- ---------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_thread_id             Integer                                                                            Optional   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
 	  latitude                      Float number                                                                       Yes        Latitude of the location
 	  longitude                     Float number                                                                       Yes        Longitude of the location
@@ -40,6 +42,6 @@ function sendLocation ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendLocation" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

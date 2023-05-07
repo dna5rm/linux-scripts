@@ -11,10 +11,12 @@ function createChatInviteLink ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to create an additional invite link for a chat.
 	Ref: https://core.telegram.org/bots/api#createchatinvitelink
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to create an additional invite link for a chat. The bot
 	must be an administrator in the chat for this to work and must have the
@@ -24,7 +26,7 @@ function createChatInviteLink ()
 	
 	  Parameter              Type                Required   Description
 	  ---------------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id                Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  name                   String              Optional   Invite link name; 0-32 characters
 	  expire_date            Integer             Optional   Point in time (Unix timestamp) when the link will expire
 	  member_limit           Integer             Optional   The maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
@@ -35,6 +37,6 @@ function createChatInviteLink ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/createChatInviteLink" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

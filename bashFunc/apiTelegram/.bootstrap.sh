@@ -44,19 +44,21 @@ awk -F'[ ><]' '/^.h/{print $2"|"$6"|"$7"|"$15,$16,$17,$18,$19,$20}' "telegram-ap
 	        }
 	    done
 	#
-	    if [[ -z "\${TELEGRAM_TOKEN}" ]] || [[ -z "\${1}" ]]; then
+	    if [[ -z "\${TELEGRAM_TOKEN}" ]] || [[ -z "\$(grep -E "+{*}+" <<<\${1:-{\}} 2> /dev/null)" ]]; then
 	$(printf "\t")cat <<-EOF
 	$(printf "\t")\$(basename "\${0}" 2> /dev/null):\${FUNCNAME[0]} - ${description}
 	$(printf "\t")Ref: https://core.telegram.org/bots/api${href}
 	$(printf "\t")---
-	$(pandoc --from=html --to=markdown -o - <(lynx -source "telegram-api.html" | sed -n '/^<h.*'''${NAME}'''/,/^<h/p' | sed '1d;$d;s/$^$/<\/p>/;s/<a[^>]\+>/<a>/g;s/<img[^>]\+>//g') | awk -F'.' '{print "\t"$0}' | sed 's/\\//g')
+	$(printf "\t")Telegram API Token: \\\${TELEGRAM_TOKEN} (\${TELEGRAM_TOKEN:-required})
+	$(printf "\t")---
+	$(pandoc --from=html --to=markdown -o - <(lynx -source "telegram-api.html" | sed -n '/^<h.*'''${NAME}'''/,/^<h/p' | sed '1d;$d;s/$^$/<\/p>/;s/<a[^>]\+>/<a>/g;s/<img[^>]\+>//g') | awk -F'.' '{print "\t"$0}' | sed 's/\\//g;s/`/\\`/g')
 	$(printf "\t")EOF
 	    else
 	        curl --silent --location \\
 	          --request POST --url "https://api.telegram.org/bot\${TELEGRAM_TOKEN}/${api}" \\
 	          --header "Content-Type: application/json" \\
 	          --header "Accept: application/json" \\
-	          --data "\${1}"
+	          --data "\${1:-{\}}"
 	    fi
 	}
 	EOF

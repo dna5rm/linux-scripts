@@ -11,10 +11,12 @@ function InlineQueryResultVoice ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents a link to a voice recording in an .
 	Ref: https://core.telegram.org/bots/api#inlinequeryresultvoice
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents a link to a voice recording in an .OGG container encoded with
 	OPUS. By default, this voice recording will be sent by the user.
@@ -42,6 +44,6 @@ function InlineQueryResultVoice ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineQueryResultVoice" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

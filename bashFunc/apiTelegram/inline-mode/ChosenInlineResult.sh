@@ -11,10 +11,12 @@ function ChosenInlineResult ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents a result of an inline query that was chosen by the user and sent to their chat partner.
 	Ref: https://core.telegram.org/bots/api#choseninlineresult
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents a result of an inline query that was chosen by the user and
 	sent to their chat partner.
@@ -35,6 +37,6 @@ function ChosenInlineResult ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChosenInlineResult" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

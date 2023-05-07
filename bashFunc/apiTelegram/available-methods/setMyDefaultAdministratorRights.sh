@@ -11,10 +11,12 @@ function setMyDefaultAdministratorRights ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels.
 	Ref: https://core.telegram.org/bots/api#setmydefaultadministratorrights
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to change the default administrator rights requested by
 	the bot when it's added as an administrator to groups or channels.
@@ -31,6 +33,6 @@ function setMyDefaultAdministratorRights ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setMyDefaultAdministratorRights" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

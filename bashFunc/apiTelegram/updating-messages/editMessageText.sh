@@ -11,10 +11,12 @@ function editMessageText ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to edit text and game messages.
 	Ref: https://core.telegram.org/bots/api#editmessagetext
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to edit text and game messages. On success, if the
 	edited message is not an inline message, the edited Message is returned,
@@ -22,7 +24,7 @@ function editMessageText ()
 	
 	  Parameter                  Type                     Required   Description
 	  -------------------------- ------------------------ ---------- --------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id                    Integer or String        Optional   Required if *inline_message_id* is not specified. Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                    Integer or String        Optional   Required if *inline_message_id* is not specified. Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_id                 Integer                  Optional   Required if *inline_message_id* is not specified. Identifier of the message to edit
 	  inline_message_id          String                   Optional   Required if *chat_id* and *message_id* are not specified. Identifier of the inline message
 	  text                       String                   Yes        New text of the message, 1-4096 characters after entities parsing
@@ -36,6 +38,6 @@ function editMessageText ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/editMessageText" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

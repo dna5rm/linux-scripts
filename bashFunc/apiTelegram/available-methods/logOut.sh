@@ -11,10 +11,12 @@ function logOut ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to log out from the cloud Bot API server before launching the bot locally.
 	Ref: https://core.telegram.org/bots/api#logout
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to log out from the cloud Bot API server before
 	launching the bot locally. You **must** log out the bot before running
@@ -28,6 +30,6 @@ function logOut ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/logOut" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

@@ -11,10 +11,12 @@ function InputMediaAnimation ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents an animation file (GIF or H.
 	Ref: https://core.telegram.org/bots/api#inputmediaanimation
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents an animation file (GIF or H.264/MPEG-4 AVC video without
 	sound) to be sent.
@@ -37,6 +39,6 @@ function InputMediaAnimation ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputMediaAnimation" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

@@ -11,10 +11,12 @@ function InputMediaPhoto ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents a photo to be sent.
 	Ref: https://core.telegram.org/bots/api#inputmediaphoto
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents a photo to be sent.
 	
@@ -32,6 +34,6 @@ function InputMediaPhoto ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputMediaPhoto" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

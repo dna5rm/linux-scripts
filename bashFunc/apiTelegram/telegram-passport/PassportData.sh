@@ -11,10 +11,12 @@ function PassportData ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Describes Telegram Passport data shared with the bot by the user.
 	Ref: https://core.telegram.org/bots/api#passportdata
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Describes Telegram Passport data shared with the bot by the user.
 	
@@ -28,6 +30,6 @@ function PassportData ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportData" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

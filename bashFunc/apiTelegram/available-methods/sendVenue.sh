@@ -11,17 +11,19 @@ function sendVenue ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to send information about a venue.
 	Ref: https://core.telegram.org/bots/api#sendvenue
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to send information about a venue. On success, the sent
 	Message is returned.
 	
 	  Parameter                     Type                                                                               Required   Description
 	  ----------------------------- ---------------------------------------------------------------------------------- ---------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_thread_id             Integer                                                                            Optional   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
 	  latitude                      Float number                                                                       Yes        Latitude of the venue
 	  longitude                     Float number                                                                       Yes        Longitude of the venue
@@ -42,6 +44,6 @@ function sendVenue ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendVenue" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

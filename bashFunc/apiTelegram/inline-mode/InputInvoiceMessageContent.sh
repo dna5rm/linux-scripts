@@ -11,10 +11,12 @@ function InputInvoiceMessageContent ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents the content of an invoice message to be sent as the result of an inline query.
 	Ref: https://core.telegram.org/bots/api#inputinvoicemessagecontent
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents the content of an invoice message to be sent as the result of
 	an inline query.
@@ -27,7 +29,7 @@ function InputInvoiceMessageContent ()
 	  provider_token                  String                  Payment provider token, obtained via @BotFather
 	  currency                        String                  Three-letter ISO 4217 currency code, see more on currencies
 	  prices                          Array of LabeledPrice   Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
-	  max_tip_amount                  Integer                 *Optional*. The maximum accepted amount for tips in the *smallest units* of the currency (integer, **not** float/double). For example, for a maximum tip of `US$ 1.45` pass `max_tip_amount = 145`. See the *exp* parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
+	  max_tip_amount                  Integer                 *Optional*. The maximum accepted amount for tips in the *smallest units* of the currency (integer, **not** float/double). For example, for a maximum tip of \`US$ 1.45\` pass \`max_tip_amount = 145\`. See the *exp* parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
 	  suggested_tip_amounts           Array of Integer        *Optional*. A JSON-serialized array of suggested amounts of tip in the *smallest units* of the currency (integer, **not** float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive, passed in a strictly increased order and must not exceed *max_tip_amount*.
 	  provider_data                   String                  *Optional*. A JSON-serialized object for data about the invoice, which will be shared with the payment provider. A detailed description of the required fields should be provided by the payment provider.
 	  photo_url                       String                  *Optional*. URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
@@ -47,6 +49,6 @@ function InputInvoiceMessageContent ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputInvoiceMessageContent" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

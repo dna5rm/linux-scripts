@@ -11,10 +11,12 @@ function sendChatAction ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method when you need to tell the user that something is happening on the bot's side.
 	Ref: https://core.telegram.org/bots/api#sendchataction
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method when you need to tell the user that something is
 	happening on the bot's side. The status is set for 5 seconds or less
@@ -32,7 +34,7 @@ function sendChatAction ()
 	
 	  Parameter           Type                Required   Description
 	  ------------------- ------------------- ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id             Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id             Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_thread_id   Integer             Optional   Unique identifier for the target message thread; supergroups only
 	  action              String              Yes        Type of action to broadcast. Choose one, depending on what the user is about to receive: *typing* for text messages, *upload_photo* for photos, *record_video* or *upload_video* for videos, *record_voice* or *upload_voice* for voice notes, *upload_document* for general files, *choose_sticker* for stickers, *find_location* for location data, *record_video_note* or *upload_video_note* for video notes.
 	EOF
@@ -41,6 +43,6 @@ function sendChatAction ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendChatAction" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

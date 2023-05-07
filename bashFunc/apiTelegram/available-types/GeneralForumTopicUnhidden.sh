@@ -11,10 +11,12 @@ function GeneralForumTopicUnhidden ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents a service message about General forum topic unhidden in the chat.
 	Ref: https://core.telegram.org/bots/api#generalforumtopicunhidden
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents a service message about General forum topic
 	unhidden in the chat. Currently holds no information.
@@ -24,6 +26,6 @@ function GeneralForumTopicUnhidden ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/GeneralForumTopicUnhidden" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

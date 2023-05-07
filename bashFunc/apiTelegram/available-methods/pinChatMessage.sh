@@ -11,10 +11,12 @@ function pinChatMessage ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to add a message to the list of pinned messages in a chat.
 	Ref: https://core.telegram.org/bots/api#pinchatmessage
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to add a message to the list of pinned messages in a
 	chat. If the chat is not a private chat, the bot must be an
@@ -25,7 +27,7 @@ function pinChatMessage ()
 	
 	  Parameter              Type                Required   Description
 	  ---------------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id                Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_id             Integer             Yes        Identifier of a message to pin
 	  disable_notification   Boolean             Optional   Pass *True* if it is not necessary to send a notification to all chat members about the new pinned message. Notifications are always disabled in channels and private chats.
 	EOF
@@ -34,6 +36,6 @@ function pinChatMessage ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/pinChatMessage" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

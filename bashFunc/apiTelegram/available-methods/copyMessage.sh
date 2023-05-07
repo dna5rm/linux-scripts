@@ -11,10 +11,12 @@ function copyMessage ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to copy messages of any kind.
 	Ref: https://core.telegram.org/bots/api#copymessage
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to copy messages of any kind. Service messages and
 	invoice messages can't be copied. A quiz poll can be copied only if the
@@ -25,9 +27,9 @@ function copyMessage ()
 	
 	  Parameter                     Type                                                                               Required   Description
 	  ----------------------------- ---------------------------------------------------------------------------------- ---------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                       Integer or String                                                                  Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_thread_id             Integer                                                                            Optional   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
-	  from_chat_id                  Integer or String                                                                  Yes        Unique identifier for the chat where the original message was sent (or channel username in the format `@channelusername`)
+	  from_chat_id                  Integer or String                                                                  Yes        Unique identifier for the chat where the original message was sent (or channel username in the format \`@channelusername\`)
 	  message_id                    Integer                                                                            Yes        Message identifier in the chat specified in *from_chat_id*
 	  caption                       String                                                                             Optional   New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
 	  parse_mode                    String                                                                             Optional   Mode for parsing entities in the new caption. See formatting options for more details.
@@ -43,6 +45,6 @@ function copyMessage ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/copyMessage" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

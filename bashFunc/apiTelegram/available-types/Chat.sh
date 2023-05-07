@@ -11,10 +11,12 @@ function Chat ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents a chat.
 	Ref: https://core.telegram.org/bots/api#chat
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents a chat.
 	
@@ -31,7 +33,7 @@ function Chat ()
 	  active_usernames                          Array of String   *Optional*. If non-empty, the list of all active chat usernames; for private chats, supergroups and channels. Returned only in getChat.
 	  emoji_status_custom_emoji_id              String            *Optional*. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat.
 	  bio                                       String            *Optional*. Bio of the other party in a private chat. Returned only in getChat.
-	  has_private_forwards                      True              *Optional*. *True*, if privacy settings of the other party in the private chat allows to use `tg://user?id=<user_id>` links only in chats with the user. Returned only in getChat.
+	  has_private_forwards                      True              *Optional*. *True*, if privacy settings of the other party in the private chat allows to use \`tg://user?id=<user_id>\` links only in chats with the user. Returned only in getChat.
 	  has_restricted_voice_and_video_messages   True              *Optional*. *True*, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat.
 	  join_to_send_messages                     True              *Optional*. *True*, if users need to join the supergroup before they can send messages. Returned only in getChat.
 	  join_by_request                           True              *Optional*. *True*, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat.
@@ -54,6 +56,6 @@ function Chat ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/Chat" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

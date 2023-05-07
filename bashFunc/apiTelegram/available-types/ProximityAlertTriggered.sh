@@ -11,10 +11,12 @@ function ProximityAlertTriggered ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents the content of a service message, sent whenever a user in the chat triggers a proximity alert set by another user.
 	Ref: https://core.telegram.org/bots/api#proximityalerttriggered
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents the content of a service message, sent whenever a
 	user in the chat triggers a proximity alert set by another user.
@@ -30,6 +32,6 @@ function ProximityAlertTriggered ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ProximityAlertTriggered" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

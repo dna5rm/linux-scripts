@@ -11,10 +11,12 @@ function InlineQueryResultsButton ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents a button to be shown above inline query results.
 	Ref: https://core.telegram.org/bots/api#inlinequeryresultsbutton
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents a button to be shown above inline query results.
 	You **must** use exactly one of the optional fields.
@@ -42,9 +44,9 @@ function InlineQueryResultsButton ()
 	                                                  sent to the bot when a
 	                                                  user presses the
 	                                                  button. 1-64
-	                                                  characters, only `A-Z`,
-	                                                  `a-z`, `0-9`, `_` and
-	                                                  `-` are allowed.
+	                                                  characters, only \`A-Z\`,
+	                                                  \`a-z\`, \`0-9\`, \`_\` and
+	                                                  \`-\` are allowed.
 	                                                  
 	                                                  *Example:* An inline
 	                                                  bot that sends YouTube
@@ -81,6 +83,6 @@ function InlineQueryResultsButton ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineQueryResultsButton" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

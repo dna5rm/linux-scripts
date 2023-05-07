@@ -11,10 +11,12 @@ function deleteMessage ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to delete a message, including service messages, with the following limitations:.
 	Ref: https://core.telegram.org/bots/api#deletemessage
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to delete a message, including service messages, with
 	the following limitations:
@@ -36,7 +38,7 @@ function deleteMessage ()
 	
 	  Parameter    Type                Required   Description
 	  ------------ ------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id      Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id      Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_id   Integer             Yes        Identifier of the message to delete
 	EOF
     else
@@ -44,6 +46,6 @@ function deleteMessage ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteMessage" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

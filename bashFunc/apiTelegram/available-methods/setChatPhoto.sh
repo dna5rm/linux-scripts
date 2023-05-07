@@ -11,10 +11,12 @@ function setChatPhoto ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to set a new profile photo for the chat.
 	Ref: https://core.telegram.org/bots/api#setchatphoto
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to set a new profile photo for the chat. Photos can't
 	be changed for private chats. The bot must be an administrator in the
@@ -23,7 +25,7 @@ function setChatPhoto ()
 	
 	  Parameter   Type                Required   Description
 	  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  photo       InputFile           Yes        New chat photo, uploaded using multipart/form-data
 	EOF
     else
@@ -31,6 +33,6 @@ function setChatPhoto ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setChatPhoto" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

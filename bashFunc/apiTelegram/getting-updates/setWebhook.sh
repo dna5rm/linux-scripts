@@ -11,10 +11,12 @@ function setWebhook ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to specify a URL and receive incoming updates via an outgoing webhook.
 	Ref: https://core.telegram.org/bots/api#setwebhook
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to specify a URL and receive incoming updates via an
 	outgoing webhook. Whenever there is an update for the bot, we will send
@@ -77,8 +79,8 @@ function setWebhook ()
 	                                                             header
 	                                                             "X-Telegram-Bot-Api-Secret-Token"
 	                                                             in every webhook request, 1-256
-	                                                             characters. Only characters `A-Z`,
-	                                                             `a-z`, `0-9`, `_` and `-` are
+	                                                             characters. Only characters \`A-Z\`,
+	                                                             \`a-z\`, \`0-9\`, \`_\` and \`-\` are
 	                                                             allowed. The header is useful to
 	                                                             ensure that the request comes from
 	                                                             a webhook set by you.
@@ -101,6 +103,6 @@ function setWebhook ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

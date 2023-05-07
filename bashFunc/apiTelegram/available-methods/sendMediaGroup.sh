@@ -11,10 +11,12 @@ function sendMediaGroup ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to send a group of photos, videos, documents or audios as an album.
 	Ref: https://core.telegram.org/bots/api#sendmediagroup
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to send a group of photos, videos, documents or audios
 	as an album. Documents and audio files can be only grouped in an album
@@ -23,7 +25,7 @@ function sendMediaGroup ()
 	
 	  Parameter                     Type                                                                                Required   Description
 	  ----------------------------- ----------------------------------------------------------------------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id                       Integer or String                                                                   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	  chat_id                       Integer or String                                                                   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
 	  message_thread_id             Integer                                                                             Optional   Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
 	  media                         Array of InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo   Yes        A JSON-serialized array describing messages to be sent, must include 2-10 items
 	  disable_notification          Boolean                                                                             Optional   Sends messages silently. Users will receive a notification with no sound.
@@ -36,6 +38,6 @@ function sendMediaGroup ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMediaGroup" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

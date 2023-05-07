@@ -11,10 +11,12 @@ function InputMessageContent ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents the content of a message to be sent as a result of an inline query.
 	Ref: https://core.telegram.org/bots/api#inputmessagecontent
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents the content of a message to be sent as a result
 	of an inline query. Telegram clients currently support the following 5
@@ -31,6 +33,6 @@ function InputMessageContent ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputMessageContent" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

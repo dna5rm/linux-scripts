@@ -11,10 +11,12 @@ function InlineQueryResultMpeg4Gif ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents a link to a video animation (H.
 	Ref: https://core.telegram.org/bots/api#inlinequeryresultmpeg4gif
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents a link to a video animation (H.264/MPEG-4 AVC video without
 	sound). By default, this animated MPEG-4 file will be sent by the user
@@ -44,6 +46,6 @@ function InlineQueryResultMpeg4Gif ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineQueryResultMpeg4Gif" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

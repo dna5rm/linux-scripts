@@ -11,10 +11,12 @@ function setChatStickerSet ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to set a new group sticker set for a supergroup.
 	Ref: https://core.telegram.org/bots/api#setchatstickerset
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to set a new group sticker set for a supergroup. The bot
 	must be an administrator in the chat for this to work and must have the
@@ -24,7 +26,7 @@ function setChatStickerSet ()
 	
 	  Parameter          Type                Required   Description
 	  ------------------ ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
-	  chat_id            Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+	  chat_id            Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
 	  sticker_set_name   String              Yes        Name of the sticker set to be set as the group sticker set
 	EOF
     else
@@ -32,6 +34,6 @@ function setChatStickerSet ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setChatStickerSet" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

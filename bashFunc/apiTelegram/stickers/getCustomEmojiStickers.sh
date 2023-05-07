@@ -11,10 +11,12 @@ function getCustomEmojiStickers ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to get information about custom emoji stickers by their identifiers.
 	Ref: https://core.telegram.org/bots/api#getcustomemojistickers
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to get information about custom emoji stickers by their
 	identifiers. Returns an Array of Sticker objects.
@@ -28,6 +30,6 @@ function getCustomEmojiStickers ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getCustomEmojiStickers" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

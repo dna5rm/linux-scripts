@@ -11,10 +11,12 @@ function deleteForumTopic ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to delete a forum topic along with all its messages in a forum supergroup chat.
 	Ref: https://core.telegram.org/bots/api#deleteforumtopic
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to delete a forum topic along with all its messages in a
 	forum supergroup chat. The bot must be an administrator in the chat for
@@ -23,7 +25,7 @@ function deleteForumTopic ()
 	
 	  Parameter           Type                Required   Description
 	  ------------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
-	  chat_id             Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+	  chat_id             Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
 	  message_thread_id   Integer             Yes        Unique identifier for the target message thread of the forum topic
 	EOF
     else
@@ -31,6 +33,6 @@ function deleteForumTopic ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteForumTopic" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

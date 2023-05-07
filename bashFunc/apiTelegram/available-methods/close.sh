@@ -11,10 +11,12 @@ function close ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to close the bot instance before moving it from one local server to another.
 	Ref: https://core.telegram.org/bots/api#close
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to close the bot instance before moving it from one
 	local server to another. You need to delete the webhook before calling
@@ -27,6 +29,6 @@ function close ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/close" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

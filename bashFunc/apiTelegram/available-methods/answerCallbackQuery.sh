@@ -11,10 +11,12 @@ function answerCallbackQuery ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to send answers to callback queries sent from inline keyboards.
 	Ref: https://core.telegram.org/bots/api#answercallbackquery
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to send answers to callback queries sent from inline
 	keyboards. The answer will be displayed to the user as a notification at
@@ -24,7 +26,7 @@ function answerCallbackQuery ()
 	> Alternatively, the user can be redirected to the specified Game URL.
 	> For this option to work, you must first create a game for your bot via
 	> @BotFather and accept the terms. Otherwise, you may use links like
-	> `t.me/your_bot?start=XXXX` that open your bot with a parameter.
+	> \`t.me/your_bot?start=XXXX\` that open your bot with a parameter.
 	
 	  ------------------------------------------------------------------------------------
 	  Parameter           Type              Required          Description
@@ -55,7 +57,7 @@ function answerCallbackQuery ()
 	                                                          
 	                                                          Otherwise, you may use links
 	                                                          like
-	                                                          `t.me/your_bot?start=XXXX`
+	                                                          \`t.me/your_bot?start=XXXX\`
 	                                                          that open your bot with a
 	                                                          parameter.
 	
@@ -73,6 +75,6 @@ function answerCallbackQuery ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/answerCallbackQuery" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

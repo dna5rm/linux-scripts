@@ -11,10 +11,12 @@ function setPassportDataErrors ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Informs a user that some of the Telegram Passport elements they provided contains errors.
 	Ref: https://core.telegram.org/bots/api#setpassportdataerrors
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Informs a user that some of the Telegram Passport elements they provided
 	contains errors. The user will not be able to re-submit their Passport
@@ -37,6 +39,6 @@ function setPassportDataErrors ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setPassportDataErrors" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

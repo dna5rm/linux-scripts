@@ -11,10 +11,12 @@ function unbanChatMember ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to unban a previously banned user in a supergroup or channel.
 	Ref: https://core.telegram.org/bots/api#unbanchatmember
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to unban a previously banned user in a supergroup or
 	channel. The user will **not** return to the group or channel
@@ -27,7 +29,7 @@ function unbanChatMember ()
 	
 	  Parameter        Type                Required   Description
 	  ---------------- ------------------- ---------- ---------------------------------------------------------------------------------------------------------------------------
-	  chat_id          Integer or String   Yes        Unique identifier for the target group or username of the target supergroup or channel (in the format `@channelusername`)
+	  chat_id          Integer or String   Yes        Unique identifier for the target group or username of the target supergroup or channel (in the format \`@channelusername\`)
 	  user_id          Integer             Yes        Unique identifier of the target user
 	  only_if_banned   Boolean             Optional   Do nothing if the user is not banned
 	EOF
@@ -36,6 +38,6 @@ function unbanChatMember ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/unbanChatMember" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

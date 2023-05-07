@@ -11,10 +11,12 @@ function getForumTopicIconStickers ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user.
 	Ref: https://core.telegram.org/bots/api#getforumtopiciconstickers
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Use this method to get custom emoji stickers, which can be used as a
 	forum topic icon by any user. Requires no parameters. Returns an Array
@@ -25,6 +27,6 @@ function getForumTopicIconStickers ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getForumTopicIconStickers" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

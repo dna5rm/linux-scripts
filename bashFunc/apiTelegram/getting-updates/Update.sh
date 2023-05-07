@@ -11,10 +11,12 @@ function Update ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents an incoming update.
 	Ref: https://core.telegram.org/bots/api#update
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents an incoming update.
 	At most **one** of the optional parameters can be present in any given
@@ -43,6 +45,6 @@ function Update ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/Update" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

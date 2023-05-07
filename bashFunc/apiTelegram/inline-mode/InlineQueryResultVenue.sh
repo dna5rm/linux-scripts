@@ -11,10 +11,12 @@ function InlineQueryResultVenue ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents a venue.
 	Ref: https://core.telegram.org/bots/api#inlinequeryresultvenue
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents a venue. By default, the venue will be sent by the user.
 	Alternatively, you can use *input_message_content* to send a message
@@ -46,6 +48,6 @@ function InlineQueryResultVenue ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineQueryResultVenue" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

@@ -11,10 +11,12 @@ function MaskPosition ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object describes the position on faces where a mask should be placed by default.
 	Ref: https://core.telegram.org/bots/api#maskposition
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object describes the position on faces where a mask should be
 	placed by default.
@@ -31,6 +33,6 @@ function MaskPosition ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/MaskPosition" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

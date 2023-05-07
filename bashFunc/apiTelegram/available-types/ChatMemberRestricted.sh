@@ -11,10 +11,12 @@ function ChatMemberRestricted ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents a chat member that is under certain restrictions in the chat.
 	Ref: https://core.telegram.org/bots/api#chatmemberrestricted
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents a chat member that is under certain restrictions in the chat.
 	Supergroups only.
@@ -45,6 +47,6 @@ function ChatMemberRestricted ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatMemberRestricted" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

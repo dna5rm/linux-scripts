@@ -11,10 +11,12 @@ function EncryptedCredentials ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Describes data required for decrypting and authenticating EncryptedPassportElement.
 	Ref: https://core.telegram.org/bots/api#encryptedcredentials
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Describes data required for decrypting and authenticating
 	EncryptedPassportElement. See the Telegram Passport Documentation for a
@@ -32,6 +34,6 @@ function EncryptedCredentials ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/EncryptedCredentials" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

@@ -11,10 +11,12 @@ function Message ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents a message.
 	Ref: https://core.telegram.org/bots/api#message
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents a message.
 	
@@ -90,13 +92,13 @@ function Message ()
 	  video_chat_ended                    VideoChatEnded                  *Optional*. Service message: video chat ended
 	  video_chat_participants_invited     VideoChatParticipantsInvited    *Optional*. Service message: new participants invited to a video chat
 	  web_app_data                        WebAppData                      *Optional*. Service message: data sent by a Web App
-	  reply_markup                        InlineKeyboardMarkup            *Optional*. Inline keyboard attached to the message. `login_url` buttons are represented as ordinary `url` buttons.
+	  reply_markup                        InlineKeyboardMarkup            *Optional*. Inline keyboard attached to the message. \`login_url\` buttons are represented as ordinary \`url\` buttons.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/Message" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

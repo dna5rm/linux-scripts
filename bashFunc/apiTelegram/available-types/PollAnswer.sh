@@ -11,10 +11,12 @@ function PollAnswer ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents an answer of a user in a non-anonymous poll.
 	Ref: https://core.telegram.org/bots/api#pollanswer
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents an answer of a user in a non-anonymous poll.
 	
@@ -29,6 +31,6 @@ function PollAnswer ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PollAnswer" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

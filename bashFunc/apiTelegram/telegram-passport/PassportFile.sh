@@ -11,10 +11,12 @@ function PassportFile ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object represents a file uploaded to Telegram Passport.
 	Ref: https://core.telegram.org/bots/api#passportfile
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	This object represents a file uploaded to Telegram Passport. Currently
 	all Telegram Passport files are in JPEG format when decrypted and don't
@@ -32,6 +34,6 @@ function PassportFile ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportFile" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

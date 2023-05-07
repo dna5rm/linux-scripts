@@ -11,10 +11,12 @@ function getMe ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - A simple method for testing your bot's authentication token.
 	Ref: https://core.telegram.org/bots/api#getme
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	A simple method for testing your bot's authentication token. Requires
 	no parameters. Returns basic information about the bot in form of a User
@@ -24,6 +26,7 @@ function getMe ()
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getMe" \
           --header "Content-Type: application/json" \
-          --header "Accept: application/json"
+          --header "Accept: application/json" \
+          --data "${1:-{\}}"
     fi
 }

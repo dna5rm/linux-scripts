@@ -11,10 +11,12 @@ function ReplyKeyboardRemove ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display the default letter-keyboard.
 	Ref: https://core.telegram.org/bots/api#replykeyboardremove
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Upon receiving a message with this object, Telegram clients will remove
 	the current custom keyboard and display the default letter-keyboard. By
@@ -65,6 +67,6 @@ function ReplyKeyboardRemove ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ReplyKeyboardRemove" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

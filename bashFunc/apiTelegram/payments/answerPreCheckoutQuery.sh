@@ -11,10 +11,12 @@ function answerPreCheckoutQuery ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Once the user has confirmed their payment and shipping details, the Bot API sends the final confirmation in the form of an Update with the field *pre_checkout_query*.
 	Ref: https://core.telegram.org/bots/api#answerprecheckoutquery
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Once the user has confirmed their payment and shipping details, the Bot
 	API sends the final confirmation in the form of an Update with the field
@@ -34,6 +36,6 @@ function answerPreCheckoutQuery ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/answerPreCheckoutQuery" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }

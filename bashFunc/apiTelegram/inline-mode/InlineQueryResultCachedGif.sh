@@ -11,10 +11,12 @@ function InlineQueryResultCachedGif ()
         }
     done
 
-    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "$(grep -E "+{*}+" <<<${1:-{\}} 2> /dev/null)" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Represents a link to an animated GIF file stored on the Telegram servers.
 	Ref: https://core.telegram.org/bots/api#inlinequeryresultcachedgif
+	---
+	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
 	Represents a link to an animated GIF file stored on the Telegram
 	servers. By default, this animated GIF file will be sent by the user
@@ -39,6 +41,6 @@ function InlineQueryResultCachedGif ()
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineQueryResultCachedGif" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1}"
+          --data "${1:-{\}}"
     fi
 }
