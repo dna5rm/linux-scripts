@@ -4,6 +4,7 @@
 bashFunc=(
     "askAlpaca"
     "apiTelegram/getMe"
+    "apiTelegram/getChat"
     "apiTelegram/getUpdates"
     "apiTelegram/sendMessage"
 )
@@ -30,22 +31,43 @@ TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
 
 [[ "${getMe[0]}" == "true" ]] && {
 
-    # Get the most recent update_id.
-    [[ -s "${cacheDir}/getUpdates.json" ]] && { updateLast="$(jq -c '.[]' "${cacheDir}/getUpdates.json" | awk 'END{print}' | jq -r '.update_id + 1')"; }
+    while true; do
+        # Get the most recent update_id.
+        [[ -s "${cacheDir}/getUpdates.json" ]] && {
+            updateLast="$(jq -c '.[]' "${cacheDir}/getUpdates.json" | awk 'END{print}' | jq -r '.update_id')"
+        }
 
-    install -m 644 -D <(getUpdates '{"offset": '''${updateLast:-0}'''}' | jq -c '.result') "${cacheDir}/getUpdates.json"
+        install -m 644 -D <(getUpdates '{"offset": '''${updateLast}'''}' | jq -c '.result') "${cacheDir}/getUpdates.json"
 
-    jq -r '.[].message | select(.from.is_bot == false) | [.from.username, .chat.id, .chat.type, .text] | @tsv' "${cacheDir}/getUpdates.json" |\
-     while read name chat_id type message; do
+        jq -r '.[] | select(.message.from.is_bot == false) | [.update_id, .message.from.username, .message.chat.id, .message.chat.type, .message.text] | @tsv' "${cacheDir}/getUpdates.json" |\
+         while read id name chat_id type message; do
 
-        reply="$(askAlpaca "${name} in a ${type} chat asked: ${message}")"
+            [[ "${id}" -gt "${updateLast:-0}" ]] && {
 
-        json={}
-        json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json})"
-        json="$(jq --arg text "${reply}" '. + {"text": $text}' <<<${json})"
+                # Respond to private chats with Alpaca.
+                if [[ "${type,,}" == "private" ]]; then
+                    reply="$(askAlpaca "${name} in a ${type} chat asked: ${message}")"
 
-        sendMessage "${json}"
+                    json={}
+                    json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json})"
+                    json="$(jq --arg text "${reply}" '. + {"text": $text}' <<<${json})"
 
+                    sendMessage "${json}" | jq -c '.'
+
+                # Respond to /ask commands with Alpaca.
+                elif [[ "${type,,}" == "supergroup" ]] && [[ "${message%% *}" == "/ask" ]]; then
+                   reply="$(askAlpaca "${name} in a public group chat asked: ${message#* }")"
+
+                   json={}
+                   json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json})"
+                   json="$(jq --arg text "${reply}" '. + {"text": $text}' <<<${json})"
+
+                   sendMessage "${json}" | jq -c '.'
+                else
+                    echo "[$(date +'%r')] ${type,,} :: ${message}"
+                fi
+            }
+
+        done
     done
-
 }
