@@ -1,0 +1,34 @@
+## usershared # This object contains information about the user whose identifier was shared with the bot using a KeyboardButtonRequestUser button.
+# https://core.telegram.org/bots/api#usershared
+
+function UserShared ()
+{
+    # Verify function requirements
+    for req in curl; do
+        type  >/dev/null 2>&1 || {
+            echo >&2 "$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - ${req} is not installed. Aborting."
+            exit 1
+        }
+    done
+
+    if [[ -z "${TELEGRAM_TOKEN}" ]] || [[ -z "${1}" ]]; then
+	cat <<-EOF
+	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - This object contains information about the user whose identifier was shared with the bot using a KeyboardButtonRequestUser button.
+	Ref: https://core.telegram.org/bots/api#usershared
+	---
+	This object contains information about the user whose identifier was
+	shared with the bot using a KeyboardButtonRequestUser button.
+	
+	  Field        Type      Description
+	  ------------ --------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	  request_id   Integer   Identifier of the request
+	  user_id      Integer   Identifier of the shared user. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a 64-bit integer or double-precision float type are safe for storing this identifier. The bot may not have access to the user and could be unable to use this identifier, unless the user is already known to the bot by some other means.
+	EOF
+    else
+        curl --silent --location \
+          --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/UserShared" \
+          --header "Content-Type: application/json" \
+          --header "Accept: application/json" \
+          --data "${1}"
+    fi
+}
