@@ -19,38 +19,63 @@ function askOpenAI()
     cachePath="${HOME}/.cache/$(basename "${FUNC_SOURCE}")"
     cacheHash="$(echo "${@,,}" | md5sum -t | awk '{print $1}')"
 
-    if [[ -z "${OPENAI_API_KEY}" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${OPENAI_API_KEY}" ]] || [[ -z "${@}" ]]; then
         cat <<-EOF
 	${FUNC_SOURCE} - Creates a completion for the provided prompt.
 	Ref: https://platform.openai.com/docs/api-reference/completions/create
 	---
 	apiKey: \${OPENAI_API_KEY} (${OPENAI_API_KEY:-required})
 	model: \${OPENAI_MODEL} (${OPENAI_MODEL:-text-davinci-003})
-	prompt: \${1} (${1:-required})
+	prompt: \${@} (${@:-required})
 	temperature: \${OPENAI_TEMP} (${OPENAI_TEMP:-0.7})
 	max_tokens: \${OPENAI_TOKENS} (${OPENAI_TOKENS:-1900})
+        ---
 	EOF
-    else
 
+    ## Creates an image given a prompt. ##
+    elif [[ "${1,,}" == "image"* ]]; then
         # Perform query & cache.
         [[ ! -f "${cachePath}/${cacheHash}" ]] && {
-            jsonPost="{\"echo\": false}"
-            jsonPost="$(jq --arg model "${OPENAI_MODEL:-text-davinci-003}" '. + {"model": $model}' <<<${jsonPost})"
-            jsonPost="$(jq --arg prompt "${1:-Say this is a test!}" '. + {"prompt": $prompt}' <<<${jsonPost})"
-            jsonPost="$(jq --arg temperature "${OPENAI_TEMP:-0.7}" '. + {"temperature": $temperature|tonumber}' <<<${jsonPost})"
-            jsonPost="$(jq --arg max_tokens "${OPENAI_TOKENS:-1900}" '. + {"max_tokens": $max_tokens|tonumber}' <<<${jsonPost})"
+            prompt="$(echo "${@}" | sed 's/^[^ ]* *//')"
+            [[ "$(grep -E "\b(256x256|512x512|1024x1024)\b" <<<${1#*:})" ]] && { size="${1#*:}"; }
 
-            install -m 644 -D  <(printf "[ $(date) ]\n\n${FUNCNAME[0]}:task: \"${jsonPost}\"\n\n") "${cachePath}/${cacheHash}"
+            jsonPost="{\"n\": 1, \"response_format\": \"b64_json\"}"
+            jsonPost="$(jq --arg size "${size:-256x256}" '. + {"size": $size}' <<<${jsonPost})"
+            jsonPost="$(jq --arg prompt "${prompt}" '. + {"prompt": $prompt}' <<<${jsonPost})"
+
+            install -m 644 -D <(printf "[ $(date) ]\n\n${FUNCNAME[0]}:task: \"${jsonPost}\"\n\n") "${cachePath}/${cacheHash}"
 
             curl --silent --location \
-             --request POST --url "https://api.openai.com/v1/completions" \
+             --request POST --url "https://api.openai.com/v1/images/generations" \
              --header "Content-Type: application/json" \
              --header "Authorization: Bearer ${OPENAI_API_KEY}" \
-             --data "${jsonPost}" | tee -a "${cachePath}/${cacheHash}"
+             --data "${jsonPost}" | jq -c '.' | tee -a "${cachePath}/${cacheHash}"
         } || {
             # Return the last query.
             awk 'END{print}' "${cachePath}/${cacheHash}"
         }
 
+    ## Creates a completion for the provided prompt and parameters. ##
+    else
+        # Perform query & cache.
+        [[ ! -f "${cachePath}/${cacheHash}" ]] && {
+            prompt="${@}"
+            jsonPost="{\"echo\": false}"
+            jsonPost="$(jq --arg model "${OPENAI_MODEL:-text-davinci-003}" '. + {"model": $model}' <<<${jsonPost})"
+            jsonPost="$(jq --arg prompt "${prompt}" '. + {"prompt": $prompt}' <<<${jsonPost})"
+            jsonPost="$(jq --arg temperature "${OPENAI_TEMP:-0.7}" '. + {"temperature": $temperature|tonumber}' <<<${jsonPost})"
+            jsonPost="$(jq --arg max_tokens "${OPENAI_TOKENS:-1900}" '. + {"max_tokens": $max_tokens|tonumber}' <<<${jsonPost})"
+
+            install -m 644 -D <(printf "[ $(date) ]\n\n${FUNCNAME[0]}:task: \"${jsonPost}\"\n\n") "${cachePath}/${cacheHash}"
+
+            curl --silent --location \
+             --request POST --url "https://api.openai.com/v1/completions" \
+             --header "Content-Type: application/json" \
+             --header "Authorization: Bearer ${OPENAI_API_KEY}" \
+             --data "${jsonPost}" | jq -c '.' | tee -a "${cachePath}/${cacheHash}"
+        } || {
+            # Return the last query.
+            awk 'END{print}' "${cachePath}/${cacheHash}"
+        }
     fi
 }

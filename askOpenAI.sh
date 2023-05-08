@@ -19,8 +19,12 @@ done || exit 1
 
 OPENAI_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.OPENAI_API_KEY')"
 
-[[ -z "${1}" ]] && {
+if [[ -z "${@}" ]]; then
     askOpenAI
-} || {
-    askOpenAI "${1}" | jq -r '. | .model, "", .choices[0].text' | sed "1 s,.*,$(tput smso)&$(tput sgr0),"
-}
+elif [[ "${1,,}" == "image"* ]]; then
+    outputUUID="${HOME}/public_html/img/$(uuid).png"
+    install -m 644 -D <(askOpenAI "${@}" | jq -r '.data[0].b64_json' | base64 -d) "${outputUUID}"
+    [[ -f "${outputUUID}" ]] && { file "${outputUUID}"; }
+else
+    askOpenAI "${@}" | jq -r '. | .model, "", .choices[0].text' | sed "1 s,.*,$(tput smso)&$(tput sgr0),"
+fi
