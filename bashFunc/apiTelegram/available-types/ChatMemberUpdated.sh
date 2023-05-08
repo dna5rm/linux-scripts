@@ -18,23 +18,22 @@ function ChatMemberUpdated ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents changes in the status of a chat member.
-	
-	  Field                         Type             Description
-	  ----------------------------- ---------------- --------------------------------------------------------------------------------------------------------------------
-	  chat                          Chat             Chat the user belongs to
-	  from                          User             Performer of the action, which resulted in the change
-	  date                          Integer          Date the change was done in Unix time
-	  old_chat_member               ChatMember       Previous information about the chat member
-	  new_chat_member               ChatMember       New information about the chat member
-	  invite_link                   ChatInviteLink   *Optional*. Chat invite link, which was used by the user to join the chat; for joining by invite link events only.
-	  via_chat_folder_invite_link   Boolean          *Optional*. True, if the user joined the chat via a chat folder invite link
+This object represents changes in the status of a chat member.
+  Field                         Type             Description
+  ----------------------------- ---------------- --------------------------------------------------------------------------------------------------------------------
+  chat                          Chat             Chat the user belongs to
+  from                          User             Performer of the action, which resulted in the change
+  date                          Integer          Date the change was done in Unix time
+  old_chat_member               ChatMember       Previous information about the chat member
+  new_chat_member               ChatMember       New information about the chat member
+  invite_link                   ChatInviteLink   *Optional*. Chat invite link, which was used by the user to join the chat; for joining by invite link events only.
+  via_chat_folder_invite_link   Boolean          *Optional*. True, if the user joined the chat via a chat folder invite link
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatMemberUpdated" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

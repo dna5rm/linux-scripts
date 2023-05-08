@@ -18,19 +18,18 @@ function ChatMemberLeft ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents a chat member that isn't currently a member of the chat, but
-	may join it themselves.
-	
-	  Field    Type     Description
-	  -------- -------- -------------------------------------------------
-	  status   String   The member's status in the chat, always "left"
-	  user     User     Information about the user
+Represents a chat member that isn\'t currently a member of the chat, but
+may join it themselves.
+  Field    Type     Description
+  -------- -------- -------------------------------------------------
+  status   String   The member\'s status in the chat, always "left"
+  user     User     Information about the user
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatMemberLeft" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

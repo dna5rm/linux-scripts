@@ -18,17 +18,16 @@ function SentWebAppMessage ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Describes an inline message sent by a Web App on behalf of a user.
-	
-	  Field               Type     Description
-	  ------------------- -------- ---------------------------------------------------------------------------------------------------------------------------
-	  inline_message_id   String   *Optional*. Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message.
+Describes an inline message sent by a Web App on behalf of a user.
+  Field               Type     Description
+  ------------------- -------- ---------------------------------------------------------------------------------------------------------------------------
+  inline_message_id   String   *Optional*. Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/SentWebAppMessage" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

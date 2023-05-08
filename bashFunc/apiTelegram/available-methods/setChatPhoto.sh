@@ -18,21 +18,20 @@ function setChatPhoto ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to set a new profile photo for the chat. Photos can't
-	be changed for private chats. The bot must be an administrator in the
-	chat for this to work and must have the appropriate administrator
-	rights. Returns *True* on success.
-	
-	  Parameter   Type                Required   Description
-	  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
-	  photo       InputFile           Yes        New chat photo, uploaded using multipart/form-data
+Use this method to set a new profile photo for the chat. Photos can\'t
+be changed for private chats. The bot must be an administrator in the
+chat for this to work and must have the appropriate administrator
+rights. Returns *True* on success.
+  Parameter   Type                Required   Description
+  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
+  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+  photo       InputFile           Yes        New chat photo, uploaded using multipart/form-data
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setChatPhoto" \
-          --header "Content-Type: application/json" \
+          --header "Content-Type: multipart/form-data" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

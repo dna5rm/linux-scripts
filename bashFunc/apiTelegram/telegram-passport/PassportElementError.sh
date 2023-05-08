@@ -18,24 +18,23 @@ function PassportElementError ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents an error in the Telegram Passport element which
-	was submitted that should be resolved by the user. It should be one of:
-	
-	-   PassportElementErrorDataField
-	-   PassportElementErrorFrontSide
-	-   PassportElementErrorReverseSide
-	-   PassportElementErrorSelfie
-	-   PassportElementErrorFile
-	-   PassportElementErrorFiles
-	-   PassportElementErrorTranslationFile
-	-   PassportElementErrorTranslationFiles
-	-   PassportElementErrorUnspecified
+This object represents an error in the Telegram Passport element which
+was submitted that should be resolved by the user. It should be one of:
+-   PassportElementErrorDataField
+-   PassportElementErrorFrontSide
+-   PassportElementErrorReverseSide
+-   PassportElementErrorSelfie
+-   PassportElementErrorFile
+-   PassportElementErrorFiles
+-   PassportElementErrorTranslationFile
+-   PassportElementErrorTranslationFiles
+-   PassportElementErrorUnspecified
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportElementError" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

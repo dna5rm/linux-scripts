@@ -18,18 +18,17 @@ function VideoChatParticipantsInvited ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a service message about new members invited to a
-	video chat.
-	
-	  Field   Type            Description
-	  ------- --------------- -------------------------------------------------
-	  users   Array of User   New members that were invited to the video chat
+This object represents a service message about new members invited to a
+video chat.
+  Field   Type            Description
+  ------- --------------- -------------------------------------------------
+  users   Array of User   New members that were invited to the video chat
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/VideoChatParticipantsInvited" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

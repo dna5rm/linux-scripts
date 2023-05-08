@@ -18,21 +18,20 @@ function uploadStickerFile ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to upload a file with a sticker for later use in the
-	createNewStickerSet and addStickerToSet methods (the file can be used
-	multiple times). Returns the uploaded File on success.
-	
-	  Parameter        Type        Required   Description
-	  ---------------- ----------- ---------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  user_id          Integer     Yes        User identifier of sticker file owner
-	  sticker          InputFile   Yes        A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See https://core.telegram.org/stickers for technical requirements. More information on Sending Files »
-	  sticker_format   String      Yes        Format of the sticker, must be one of "static", "animated", "video"
+Use this method to upload a file with a sticker for later use in the
+createNewStickerSet and addStickerToSet methods (the file can be used
+multiple times). Returns the uploaded File on success.
+  Parameter        Type        Required   Description
+  ---------------- ----------- ---------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  user_id          Integer     Yes        User identifier of sticker file owner
+  sticker          InputFile   Yes        A file with the sticker in .WEBP, .PNG, .TGS, or .WEBM format. See https://core.telegram.org/stickers for technical requirements. More information on Sending Files »
+  sticker_format   String      Yes        Format of the sticker, must be one of "static", "animated", "video"
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/uploadStickerFile" \
-          --header "Content-Type: application/json" \
+          --header "Content-Type: multipart/form-data" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

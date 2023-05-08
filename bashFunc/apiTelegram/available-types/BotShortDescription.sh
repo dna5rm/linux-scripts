@@ -18,17 +18,16 @@ function BotShortDescription ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents the bot's short description.
-	
-	  Field               Type     Description
-	  ------------------- -------- ------------------------------
-	  short_description   String   The bot's short description
+This object represents the bot\'s short description.
+  Field               Type     Description
+  ------------------- -------- ------------------------------
+  short_description   String   The bot\'s short description
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/BotShortDescription" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

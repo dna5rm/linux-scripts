@@ -18,21 +18,20 @@ function answerWebAppQuery ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to set the result of an interaction with a Web App and
-	send a corresponding message on behalf of the user to the chat from
-	which the query originated. On success, a SentWebAppMessage object is
-	returned.
-	
-	  Parameter          Type                Required   Description
-	  ------------------ ------------------- ---------- ------------------------------------------------------------
-	  web_app_query_id   String              Yes        Unique identifier for the query to be answered
-	  result             InlineQueryResult   Yes        A JSON-serialized object describing the message to be sent
+Use this method to set the result of an interaction with a Web App and
+send a corresponding message on behalf of the user to the chat from
+which the query originated. On success, a SentWebAppMessage object is
+returned.
+  Parameter          Type                Required   Description
+  ------------------ ------------------- ---------- ------------------------------------------------------------
+  web_app_query_id   String              Yes        Unique identifier for the query to be answered
+  result             InlineQueryResult   Yes        A JSON-serialized object describing the message to be sent
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/answerWebAppQuery" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

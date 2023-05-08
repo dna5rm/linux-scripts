@@ -18,18 +18,17 @@ function MessageAutoDeleteTimerChanged ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a service message about a change in auto-delete
-	timer settings.
-	
-	  Field                      Type      Description
-	  -------------------------- --------- -----------------------------------------------------------
-	  message_auto_delete_time   Integer   New auto-delete time for messages in the chat; in seconds
+This object represents a service message about a change in auto-delete
+timer settings.
+  Field                      Type      Description
+  -------------------------- --------- -----------------------------------------------------------
+  message_auto_delete_time   Integer   New auto-delete time for messages in the chat; in seconds
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/MessageAutoDeleteTimerChanged" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

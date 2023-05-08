@@ -18,18 +18,17 @@ function Dice ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents an animated emoji that displays a random value.
-	
-	  Field   Type      Description
-	  ------- --------- -----------------------------------------------------------------------------------------------------------
-	  emoji   String    Emoji on which the dice throw animation is based
-	  value   Integer   Value of the dice, 1-6 for "", "" and "" base emoji, 1-5 for "" and "" base emoji, 1-64 for "" base emoji
+This object represents an animated emoji that displays a random value.
+  Field   Type      Description
+  ------- --------- -----------------------------------------------------------------------------------------------------------
+  emoji   String    Emoji on which the dice throw animation is based
+  value   Integer   Value of the dice, 1-6 for "", "" and "" base emoji, 1-5 for "" and "" base emoji, 1-64 for "" base emoji
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/Dice" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

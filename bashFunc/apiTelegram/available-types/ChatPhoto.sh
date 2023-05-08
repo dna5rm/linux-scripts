@@ -18,20 +18,19 @@ function ChatPhoto ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a chat photo.
-	
-	  Field                  Type     Description
-	  ---------------------- -------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  small_file_id          String   File identifier of small (160x160) chat photo. This file_id can be used only for photo download and only for as long as the photo is not changed.
-	  small_file_unique_id   String   Unique file identifier of small (160x160) chat photo, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
-	  big_file_id            String   File identifier of big (640x640) chat photo. This file_id can be used only for photo download and only for as long as the photo is not changed.
-	  big_file_unique_id     String   Unique file identifier of big (640x640) chat photo, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+This object represents a chat photo.
+  Field                  Type     Description
+  ---------------------- -------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  small_file_id          String   File identifier of small (160x160) chat photo. This file_id can be used only for photo download and only for as long as the photo is not changed.
+  small_file_unique_id   String   Unique file identifier of small (160x160) chat photo, which is supposed to be the same over time and for different bots. Can\'t be used to download or reuse the file.
+  big_file_id            String   File identifier of big (640x640) chat photo. This file_id can be used only for photo download and only for as long as the photo is not changed.
+  big_file_unique_id     String   Unique file identifier of big (640x640) chat photo, which is supposed to be the same over time and for different bots. Can\'t be used to download or reuse the file.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatPhoto" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

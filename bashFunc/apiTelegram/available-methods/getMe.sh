@@ -18,15 +18,15 @@ function getMe ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	A simple method for testing your bot's authentication token. Requires
-	no parameters. Returns basic information about the bot in form of a User
-	object.
+A simple method for testing your bot\'s authentication token. Requires
+no parameters. Returns basic information about the bot in form of a User
+object.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getMe" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

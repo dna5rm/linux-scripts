@@ -18,15 +18,15 @@ function getForumTopicIconStickers ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get custom emoji stickers, which can be used as a
-	forum topic icon by any user. Requires no parameters. Returns an Array
-	of Sticker objects.
+Use this method to get custom emoji stickers, which can be used as a
+forum topic icon by any user. Requires no parameters. Returns an Array
+of Sticker objects.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getForumTopicIconStickers" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

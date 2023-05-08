@@ -18,18 +18,17 @@ function getStickerSet ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get a sticker set. On success, a StickerSet object is
-	returned.
-	
-	  Parameter   Type     Required   Description
-	  ----------- -------- ---------- -------------------------
-	  name        String   Yes        Name of the sticker set
+Use this method to get a sticker set. On success, a StickerSet object is
+returned.
+  Parameter   Type     Required   Description
+  ----------- -------- ---------- -------------------------
+  name        String   Yes        Name of the sticker set
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getStickerSet" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

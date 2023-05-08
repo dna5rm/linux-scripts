@@ -18,18 +18,17 @@ function deleteWebhook ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to remove webhook integration if you decide to switch
-	back to getUpdates. Returns *True* on success.
-	
-	  Parameter              Type      Required   Description
-	  ---------------------- --------- ---------- -----------------------------------------
-	  drop_pending_updates   Boolean   Optional   Pass *True* to drop all pending updates
+Use this method to remove webhook integration if you decide to switch
+back to getUpdates. Returns *True* on success.
+  Parameter              Type      Required   Description
+  ---------------------- --------- ---------- -----------------------------------------
+  drop_pending_updates   Boolean   Optional   Pass *True* to drop all pending updates
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteWebhook" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

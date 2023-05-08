@@ -18,19 +18,18 @@ function setChatMenuButton ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to change the bot's menu button in a private chat, or
-	the default menu button. Returns *True* on success.
-	
-	  Parameter     Type         Required   Description
-	  ------------- ------------ ---------- -------------------------------------------------------------------------------------------------------------
-	  chat_id       Integer      Optional   Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
-	  menu_button   MenuButton   Optional   A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
+Use this method to change the bot\'s menu button in a private chat, or
+the default menu button. Returns *True* on success.
+  Parameter     Type         Required   Description
+  ------------- ------------ ---------- -------------------------------------------------------------------------------------------------------------
+  chat_id       Integer      Optional   Unique identifier for the target private chat. If not specified, default bot\'s menu button will be changed
+  menu_button   MenuButton   Optional   A JSON-serialized object for the bot\'s new menu button. Defaults to MenuButtonDefault
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setChatMenuButton" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

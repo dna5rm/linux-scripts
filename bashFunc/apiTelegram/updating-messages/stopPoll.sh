@@ -18,20 +18,19 @@ function stopPoll ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to stop a poll which was sent by the bot. On success,
-	the stopped Poll is returned.
-	
-	  Parameter      Type                   Required   Description
-	  -------------- ---------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id        Integer or String      Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
-	  message_id     Integer                Yes        Identifier of the original message with the poll
-	  reply_markup   InlineKeyboardMarkup   Optional   A JSON-serialized object for a new message inline keyboard.
+Use this method to stop a poll which was sent by the bot. On success,
+the stopped Poll is returned.
+  Parameter      Type                   Required   Description
+  -------------- ---------------------- ---------- ------------------------------------------------------------------------------------------------------------
+  chat_id        Integer or String      Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+  message_id     Integer                Yes        Identifier of the original message with the poll
+  reply_markup   InlineKeyboardMarkup   Optional   A JSON-serialized object for a new message inline keyboard.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/stopPoll" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,15 +18,15 @@ function InputFile ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents the contents of a file to be uploaded. Must be
-	posted using multipart/form-data in the usual way that files are
-	uploaded via the browser.
+This object represents the contents of a file to be uploaded. Must be
+posted using multipart/form-data in the usual way that files are
+uploaded via the browser.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputFile" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

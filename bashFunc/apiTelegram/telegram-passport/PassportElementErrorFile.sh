@@ -18,21 +18,20 @@ function PassportElementErrorFile ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents an issue with a document scan. The error is considered
-	resolved when the file with the document scan changes.
-	
-	  Field       Type     Description
-	  ----------- -------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  source      String   Error source, must be *file*
-	  type        String   The section of the user's Telegram Passport which has the issue, one of "utility_bill", "bank_statement", "rental_agreement", "passport_registration", "temporary_registration"
-	  file_hash   String   Base64-encoded file hash
-	  message     String   Error message
+Represents an issue with a document scan. The error is considered
+resolved when the file with the document scan changes.
+  Field       Type     Description
+  ----------- -------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  source      String   Error source, must be *file*
+  type        String   The section of the user\'s Telegram Passport which has the issue, one of "utility_bill", "bank_statement", "rental_agreement", "passport_registration", "temporary_registration"
+  file_hash   String   Base64-encoded file hash
+  message     String   Error message
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportElementErrorFile" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,21 +18,20 @@ function ChatMember ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object contains information about one member of a chat. Currently,
-	the following 6 types of chat members are supported:
-	
-	-   ChatMemberOwner
-	-   ChatMemberAdministrator
-	-   ChatMemberMember
-	-   ChatMemberRestricted
-	-   ChatMemberLeft
-	-   ChatMemberBanned
+This object contains information about one member of a chat. Currently,
+the following 6 types of chat members are supported:
+-   ChatMemberOwner
+-   ChatMemberAdministrator
+-   ChatMemberMember
+-   ChatMemberRestricted
+-   ChatMemberLeft
+-   ChatMemberBanned
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatMember" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

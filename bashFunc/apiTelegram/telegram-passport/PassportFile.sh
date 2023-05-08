@@ -18,22 +18,21 @@ function PassportFile ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a file uploaded to Telegram Passport. Currently
-	all Telegram Passport files are in JPEG format when decrypted and don't
-	exceed 10MB.
-	
-	  Field            Type      Description
-	  ---------------- --------- ---------------------------------------------------------------------------------------------------------------------------------------------------
-	  file_id          String    Identifier for this file, which can be used to download or reuse the file
-	  file_unique_id   String    Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
-	  file_size        Integer   File size in bytes
-	  file_date        Integer   Unix time when the file was uploaded
+This object represents a file uploaded to Telegram Passport. Currently
+all Telegram Passport files are in JPEG format when decrypted and don\'t
+exceed 10MB.
+  Field            Type      Description
+  ---------------- --------- ---------------------------------------------------------------------------------------------------------------------------------------------------
+  file_id          String    Identifier for this file, which can be used to download or reuse the file
+  file_unique_id   String    Unique identifier for this file, which is supposed to be the same over time and for different bots. Can\'t be used to download or reuse the file.
+  file_size        Integer   File size in bytes
+  file_date        Integer   Unix time when the file was uploaded
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportFile" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

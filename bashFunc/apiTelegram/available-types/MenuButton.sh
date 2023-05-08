@@ -18,22 +18,20 @@ function MenuButton ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object describes the bot's menu button in a private chat. It
-	should be one of
-	
-	-   MenuButtonCommands
-	-   MenuButtonWebApp
-	-   MenuButtonDefault
-	
-	If a menu button other than MenuButtonDefault is set for a private chat,
-	then it is applied in the chat. Otherwise the default menu button is
-	applied. By default, the menu button opens the list of bot commands.
+This object describes the bot\'s menu button in a private chat. It
+should be one of
+-   MenuButtonCommands
+-   MenuButtonWebApp
+-   MenuButtonDefault
+If a menu button other than MenuButtonDefault is set for a private chat,
+then it is applied in the chat. Otherwise the default menu button is
+applied. By default, the menu button opens the list of bot commands.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/MenuButton" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

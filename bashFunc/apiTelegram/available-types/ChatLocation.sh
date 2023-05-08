@@ -18,18 +18,17 @@ function ChatLocation ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents a location to which a chat is connected.
-	
-	  Field      Type       Description
-	  ---------- ---------- -------------------------------------------------------------------------------
-	  location   Location   The location to which the supergroup is connected. Can't be a live location.
-	  address    String     Location address; 1-64 characters, as defined by the chat owner
+Represents a location to which a chat is connected.
+  Field      Type       Description
+  ---------- ---------- -------------------------------------------------------------------------------
+  location   Location   The location to which the supergroup is connected. Can\'t be a live location.
+  address    String     Location address; 1-64 characters, as defined by the chat owner
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatLocation" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

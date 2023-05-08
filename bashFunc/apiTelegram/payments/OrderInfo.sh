@@ -18,20 +18,19 @@ function OrderInfo ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents information about an order.
-	
-	  Field              Type              Description
-	  ------------------ ----------------- -----------------------------------
-	  name               String            *Optional*. User name
-	  phone_number       String            *Optional*. User's phone number
-	  email              String            *Optional*. User email
-	  shipping_address   ShippingAddress   *Optional*. User shipping address
+This object represents information about an order.
+  Field              Type              Description
+  ------------------ ----------------- -----------------------------------
+  name               String            *Optional*. User name
+  phone_number       String            *Optional*. User\'s phone number
+  email              String            *Optional*. User email
+  shipping_address   ShippingAddress   *Optional*. User shipping address
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/OrderInfo" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

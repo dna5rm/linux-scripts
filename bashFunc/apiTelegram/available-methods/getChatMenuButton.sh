@@ -18,18 +18,17 @@ function getChatMenuButton ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get the current value of the bot's menu button in a
-	private chat, or the default menu button. Returns MenuButton on success.
-	
-	  Parameter   Type      Required   Description
-	  ----------- --------- ---------- --------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer   Optional   Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
+Use this method to get the current value of the bot\'s menu button in a
+private chat, or the default menu button. Returns MenuButton on success.
+  Parameter   Type      Required   Description
+  ----------- --------- ---------- --------------------------------------------------------------------------------------------------------------
+  chat_id     Integer   Optional   Unique identifier for the target private chat. If not specified, default bot\'s menu button will be returned
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getChatMenuButton" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

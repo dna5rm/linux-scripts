@@ -18,18 +18,17 @@ function PassportData ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Describes Telegram Passport data shared with the bot by the user.
-	
-	  Field         Type                                Description
-	  ------------- ----------------------------------- ----------------------------------------------------------------------------------------------------------
-	  data          Array of EncryptedPassportElement   Array with information about documents and other Telegram Passport elements that was shared with the bot
-	  credentials   EncryptedCredentials                Encrypted credentials required to decrypt the data
+Describes Telegram Passport data shared with the bot by the user.
+  Field         Type                                Description
+  ------------- ----------------------------------- ----------------------------------------------------------------------------------------------------------
+  data          Array of EncryptedPassportElement   Array with information about documents and other Telegram Passport elements that was shared with the bot
+  credentials   EncryptedCredentials                Encrypted credentials required to decrypt the data
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportData" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

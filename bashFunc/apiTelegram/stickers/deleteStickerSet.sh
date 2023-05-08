@@ -18,18 +18,17 @@ function deleteStickerSet ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to delete a sticker set that was created by the bot.
-	Returns *True* on success.
-	
-	  Parameter   Type     Required   Description
-	  ----------- -------- ---------- ------------------
-	  name        String   Yes        Sticker set name
+Use this method to delete a sticker set that was created by the bot.
+Returns *True* on success.
+  Parameter   Type     Required   Description
+  ----------- -------- ---------- ------------------
+  name        String   Yes        Sticker set name
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteStickerSet" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

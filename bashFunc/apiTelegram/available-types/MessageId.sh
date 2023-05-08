@@ -18,17 +18,16 @@ function MessageId ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a unique message identifier.
-	
-	  Field        Type      Description
-	  ------------ --------- ---------------------------
-	  message_id   Integer   Unique message identifier
+This object represents a unique message identifier.
+  Field        Type      Description
+  ------------ --------- ---------------------------
+  message_id   Integer   Unique message identifier
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/MessageId" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

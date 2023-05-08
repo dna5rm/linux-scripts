@@ -18,21 +18,20 @@ function PassportElementErrorTranslationFiles ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents an issue with the translated version of a document. The error
-	is considered resolved when a file with the document translation change.
-	
-	  Field         Type              Description
-	  ------------- ----------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  source        String            Error source, must be *translation_files*
-	  type          String            Type of element of the user's Telegram Passport which has the issue, one of "passport", "driver_license", "identity_card", "internal_passport", "utility_bill", "bank_statement", "rental_agreement", "passport_registration", "temporary_registration"
-	  file_hashes   Array of String   List of base64-encoded file hashes
-	  message       String            Error message
+Represents an issue with the translated version of a document. The error
+is considered resolved when a file with the document translation change.
+  Field         Type              Description
+  ------------- ----------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  source        String            Error source, must be *translation_files*
+  type          String            Type of element of the user\'s Telegram Passport which has the issue, one of "passport", "driver_license", "identity_card", "internal_passport", "utility_bill", "bank_statement", "rental_agreement", "passport_registration", "temporary_registration"
+  file_hashes   Array of String   List of base64-encoded file hashes
+  message       String            Error message
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportElementErrorTranslationFiles" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

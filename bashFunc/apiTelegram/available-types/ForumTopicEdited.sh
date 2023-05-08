@@ -18,18 +18,17 @@ function ForumTopicEdited ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a service message about an edited forum topic.
-	
-	  Field                  Type     Description
-	  ---------------------- -------- -----------------------------------------------------------------------------------------------------------------------------------
-	  name                   String   *Optional*. New name of the topic, if it was edited
-	  icon_custom_emoji_id   String   *Optional*. New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed
+This object represents a service message about an edited forum topic.
+  Field                  Type     Description
+  ---------------------- -------- -----------------------------------------------------------------------------------------------------------------------------------
+  name                   String   *Optional*. New name of the topic, if it was edited
+  icon_custom_emoji_id   String   *Optional*. New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ForumTopicEdited" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

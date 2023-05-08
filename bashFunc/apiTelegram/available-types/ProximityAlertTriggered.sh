@@ -18,20 +18,19 @@ function ProximityAlertTriggered ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents the content of a service message, sent whenever a
-	user in the chat triggers a proximity alert set by another user.
-	
-	  Field      Type      Description
-	  ---------- --------- --------------------------------
-	  traveler   User      User that triggered the alert
-	  watcher    User      User that set the alert
-	  distance   Integer   The distance between the users
+This object represents the content of a service message, sent whenever a
+user in the chat triggers a proximity alert set by another user.
+  Field      Type      Description
+  ---------- --------- --------------------------------
+  traveler   User      User that triggered the alert
+  watcher    User      User that set the alert
+  distance   Integer   The distance between the users
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ProximityAlertTriggered" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

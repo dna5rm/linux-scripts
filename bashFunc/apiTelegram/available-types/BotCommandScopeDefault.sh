@@ -18,18 +18,17 @@ function BotCommandScopeDefault ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents the default scope of bot commands. Default commands are used
-	if no commands with a narrower scope are specified for the user.
-	
-	  Field   Type     Description
-	  ------- -------- -------------------------------
-	  type    String   Scope type, must be *default*
+Represents the default scope of bot commands. Default commands are used
+if no commands with a narrower scope are specified for the user.
+  Field   Type     Description
+  ------- -------- -------------------------------
+  type    String   Scope type, must be *default*
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/BotCommandScopeDefault" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

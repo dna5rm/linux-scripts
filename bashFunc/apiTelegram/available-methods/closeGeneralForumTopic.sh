@@ -18,20 +18,19 @@ function closeGeneralForumTopic ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to close an open 'General' topic in a forum supergroup
-	chat. The bot must be an administrator in the chat for this to work and
-	must have the *can_manage_topics* administrator rights. Returns *True*
-	on success.
-	
-	  Parameter   Type                Required   Description
-	  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
+Use this method to close an open \'General\' topic in a forum supergroup
+chat. The bot must be an administrator in the chat for this to work and
+must have the *can_manage_topics* administrator rights. Returns *True*
+on success.
+  Parameter   Type                Required   Description
+  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
+  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/closeGeneralForumTopic" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

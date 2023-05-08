@@ -18,21 +18,20 @@ function unbanChatSenderChat ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to unban a previously banned channel chat in a
-	supergroup or channel. The bot must be an administrator for this to work
-	and must have the appropriate administrator rights. Returns *True* on
-	success.
-	
-	  Parameter        Type                Required   Description
-	  ---------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id          Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
-	  sender_chat_id   Integer             Yes        Unique identifier of the target sender chat
+Use this method to unban a previously banned channel chat in a
+supergroup or channel. The bot must be an administrator for this to work
+and must have the appropriate administrator rights. Returns *True* on
+success.
+  Parameter        Type                Required   Description
+  ---------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
+  chat_id          Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+  sender_chat_id   Integer             Yes        Unique identifier of the target sender chat
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/unbanChatSenderChat" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,21 +18,20 @@ function PassportElementErrorSelfie ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents an issue with the selfie with a document. The error is
-	considered resolved when the file with the selfie changes.
-	
-	  Field       Type     Description
-	  ----------- -------- ---------------------------------------------------------------------------------------------------------------------------------------------
-	  source      String   Error source, must be *selfie*
-	  type        String   The section of the user's Telegram Passport which has the issue, one of "passport", "driver_license", "identity_card", "internal_passport"
-	  file_hash   String   Base64-encoded hash of the file with the selfie
-	  message     String   Error message
+Represents an issue with the selfie with a document. The error is
+considered resolved when the file with the selfie changes.
+  Field       Type     Description
+  ----------- -------- ---------------------------------------------------------------------------------------------------------------------------------------------
+  source      String   Error source, must be *selfie*
+  type        String   The section of the user\'s Telegram Passport which has the issue, one of "passport", "driver_license", "identity_card", "internal_passport"
+  file_hash   String   Base64-encoded hash of the file with the selfie
+  message     String   Error message
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportElementErrorSelfie" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

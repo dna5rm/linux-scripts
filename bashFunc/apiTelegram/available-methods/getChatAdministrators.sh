@@ -18,18 +18,17 @@ function getChatAdministrators ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get a list of administrators in a chat, which aren't
-	bots. Returns an Array of ChatMember objects.
-	
-	  Parameter   Type                Required   Description
-	  ----------- ------------------- ---------- --------------------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup or channel (in the format \`@channelusername\`)
+Use this method to get a list of administrators in a chat, which aren\'t
+bots. Returns an Array of ChatMember objects.
+  Parameter   Type                Required   Description
+  ----------- ------------------- ---------- --------------------------------------------------------------------------------------------------------------------------
+  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup or channel (in the format `@channelusername`)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getChatAdministrators" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

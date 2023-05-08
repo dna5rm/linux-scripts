@@ -18,18 +18,17 @@ function getMyDefaultAdministratorRights ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get the current default administrator rights of the
-	bot. Returns ChatAdministratorRights on success.
-	
-	  Parameter      Type      Required   Description
-	  -------------- --------- ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  for_channels   Boolean   Optional   Pass *True* to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned.
+Use this method to get the current default administrator rights of the
+bot. Returns ChatAdministratorRights on success.
+  Parameter      Type      Required   Description
+  -------------- --------- ---------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  for_channels   Boolean   Optional   Pass *True* to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getMyDefaultAdministratorRights" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

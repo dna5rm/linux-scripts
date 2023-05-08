@@ -18,19 +18,18 @@ function BotCommandScopeChatAdministrators ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents the scope of bot commands, covering all administrators of a
-	specific group or supergroup chat.
-	
-	  Field     Type                Description
-	  --------- ------------------- ------------------------------------------------------------------------------------------------------------------
-	  type      String              Scope type, must be *chat_administrators*
-	  chat_id   Integer or String   Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
+Represents the scope of bot commands, covering all administrators of a
+specific group or supergroup chat.
+  Field     Type                Description
+  --------- ------------------- ------------------------------------------------------------------------------------------------------------------
+  type      String              Scope type, must be *chat_administrators*
+  chat_id   Integer or String   Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/BotCommandScopeChatAdministrators" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

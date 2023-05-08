@@ -18,20 +18,19 @@ function ForumTopic ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a forum topic.
-	
-	  Field                  Type      Description
-	  ---------------------- --------- ---------------------------------------------------------------------------
-	  message_thread_id      Integer   Unique identifier of the forum topic
-	  name                   String    Name of the topic
-	  icon_color             Integer   Color of the topic icon in RGB format
-	  icon_custom_emoji_id   String    *Optional*. Unique identifier of the custom emoji shown as the topic icon
+This object represents a forum topic.
+  Field                  Type      Description
+  ---------------------- --------- ---------------------------------------------------------------------------
+  message_thread_id      Integer   Unique identifier of the forum topic
+  name                   String    Name of the topic
+  icon_color             Integer   Color of the topic icon in RGB format
+  icon_custom_emoji_id   String    *Optional*. Unique identifier of the custom emoji shown as the topic icon
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ForumTopic" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

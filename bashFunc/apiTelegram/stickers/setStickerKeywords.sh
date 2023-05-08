@@ -18,20 +18,19 @@ function setStickerKeywords ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to change search keywords assigned to a regular or
-	custom emoji sticker. The sticker must belong to a sticker set created
-	by the bot. Returns *True* on success.
-	
-	  Parameter   Type              Required   Description
-	  ----------- ----------------- ---------- ---------------------------------------------------------------------------------------------------------
-	  sticker     String            Yes        File identifier of the sticker
-	  keywords    Array of String   Optional   A JSON-serialized list of 0-20 search keywords for the sticker with total length of up to 64 characters
+Use this method to change search keywords assigned to a regular or
+custom emoji sticker. The sticker must belong to a sticker set created
+by the bot. Returns *True* on success.
+  Parameter   Type              Required   Description
+  ----------- ----------------- ---------- ---------------------------------------------------------------------------------------------------------
+  sticker     String            Yes        File identifier of the sticker
+  keywords    Array of String   Optional   A JSON-serialized list of 0-20 search keywords for the sticker with total length of up to 64 characters
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setStickerKeywords" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,17 +18,16 @@ function BotName ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents the bot's name.
-	
-	  Field   Type     Description
-	  ------- -------- -----------------
-	  name    String   The bot's name
+This object represents the bot\'s name.
+  Field   Type     Description
+  ------- -------- -----------------
+  name    String   The bot\'s name
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/BotName" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

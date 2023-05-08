@@ -18,21 +18,19 @@ function InlineKeyboardMarkup ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents an inline keyboard that appears right next to the
-	message it belongs to.
-	
-	  Field             Type                                     Description
-	  ----------------- ---------------------------------------- ------------------------------------------------------------------------------------
-	  inline_keyboard   Array of Array of InlineKeyboardButton   Array of button rows, each represented by an Array of InlineKeyboardButton objects
-	
-	**Note:** This will only work in Telegram versions released after 9
-	April, 2016. Older clients will display *unsupported message*.
+This object represents an inline keyboard that appears right next to the
+message it belongs to.
+  Field             Type                                     Description
+  ----------------- ---------------------------------------- ------------------------------------------------------------------------------------
+  inline_keyboard   Array of Array of InlineKeyboardButton   Array of button rows, each represented by an Array of InlineKeyboardButton objects
+**Note:** This will only work in Telegram versions released after 9
+April, 2016. Older clients will display *unsupported message*.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineKeyboardMarkup" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

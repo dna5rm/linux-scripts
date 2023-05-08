@@ -18,21 +18,20 @@ function InputContactMessageContent ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents the content of a contact message to be sent as the result of
-	an inline query.
-	
-	  Field          Type     Description
-	  -------------- -------- ------------------------------------------------------------------------------------
-	  phone_number   String   Contact's phone number
-	  first_name     String   Contact's first name
-	  last_name      String   *Optional*. Contact's last name
-	  vcard          String   *Optional*. Additional data about the contact in the form of a vCard, 0-2048 bytes
+Represents the content of a contact message to be sent as the result of
+an inline query.
+  Field          Type     Description
+  -------------- -------- ------------------------------------------------------------------------------------
+  phone_number   String   Contact\'s phone number
+  first_name     String   Contact\'s first name
+  last_name      String   *Optional*. Contact\'s last name
+  vcard          String   *Optional*. Additional data about the contact in the form of a vCard, 0-2048 bytes
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputContactMessageContent" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

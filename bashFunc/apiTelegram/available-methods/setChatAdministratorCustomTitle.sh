@@ -18,20 +18,19 @@ function setChatAdministratorCustomTitle ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to set a custom title for an administrator in a
-	supergroup promoted by the bot. Returns *True* on success.
-	
-	  Parameter      Type                Required   Description
-	  -------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
-	  chat_id        Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
-	  user_id        Integer             Yes        Unique identifier of the target user
-	  custom_title   String              Yes        New custom title for the administrator; 0-16 characters, emoji are not allowed
+Use this method to set a custom title for an administrator in a
+supergroup promoted by the bot. Returns *True* on success.
+  Parameter      Type                Required   Description
+  -------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
+  chat_id        Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+  user_id        Integer             Yes        Unique identifier of the target user
+  custom_title   String              Yes        New custom title for the administrator; 0-16 characters, emoji are not allowed
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setChatAdministratorCustomTitle" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

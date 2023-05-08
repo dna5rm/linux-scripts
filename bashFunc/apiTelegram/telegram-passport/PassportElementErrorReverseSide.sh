@@ -18,22 +18,21 @@ function PassportElementErrorReverseSide ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents an issue with the reverse side of a document. The error is
-	considered resolved when the file with reverse side of the document
-	changes.
-	
-	  Field       Type     Description
-	  ----------- -------- ------------------------------------------------------------------------------------------------------------
-	  source      String   Error source, must be *reverse_side*
-	  type        String   The section of the user's Telegram Passport which has the issue, one of "driver_license", "identity_card"
-	  file_hash   String   Base64-encoded hash of the file with the reverse side of the document
-	  message     String   Error message
+Represents an issue with the reverse side of a document. The error is
+considered resolved when the file with reverse side of the document
+changes.
+  Field       Type     Description
+  ----------- -------- ------------------------------------------------------------------------------------------------------------
+  source      String   Error source, must be *reverse_side*
+  type        String   The section of the user\'s Telegram Passport which has the issue, one of "driver_license", "identity_card"
+  file_hash   String   Base64-encoded hash of the file with the reverse side of the document
+  message     String   Error message
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportElementErrorReverseSide" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

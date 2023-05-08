@@ -18,21 +18,20 @@ function unpinAllForumTopicMessages ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to clear the list of pinned messages in a forum topic.
-	The bot must be an administrator in the chat for this to work and must
-	have the *can_pin_messages* administrator right in the supergroup.
-	Returns *True* on success.
-	
-	  Parameter           Type                Required   Description
-	  ------------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
-	  chat_id             Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
-	  message_thread_id   Integer             Yes        Unique identifier for the target message thread of the forum topic
+Use this method to clear the list of pinned messages in a forum topic.
+The bot must be an administrator in the chat for this to work and must
+have the *can_pin_messages* administrator right in the supergroup.
+Returns *True* on success.
+  Parameter           Type                Required   Description
+  ------------------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
+  chat_id             Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+  message_thread_id   Integer             Yes        Unique identifier for the target message thread of the forum topic
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/unpinAllForumTopicMessages" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

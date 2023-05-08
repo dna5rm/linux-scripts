@@ -18,22 +18,21 @@ function InputMediaPhoto ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents a photo to be sent.
-	
-	  Field              Type                     Description
-	  ------------------ ------------------------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  type               String                   Type of the result, must be *photo*
-	  media              String                   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass "attach://<file_attach_name>" to upload a new one using multipart/form-data under <file_attach_name> name. More information on Sending Files »
-	  caption            String                   *Optional*. Caption of the photo to be sent, 0-1024 characters after entities parsing
-	  parse_mode         String                   *Optional*. Mode for parsing entities in the photo caption. See formatting options for more details.
-	  caption_entities   Array of MessageEntity   *Optional*. List of special entities that appear in the caption, which can be specified instead of *parse_mode*
-	  has_spoiler        Boolean                  *Optional*. Pass *True* if the photo needs to be covered with a spoiler animation
+Represents a photo to be sent.
+  Field              Type                     Description
+  ------------------ ------------------------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  type               String                   Type of the result, must be *photo*
+  media              String                   File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet, or pass "attach://\<file_attach_name\>" to upload a new one using multipart/form-data under \<file_attach_name\> name. More information on Sending Files »
+  caption            String                   *Optional*. Caption of the photo to be sent, 0-1024 characters after entities parsing
+  parse_mode         String                   *Optional*. Mode for parsing entities in the photo caption. See formatting options for more details.
+  caption_entities   Array of MessageEntity   *Optional*. List of special entities that appear in the caption, which can be specified instead of *parse_mode*
+  has_spoiler        Boolean                  *Optional*. Pass *True* if the photo needs to be covered with a spoiler animation
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputMediaPhoto" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

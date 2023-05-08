@@ -18,15 +18,15 @@ function getWebhookInfo ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get current webhook status. Requires no parameters.
-	On success, returns a WebhookInfo object. If the bot is using
-	getUpdates, will return an object with the *url* field empty.
+Use this method to get current webhook status. Requires no parameters.
+On success, returns a WebhookInfo object. If the bot is using
+getUpdates, will return an object with the *url* field empty.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getWebhookInfo" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

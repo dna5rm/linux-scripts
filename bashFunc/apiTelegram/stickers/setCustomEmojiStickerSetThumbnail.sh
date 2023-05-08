@@ -18,19 +18,18 @@ function setCustomEmojiStickerSetThumbnail ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to set the thumbnail of a custom emoji sticker set.
-	Returns *True* on success.
-	
-	  Parameter         Type     Required   Description
-	  ----------------- -------- ---------- ---------------------------------------------------------------------------------------------------------------------------------------------------
-	  name              String   Yes        Sticker set name
-	  custom_emoji_id   String   Optional   Custom emoji identifier of a sticker from the sticker set; pass an empty string to drop the thumbnail and use the first sticker as the thumbnail.
+Use this method to set the thumbnail of a custom emoji sticker set.
+Returns *True* on success.
+  Parameter         Type     Required   Description
+  ----------------- -------- ---------- ---------------------------------------------------------------------------------------------------------------------------------------------------
+  name              String   Yes        Sticker set name
+  custom_emoji_id   String   Optional   Custom emoji identifier of a sticker from the sticker set; pass an empty string to drop the thumbnail and use the first sticker as the thumbnail.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setCustomEmojiStickerSetThumbnail" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

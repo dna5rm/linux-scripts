@@ -18,19 +18,18 @@ function setStickerSetTitle ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to set the title of a created sticker set. Returns
-	*True* on success.
-	
-	  Parameter   Type     Required   Description
-	  ----------- -------- ---------- ------------------------------------
-	  name        String   Yes        Sticker set name
-	  title       String   Yes        Sticker set title, 1-64 characters
+Use this method to set the title of a created sticker set. Returns
+*True* on success.
+  Parameter   Type     Required   Description
+  ----------- -------- ---------- ------------------------------------
+  name        String   Yes        Sticker set name
+  title       String   Yes        Sticker set title, 1-64 characters
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setStickerSetTitle" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

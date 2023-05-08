@@ -18,27 +18,26 @@ function InlineQueryResultArticle ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents a link to an article or web page.
-	
-	  Field                   Type                   Description
-	  ----------------------- ---------------------- -------------------------------------------------------------------------------
-	  type                    String                 Type of the result, must be *article*
-	  id                      String                 Unique identifier for this result, 1-64 Bytes
-	  title                   String                 Title of the result
-	  input_message_content   InputMessageContent    Content of the message to be sent
-	  reply_markup            InlineKeyboardMarkup   *Optional*. Inline keyboard attached to the message
-	  url                     String                 *Optional*. URL of the result
-	  hide_url                Boolean                *Optional*. Pass *True* if you don't want the URL to be shown in the message
-	  description             String                 *Optional*. Short description of the result
-	  thumbnail_url           String                 *Optional*. Url of the thumbnail for the result
-	  thumbnail_width         Integer                *Optional*. Thumbnail width
-	  thumbnail_height        Integer                *Optional*. Thumbnail height
+Represents a link to an article or web page.
+  Field                   Type                   Description
+  ----------------------- ---------------------- -------------------------------------------------------------------------------
+  type                    String                 Type of the result, must be *article*
+  id                      String                 Unique identifier for this result, 1-64 Bytes
+  title                   String                 Title of the result
+  input_message_content   InputMessageContent    Content of the message to be sent
+  reply_markup            InlineKeyboardMarkup   *Optional*. Inline keyboard attached to the message
+  url                     String                 *Optional*. URL of the result
+  hide_url                Boolean                *Optional*. Pass *True* if you don\'t want the URL to be shown in the message
+  description             String                 *Optional*. Short description of the result
+  thumbnail_url           String                 *Optional*. Url of the thumbnail for the result
+  thumbnail_width         Integer                *Optional*. Thumbnail width
+  thumbnail_height        Integer                *Optional*. Thumbnail height
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InlineQueryResultArticle" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

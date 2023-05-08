@@ -18,18 +18,17 @@ function VideoChatScheduled ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a service message about a video chat scheduled in
-	the chat.
-	
-	  Field        Type      Description
-	  ------------ --------- ------------------------------------------------------------------------------------------------------
-	  start_date   Integer   Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
+This object represents a service message about a video chat scheduled in
+the chat.
+  Field        Type      Description
+  ------------ --------- ------------------------------------------------------------------------------------------------------
+  start_date   Integer   Point in time (Unix timestamp) when the video chat is supposed to be started by a chat administrator
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/VideoChatScheduled" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

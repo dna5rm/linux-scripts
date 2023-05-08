@@ -18,18 +18,17 @@ function WebAppData ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Describes data sent from a Web App to the bot.
-	
-	  Field         Type     Description
-	  ------------- -------- --------------------------------------------------------------------------------------------------------------------------------------------
-	  data          String   The data. Be aware that a bad client can send arbitrary data in this field.
-	  button_text   String   Text of the *web_app* keyboard button from which the Web App was opened. Be aware that a bad client can send arbitrary data in this field.
+Describes data sent from a Web App to the bot.
+  Field         Type     Description
+  ------------- -------- --------------------------------------------------------------------------------------------------------------------------------------------
+  data          String   The data. Be aware that a bad client can send arbitrary data in this field.
+  button_text   String   Text of the *web_app* keyboard button from which the Web App was opened. Be aware that a bad client can send arbitrary data in this field.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/WebAppData" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

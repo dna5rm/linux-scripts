@@ -18,19 +18,18 @@ function PollAnswer ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents an answer of a user in a non-anonymous poll.
-	
-	  Field        Type               Description
-	  ------------ ------------------ -----------------------------------------------------------------------------------------------------------
-	  poll_id      String             Unique poll identifier
-	  user         User               The user, who changed the answer to the poll
-	  option_ids   Array of Integer   0-based identifiers of answer options, chosen by the user. May be empty if the user retracted their vote.
+This object represents an answer of a user in a non-anonymous poll.
+  Field        Type               Description
+  ------------ ------------------ -----------------------------------------------------------------------------------------------------------
+  poll_id      String             Unique poll identifier
+  user         User               The user, who changed the answer to the poll
+  option_ids   Array of Integer   0-based identifiers of answer options, chosen by the user. May be empty if the user retracted their vote.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PollAnswer" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

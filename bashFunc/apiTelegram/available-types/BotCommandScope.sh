@@ -18,22 +18,21 @@ function BotCommandScope ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents the scope to which bot commands are applied.
-	Currently, the following 7 scopes are supported:
-	
-	-   BotCommandScopeDefault
-	-   BotCommandScopeAllPrivateChats
-	-   BotCommandScopeAllGroupChats
-	-   BotCommandScopeAllChatAdministrators
-	-   BotCommandScopeChat
-	-   BotCommandScopeChatAdministrators
-	-   BotCommandScopeChatMember
+This object represents the scope to which bot commands are applied.
+Currently, the following 7 scopes are supported:
+-   BotCommandScopeDefault
+-   BotCommandScopeAllPrivateChats
+-   BotCommandScopeAllGroupChats
+-   BotCommandScopeAllChatAdministrators
+-   BotCommandScopeChat
+-   BotCommandScopeChatAdministrators
+-   BotCommandScopeChatMember
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/BotCommandScope" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

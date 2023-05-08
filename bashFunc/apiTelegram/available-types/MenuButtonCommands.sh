@@ -18,17 +18,16 @@ function MenuButtonCommands ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents a menu button, which opens the bot's list of commands.
-	
-	  Field   Type     Description
-	  ------- -------- ----------------------------------------
-	  type    String   Type of the button, must be *commands*
+Represents a menu button, which opens the bot\'s list of commands.
+  Field   Type     Description
+  ------- -------- ----------------------------------------
+  type    String   Type of the button, must be *commands*
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/MenuButtonCommands" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

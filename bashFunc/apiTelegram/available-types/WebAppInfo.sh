@@ -18,17 +18,16 @@ function WebAppInfo ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Describes a Web App.
-	
-	  Field   Type     Description
-	  ------- -------- ---------------------------------------------------------------------------------------------------
-	  url     String   An HTTPS URL of a Web App to be opened with additional data as specified in Initializing Web Apps
+Describes a Web App.
+  Field   Type     Description
+  ------- -------- ---------------------------------------------------------------------------------------------------
+  url     String   An HTTPS URL of a Web App to be opened with additional data as specified in Initializing Web Apps
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/WebAppInfo" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

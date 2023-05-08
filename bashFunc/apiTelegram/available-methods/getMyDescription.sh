@@ -18,18 +18,17 @@ function getMyDescription ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get the current bot description for the given user
-	language. Returns BotDescription on success.
-	
-	  Parameter       Type     Required   Description
-	  --------------- -------- ---------- ---------------------------------------------------------
-	  language_code   String   Optional   A two-letter ISO 639-1 language code or an empty string
+Use this method to get the current bot description for the given user
+language. Returns BotDescription on success.
+  Parameter       Type     Required   Description
+  --------------- -------- ---------- ---------------------------------------------------------
+  language_code   String   Optional   A two-letter ISO 639-1 language code or an empty string
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getMyDescription" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

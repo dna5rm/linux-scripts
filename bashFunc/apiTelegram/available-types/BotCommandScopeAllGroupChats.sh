@@ -18,18 +18,17 @@ function BotCommandScopeAllGroupChats ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents the scope of bot commands, covering all group and supergroup
-	chats.
-	
-	  Field   Type     Description
-	  ------- -------- ---------------------------------------
-	  type    String   Scope type, must be *all_group_chats*
+Represents the scope of bot commands, covering all group and supergroup
+chats.
+  Field   Type     Description
+  ------- -------- ---------------------------------------
+  type    String   Scope type, must be *all_group_chats*
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/BotCommandScopeAllGroupChats" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

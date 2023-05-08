@@ -18,20 +18,19 @@ function deleteChatPhoto ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to delete a chat photo. Photos can't be changed for
-	private chats. The bot must be an administrator in the chat for this to
-	work and must have the appropriate administrator rights. Returns *True*
-	on success.
-	
-	  Parameter   Type                Required   Description
-	  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
-	  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format \`@channelusername\`)
+Use this method to delete a chat photo. Photos can\'t be changed for
+private chats. The bot must be an administrator in the chat for this to
+work and must have the appropriate administrator rights. Returns *True*
+on success.
+  Parameter   Type                Required   Description
+  ----------- ------------------- ---------- ------------------------------------------------------------------------------------------------------------
+  chat_id     Integer or String   Yes        Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/deleteChatPhoto" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

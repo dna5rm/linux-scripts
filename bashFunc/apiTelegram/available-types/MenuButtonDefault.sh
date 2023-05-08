@@ -18,17 +18,16 @@ function MenuButtonDefault ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Describes that no specific value for the menu button was set.
-	
-	  Field   Type     Description
-	  ------- -------- ---------------------------------------
-	  type    String   Type of the button, must be *default*
+Describes that no specific value for the menu button was set.
+  Field   Type     Description
+  ------- -------- ---------------------------------------
+  type    String   Type of the button, must be *default*
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/MenuButtonDefault" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,21 +18,20 @@ function MaskPosition ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object describes the position on faces where a mask should be
-	placed by default.
-	
-	  Field     Type           Description
-	  --------- -------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  point     String         The part of the face relative to which the mask should be placed. One of "forehead", "eyes", "mouth", or "chin".
-	  x_shift   Float number   Shift by X-axis measured in widths of the mask scaled to the face size, from left to right. For example, choosing -1.0 will place mask just to the left of the default mask position.
-	  y_shift   Float number   Shift by Y-axis measured in heights of the mask scaled to the face size, from top to bottom. For example, 1.0 will place the mask just below the default mask position.
-	  scale     Float number   Mask scaling coefficient. For example, 2.0 means double size.
+This object describes the position on faces where a mask should be
+placed by default.
+  Field     Type           Description
+  --------- -------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  point     String         The part of the face relative to which the mask should be placed. One of "forehead", "eyes", "mouth", or "chin".
+  x_shift   Float number   Shift by X-axis measured in widths of the mask scaled to the face size, from left to right. For example, choosing -1.0 will place mask just to the left of the default mask position.
+  y_shift   Float number   Shift by Y-axis measured in heights of the mask scaled to the face size, from top to bottom. For example, 1.0 will place the mask just below the default mask position.
+  scale     Float number   Mask scaling coefficient. For example, 2.0 means double size.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/MaskPosition" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,20 +18,19 @@ function ShippingQuery ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object contains information about an incoming shipping query.
-	
-	  Field              Type              Description
-	  ------------------ ----------------- ---------------------------------
-	  id                 String            Unique query identifier
-	  from               User              User who sent the query
-	  invoice_payload    String            Bot specified invoice payload
-	  shipping_address   ShippingAddress   User specified shipping address
+This object contains information about an incoming shipping query.
+  Field              Type              Description
+  ------------------ ----------------- ---------------------------------
+  id                 String            Unique query identifier
+  from               User              User who sent the query
+  invoice_payload    String            Bot specified invoice payload
+  shipping_address   ShippingAddress   User specified shipping address
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ShippingQuery" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,22 +18,21 @@ function ShippingAddress ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a shipping address.
-	
-	  Field          Type     Description
-	  -------------- -------- --------------------------------------------
-	  country_code   String   Two-letter ISO 3166-1 alpha-2 country code
-	  state          String   State, if applicable
-	  city           String   City
-	  street_line1   String   First line for the address
-	  street_line2   String   Second line for the address
-	  post_code      String   Address post code
+This object represents a shipping address.
+  Field          Type     Description
+  -------------- -------- --------------------------------------------
+  country_code   String   Two-letter ISO 3166-1 alpha-2 country code
+  state          String   State, if applicable
+  city           String   City
+  street_line1   String   First line for the address
+  street_line2   String   Second line for the address
+  post_code      String   Address post code
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ShippingAddress" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

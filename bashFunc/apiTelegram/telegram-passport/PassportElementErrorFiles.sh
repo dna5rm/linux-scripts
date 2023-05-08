@@ -18,21 +18,20 @@ function PassportElementErrorFiles ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents an issue with a list of scans. The error is considered
-	resolved when the list of files containing the scans changes.
-	
-	  Field         Type              Description
-	  ------------- ----------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	  source        String            Error source, must be *files*
-	  type          String            The section of the user's Telegram Passport which has the issue, one of "utility_bill", "bank_statement", "rental_agreement", "passport_registration", "temporary_registration"
-	  file_hashes   Array of String   List of base64-encoded file hashes
-	  message       String            Error message
+Represents an issue with a list of scans. The error is considered
+resolved when the list of files containing the scans changes.
+  Field         Type              Description
+  ------------- ----------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  source        String            Error source, must be *files*
+  type          String            The section of the user\'s Telegram Passport which has the issue, one of "utility_bill", "bank_statement", "rental_agreement", "passport_registration", "temporary_registration"
+  file_hashes   Array of String   List of base64-encoded file hashes
+  message       String            Error message
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PassportElementErrorFiles" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

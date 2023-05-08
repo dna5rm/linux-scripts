@@ -18,18 +18,17 @@ function VideoChatEnded ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a service message about a video chat ended in the
-	chat.
-	
-	  Field      Type      Description
-	  ---------- --------- --------------------------------
-	  duration   Integer   Video chat duration in seconds
+This object represents a service message about a video chat ended in the
+chat.
+  Field      Type      Description
+  ---------- --------- --------------------------------
+  duration   Integer   Video chat duration in seconds
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/VideoChatEnded" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

@@ -18,25 +18,24 @@ function InputVenueMessageContent ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents the content of a venue message to be sent as the result of an
-	inline query.
-	
-	  Field               Type     Description
-	  ------------------- -------- ----------------------------------------------------------------------------------------------------------------------------------------------------
-	  latitude            Float    Latitude of the venue in degrees
-	  longitude           Float    Longitude of the venue in degrees
-	  title               String   Name of the venue
-	  address             String   Address of the venue
-	  foursquare_id       String   *Optional*. Foursquare identifier of the venue, if known
-	  foursquare_type     String   *Optional*. Foursquare type of the venue, if known. (For example, "arts_entertainment/default", "arts_entertainment/aquarium" or "food/icecream".)
-	  google_place_id     String   *Optional*. Google Places identifier of the venue
-	  google_place_type   String   *Optional*. Google Places type of the venue. (See supported types.)
+Represents the content of a venue message to be sent as the result of an
+inline query.
+  Field               Type     Description
+  ------------------- -------- ----------------------------------------------------------------------------------------------------------------------------------------------------
+  latitude            Float    Latitude of the venue in degrees
+  longitude           Float    Longitude of the venue in degrees
+  title               String   Name of the venue
+  address             String   Address of the venue
+  foursquare_id       String   *Optional*. Foursquare identifier of the venue, if known
+  foursquare_type     String   *Optional*. Foursquare type of the venue, if known. (For example, "arts_entertainment/default", "arts_entertainment/aquarium" or "food/icecream".)
+  google_place_id     String   *Optional*. Google Places identifier of the venue
+  google_place_type   String   *Optional*. Google Places type of the venue. (See supported types.)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputVenueMessageContent" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

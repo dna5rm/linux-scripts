@@ -18,20 +18,19 @@ function ChatMemberBanned ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents a chat member that was banned in the chat and can't return
-	to the chat or view chat messages.
-	
-	  Field        Type      Description
-	  ------------ --------- -------------------------------------------------------------------------------------------------------
-	  status       String    The member's status in the chat, always "kicked"
-	  user         User      Information about the user
-	  until_date   Integer   Date when restrictions will be lifted for this user; unix time. If 0, then the user is banned forever
+Represents a chat member that was banned in the chat and can\'t return
+to the chat or view chat messages.
+  Field        Type      Description
+  ------------ --------- -------------------------------------------------------------------------------------------------------
+  status       String    The member\'s status in the chat, always "kicked"
+  user         User      Information about the user
+  until_date   Integer   Date when restrictions will be lifted for this user; unix time. If 0, then the user is banned forever
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatMemberBanned" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

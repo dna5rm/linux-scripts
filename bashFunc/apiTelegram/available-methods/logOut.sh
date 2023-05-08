@@ -18,18 +18,18 @@ function logOut ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to log out from the cloud Bot API server before
-	launching the bot locally. You **must** log out the bot before running
-	it locally, otherwise there is no guarantee that the bot will receive
-	updates. After a successful call, you can immediately log in on a local
-	server, but will not be able to log in back to the cloud Bot API server
-	for 10 minutes. Returns *True* on success. Requires no parameters.
+Use this method to log out from the cloud Bot API server before
+launching the bot locally. You **must** log out the bot before running
+it locally, otherwise there is no guarantee that the bot will receive
+updates. After a successful call, you can immediately log in on a local
+server, but will not be able to log in back to the cloud Bot API server
+for 10 minutes. Returns *True* on success. Requires no parameters.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/logOut" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

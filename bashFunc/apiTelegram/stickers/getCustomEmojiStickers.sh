@@ -18,18 +18,17 @@ function getCustomEmojiStickers ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get information about custom emoji stickers by their
-	identifiers. Returns an Array of Sticker objects.
-	
-	  Parameter          Type              Required   Description
-	  ------------------ ----------------- ---------- ------------------------------------------------------------------------------------------
-	  custom_emoji_ids   Array of String   Yes        List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
+Use this method to get information about custom emoji stickers by their
+identifiers. Returns an Array of Sticker objects.
+  Parameter          Type              Required   Description
+  ------------------ ----------------- ---------- ------------------------------------------------------------------------------------------
+  custom_emoji_ids   Array of String   Yes        List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getCustomEmojiStickers" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

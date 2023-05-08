@@ -18,21 +18,20 @@ function InputMessageContent ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents the content of a message to be sent as a result
-	of an inline query. Telegram clients currently support the following 5
-	types:
-	
-	-   InputTextMessageContent
-	-   InputLocationMessageContent
-	-   InputVenueMessageContent
-	-   InputContactMessageContent
-	-   InputInvoiceMessageContent
+This object represents the content of a message to be sent as a result
+of an inline query. Telegram clients currently support the following 5
+types:
+-   InputTextMessageContent
+-   InputLocationMessageContent
+-   InputVenueMessageContent
+-   InputContactMessageContent
+-   InputInvoiceMessageContent
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputMessageContent" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

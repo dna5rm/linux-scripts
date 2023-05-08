@@ -18,20 +18,19 @@ function getMyCommands ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to get the current list of the bot's commands for the
-	given scope and user language. Returns an Array of BotCommand objects.
-	If commands aren't set, an empty list is returned.
-	
-	  Parameter       Type              Required   Description
-	  --------------- ----------------- ---------- ------------------------------------------------------------------------------------------
-	  scope           BotCommandScope   Optional   A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
-	  language_code   String            Optional   A two-letter ISO 639-1 language code or an empty string
+Use this method to get the current list of the bot\'s commands for the
+given scope and user language. Returns an Array of BotCommand objects.
+If commands aren\'t set, an empty list is returned.
+  Parameter       Type              Required   Description
+  --------------- ----------------- ---------- ------------------------------------------------------------------------------------------
+  scope           BotCommandScope   Optional   A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault.
+  language_code   String            Optional   A two-letter ISO 639-1 language code or an empty string
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/getMyCommands" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

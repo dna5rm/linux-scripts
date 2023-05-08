@@ -18,21 +18,20 @@ function ChatMemberOwner ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Represents a chat member that owns the chat and has all administrator
-	privileges.
-	
-	  Field          Type      Description
-	  -------------- --------- -------------------------------------------------------
-	  status         String    The member's status in the chat, always "creator"
-	  user           User      Information about the user
-	  is_anonymous   Boolean   *True*, if the user's presence in the chat is hidden
-	  custom_title   String    *Optional*. Custom title for this user
+Represents a chat member that owns the chat and has all administrator
+privileges.
+  Field          Type      Description
+  -------------- --------- -------------------------------------------------------
+  status         String    The member\'s status in the chat, always "creator"
+  user           User      Information about the user
+  is_anonymous   Boolean   *True*, if the user\'s presence in the chat is hidden
+  custom_title   String    *Optional*. Custom title for this user
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ChatMemberOwner" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

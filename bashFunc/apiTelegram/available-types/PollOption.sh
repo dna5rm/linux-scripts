@@ -18,18 +18,17 @@ function PollOption ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object contains information about one answer option in a poll.
-	
-	  Field         Type      Description
-	  ------------- --------- --------------------------------------------
-	  text          String    Option text, 1-100 characters
-	  voter_count   Integer   Number of users that voted for this option
+This object contains information about one answer option in a poll.
+  Field         Type      Description
+  ------------- --------- --------------------------------------------
+  text          String    Option text, 1-100 characters
+  voter_count   Integer   Number of users that voted for this option
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PollOption" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

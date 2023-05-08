@@ -18,18 +18,17 @@ function UserProfilePhotos ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represent a user's profile pictures.
-	
-	  Field         Type                          Description
-	  ------------- ----------------------------- ------------------------------------------------------
-	  total_count   Integer                       Total number of profile pictures the target user has
-	  photos        Array of Array of PhotoSize   Requested profile pictures (in up to 4 sizes each)
+This object represent a user\'s profile pictures.
+  Field         Type                          Description
+  ------------- ----------------------------- ------------------------------------------------------
+  total_count   Integer                       Total number of profile pictures the target user has
+  photos        Array of Array of PhotoSize   Requested profile pictures (in up to 4 sizes each)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/UserProfilePhotos" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

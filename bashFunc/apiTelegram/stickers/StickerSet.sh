@@ -18,23 +18,22 @@ function StickerSet ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a sticker set.
-	
-	  Field          Type               Description
-	  -------------- ------------------ ---------------------------------------------------------------------------------
-	  name           String             Sticker set name
-	  title          String             Sticker set title
-	  sticker_type   String             Type of stickers in the set, currently one of "regular", "mask", "custom_emoji"
-	  is_animated    Boolean            *True*, if the sticker set contains animated stickers
-	  is_video       Boolean            *True*, if the sticker set contains video stickers
-	  stickers       Array of Sticker   List of all set stickers
-	  thumbnail      PhotoSize          *Optional*. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
+This object represents a sticker set.
+  Field          Type               Description
+  -------------- ------------------ ---------------------------------------------------------------------------------
+  name           String             Sticker set name
+  title          String             Sticker set title
+  sticker_type   String             Type of stickers in the set, currently one of "regular", "mask", "custom_emoji"
+  is_animated    Boolean            *True*, if the sticker set contains animated stickers
+  is_video       Boolean            *True*, if the sticker set contains video stickers
+  stickers       Array of Sticker   List of all set stickers
+  thumbnail      PhotoSize          *Optional*. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/StickerSet" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

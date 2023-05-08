@@ -18,18 +18,17 @@ function setMyName ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to change the bot's name. Returns *True* on success.
-	
-	  Parameter       Type     Required   Description
-	  --------------- -------- ---------- ------------------------------------------------------------------------------------------------------------------------------------
-	  name            String   Optional   New bot name; 0-64 characters. Pass an empty string to remove the dedicated name for the given language.
-	  language_code   String   Optional   A two-letter ISO 639-1 language code. If empty, the name will be shown to all users for whose language there is no dedicated name.
+Use this method to change the bot\'s name. Returns *True* on success.
+  Parameter       Type     Required   Description
+  --------------- -------- ---------- ------------------------------------------------------------------------------------------------------------------------------------
+  name            String   Optional   New bot name; 0-64 characters. Pass an empty string to remove the dedicated name for the given language.
+  language_code   String   Optional   A two-letter ISO 639-1 language code. If empty, the name will be shown to all users for whose language there is no dedicated name.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setMyName" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

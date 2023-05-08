@@ -18,19 +18,18 @@ function GameHighScore ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents one row of the high scores table for a game.
-	
-	  Field      Type      Description
-	  ---------- --------- -------------------------------------------
-	  position   Integer   Position in high score table for the game
-	  user       User      User
-	  score      Integer   Score
+This object represents one row of the high scores table for a game.
+  Field      Type      Description
+  ---------- --------- -------------------------------------------
+  position   Integer   Position in high score table for the game
+  user       User      User
+  score      Integer   Score
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/GameHighScore" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

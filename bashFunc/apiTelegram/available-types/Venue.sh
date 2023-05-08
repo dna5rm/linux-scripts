@@ -18,23 +18,22 @@ function Venue ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents a venue.
-	
-	  Field               Type       Description
-	  ------------------- ---------- ------------------------------------------------------------------------------------------------------------------------------------------
-	  location            Location   Venue location. Can't be a live location
-	  title               String     Name of the venue
-	  address             String     Address of the venue
-	  foursquare_id       String     *Optional*. Foursquare identifier of the venue
-	  foursquare_type     String     *Optional*. Foursquare type of the venue. (For example, "arts_entertainment/default", "arts_entertainment/aquarium" or "food/icecream".)
-	  google_place_id     String     *Optional*. Google Places identifier of the venue
-	  google_place_type   String     *Optional*. Google Places type of the venue. (See supported types.)
+This object represents a venue.
+  Field               Type       Description
+  ------------------- ---------- ------------------------------------------------------------------------------------------------------------------------------------------
+  location            Location   Venue location. Can\'t be a live location
+  title               String     Name of the venue
+  address             String     Address of the venue
+  foursquare_id       String     *Optional*. Foursquare identifier of the venue
+  foursquare_type     String     *Optional*. Foursquare type of the venue. (For example, "arts_entertainment/default", "arts_entertainment/aquarium" or "food/icecream".)
+  google_place_id     String     *Optional*. Google Places identifier of the venue
+  google_place_type   String     *Optional*. Google Places type of the venue. (See supported types.)
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/Venue" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

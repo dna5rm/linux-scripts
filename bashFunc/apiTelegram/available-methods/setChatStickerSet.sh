@@ -18,22 +18,21 @@ function setChatStickerSet ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to set a new group sticker set for a supergroup. The bot
-	must be an administrator in the chat for this to work and must have the
-	appropriate administrator rights. Use the field *can_set_sticker_set*
-	optionally returned in getChat requests to check if the bot can use this
-	method. Returns *True* on success.
-	
-	  Parameter          Type                Required   Description
-	  ------------------ ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
-	  chat_id            Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format \`@supergroupusername\`)
-	  sticker_set_name   String              Yes        Name of the sticker set to be set as the group sticker set
+Use this method to set a new group sticker set for a supergroup. The bot
+must be an administrator in the chat for this to work and must have the
+appropriate administrator rights. Use the field *can_set_sticker_set*
+optionally returned in getChat requests to check if the bot can use this
+method. Returns *True* on success.
+  Parameter          Type                Required   Description
+  ------------------ ------------------- ---------- ------------------------------------------------------------------------------------------------------------------
+  chat_id            Integer or String   Yes        Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+  sticker_set_name   String              Yes        Name of the sticker set to be set as the group sticker set
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setChatStickerSet" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

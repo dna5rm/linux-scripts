@@ -18,20 +18,19 @@ function InputMedia ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents the content of a media message to be sent. It
-	should be one of
-	
-	-   InputMediaAnimation
-	-   InputMediaDocument
-	-   InputMediaAudio
-	-   InputMediaPhoto
-	-   InputMediaVideo
+This object represents the content of a media message to be sent. It
+should be one of
+-   InputMediaAnimation
+-   InputMediaDocument
+-   InputMediaAudio
+-   InputMediaPhoto
+-   InputMediaVideo
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputMedia" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

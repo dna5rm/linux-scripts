@@ -18,17 +18,17 @@ function close ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to close the bot instance before moving it from one
-	local server to another. You need to delete the webhook before calling
-	this method to ensure that the bot isn't launched again after server
-	restart. The method will return error 429 in the first 10 minutes after
-	the bot is launched. Returns *True* on success. Requires no parameters.
+Use this method to close the bot instance before moving it from one
+local server to another. You need to delete the webhook before calling
+this method to ensure that the bot isn\'t launched again after server
+restart. The method will return error 429 in the first 10 minutes after
+the bot is launched. Returns *True* on success. Requires no parameters.
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/close" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

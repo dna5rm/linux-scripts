@@ -18,19 +18,18 @@ function setStickerPositionInSet ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	Use this method to move a sticker in a set created by the bot to a
-	specific position. Returns *True* on success.
-	
-	  Parameter   Type      Required   Description
-	  ----------- --------- ---------- ---------------------------------------------
-	  sticker     String    Yes        File identifier of the sticker
-	  position    Integer   Yes        New sticker position in the set, zero-based
+Use this method to move a sticker in a set created by the bot to a
+specific position. Returns *True* on success.
+  Parameter   Type      Required   Description
+  ----------- --------- ---------- ---------------------------------------------
+  sticker     String    Yes        File identifier of the sticker
+  position    Integer   Yes        New sticker position in the set, zero-based
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setStickerPositionInSet" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

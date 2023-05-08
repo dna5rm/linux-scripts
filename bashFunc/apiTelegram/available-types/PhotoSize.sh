@@ -18,22 +18,21 @@ function PhotoSize ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents one size of a photo or a file / sticker
-	thumbnail.
-	
-	  Field            Type      Description
-	  ---------------- --------- ---------------------------------------------------------------------------------------------------------------------------------------------------
-	  file_id          String    Identifier for this file, which can be used to download or reuse the file
-	  file_unique_id   String    Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
-	  width            Integer   Photo width
-	  height           Integer   Photo height
-	  file_size        Integer   *Optional*. File size in bytes
+This object represents one size of a photo or a file / sticker
+thumbnail.
+  Field            Type      Description
+  ---------------- --------- ---------------------------------------------------------------------------------------------------------------------------------------------------
+  file_id          String    Identifier for this file, which can be used to download or reuse the file
+  file_unique_id   String    Unique identifier for this file, which is supposed to be the same over time and for different bots. Can\'t be used to download or reuse the file.
+  width            Integer   Photo width
+  height           Integer   Photo height
+  file_size        Integer   *Optional*. File size in bytes
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/PhotoSize" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }

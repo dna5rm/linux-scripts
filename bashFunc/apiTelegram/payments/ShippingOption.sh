@@ -18,19 +18,18 @@ function ShippingOption ()
 	---
 	Telegram API Token: \${TELEGRAM_TOKEN} (${TELEGRAM_TOKEN:-required})
 	---
-	This object represents one shipping option.
-	
-	  Field    Type                    Description
-	  -------- ----------------------- ----------------------------
-	  id       String                  Shipping option identifier
-	  title    String                  Option title
-	  prices   Array of LabeledPrice   List of price portions
+This object represents one shipping option.
+  Field    Type                    Description
+  -------- ----------------------- ----------------------------
+  id       String                  Shipping option identifier
+  title    String                  Option title
+  prices   Array of LabeledPrice   List of price portions
 	EOF
     else
         curl --silent --location \
           --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/ShippingOption" \
           --header "Content-Type: application/json" \
           --header "Accept: application/json" \
-          --data "${1:-{\}}"
+          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
     fi
 }
