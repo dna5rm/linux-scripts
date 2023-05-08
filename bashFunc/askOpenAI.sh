@@ -1,4 +1,4 @@
-# askOpenAI # Will query the OpenAI API's for a completion of a provided prompt.
+# askOpenAI # Will query the OpenAI API's to complete a given task.
 ## https://platform.openai.com/docs/api-reference
 
 function askOpenAI()
@@ -21,15 +21,20 @@ function askOpenAI()
 
     if [[ -z "${OPENAI_API_KEY}" ]] || [[ -z "${@}" ]]; then
         cat <<-EOF
-	${FUNC_SOURCE} - Creates a completion for the provided prompt.
-	Ref: https://platform.openai.com/docs/api-reference/completions/create
-	---
+	${FUNC_SOURCE} - Interface with the OpenAI API.
+
 	apiKey: \${OPENAI_API_KEY} (${OPENAI_API_KEY:-required})
+        prompt: \${@} (${@:-required})
+        ---
+        # Creates a completion for the provided prompt and parameters.
+        ## https://platform.openai.com/docs/api-reference/completions/create
 	model: \${OPENAI_MODEL} (${OPENAI_MODEL:-text-davinci-003})
-	prompt: \${@} (${@:-required})
 	temperature: \${OPENAI_TEMP} (${OPENAI_TEMP:-0.7})
 	max_tokens: \${OPENAI_TOKENS} (${OPENAI_TOKENS:-1900})
         ---
+	# Creates an image given a prompt.
+        ## https://platform.openai.com/docs/api-reference/images/create
+        task: \${@} ("image" + ${@:-required})
 	EOF
 
     ## Creates an image given a prompt. ##
