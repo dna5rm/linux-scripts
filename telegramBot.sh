@@ -3,10 +3,13 @@
 ## Bash functions to load.
 bashFunc=(
     "askAlpaca"
+    "askOpenAI"
+    "y2j"
     "apiTelegram/getMe"
     "apiTelegram/getChat"
     "apiTelegram/getUpdates"
     "apiTelegram/sendMessage"
+    "apiTelegram/sendPhoto"
 )
 
 ## Load Bash functions.
@@ -23,6 +26,7 @@ done || exit 1
 alpaca_model="${HOME}/opt/ggml-alpaca-7b-q4.bin"
 cacheDir="${HOME}/.cache/$(basename "${0}")"
 TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
+OPENAI_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.OPENAI_API_KEY')"
 
 ## Main Script - Initialization
 [[ ! -f "${cacheDir}/getme.json" ]] && {
@@ -50,13 +54,14 @@ TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
                 # Respond to private chats with Alpaca.
                 if [[ "${type,,}" == "private" ]] && [[ "${is_command}" == "null" ]]; then
                     reply="$(askAlpaca "${name} in a ${type} chat asked: ${message}")"
+                    #reply="$(askOpenAI "${name} in a ${type} chat asked: ${message}" | jq -r '.choices[0].text')"
 
                     json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
                     json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
 
                     sendMessage "${json}" | jq -c '.'
 
-                # Respond to /ask commands with Alpaca.
+                # Respond to /ask command with Alpaca.
                 elif [[ "${message%% *}" == "/ask" ]]; then
                    reply="$(askAlpaca "${name} in a public group chat asked: ${message#* }")"
 
@@ -64,6 +69,18 @@ TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
                    json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
 
                    sendMessage "${json}" | jq -c '.'
+
+                # Respond to /img command with OpenAI
+                elif [[ "${message%% *}" == "/img" ]]; then
+                   photo="${cacheDir}/$(uuid).png"
+
+                   install -m 644 -D <(askOpenAI "image ${message#* }" | jq -r '.data[0].b64_json' | base64 -d) "${photo}"
+
+                   json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
+                   json="$(jq --arg photo "@${photo}" '. + {"photo": $photo}' <<<${json:-{\}})"
+                   json="$(jq --arg caption "$(file -b "${photo}")" '. + {"caption": $caption}' <<<${json:-{\}})"
+
+                   sendPhoto "${json}" | jq -c '.'
 
                 else
                     reply="Sorry, I do not understand."
