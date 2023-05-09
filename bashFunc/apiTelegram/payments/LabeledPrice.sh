@@ -25,10 +25,16 @@ This object represents a portion of the price for goods or services.
   amount   Integer   Price of the product in the *smallest units* of the currency (integer, **not** float/double). For example, for a price of `US$ 1.45` pass `amount = 145`. See the *exp* parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies).
 	EOF
     else
-        curl --silent --location \
-          --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/LabeledPrice" \
-          --header "Content-Type: application/json" \
-          --header "Accept: application/json" \
-          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
+                # Construct a curl CMD string to eval
+                cmd=( "curl --silent --location --request POST" )
+                cmd+=( "--url \"https://api.telegram.org/bot${TELEGRAM_TOKEN}/LabeledPrice\"" )
+                cmd+=( "--header \"Content-Type: multipart/form-data\"" )
+                cmd+=( "--header \"Accept: application/json\"" )
+
+                # Prevent command injection by filtering through sed.
+                cmd+=( `jq -r 'to_entries[] | "--form \""+"\(.key)=\(.value|@text)\""' <<<"${@:-{\}}" | sed 's/[$]/\\&/g'` )
+
+                # Run the CMD
+                eval ${cmd[@]}
     fi
 }

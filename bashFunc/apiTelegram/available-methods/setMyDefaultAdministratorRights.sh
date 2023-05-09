@@ -28,10 +28,16 @@ list before adding the bot. Returns *True* on success.
   for_channels   Boolean                   Optional   Pass *True* to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed.
 	EOF
     else
-        curl --silent --location \
-          --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/setMyDefaultAdministratorRights" \
-          --header "Content-Type: application/json" \
-          --header "Accept: application/json" \
-          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
+                # Construct a curl CMD string to eval
+                cmd=( "curl --silent --location --request POST" )
+                cmd+=( "--url \"https://api.telegram.org/bot${TELEGRAM_TOKEN}/setMyDefaultAdministratorRights\"" )
+                cmd+=( "--header \"Content-Type: multipart/form-data\"" )
+                cmd+=( "--header \"Accept: application/json\"" )
+
+                # Prevent command injection by filtering through sed.
+                cmd+=( `jq -r 'to_entries[] | "--form \""+"\(.key)=\(.value|@text)\""' <<<"${@:-{\}}" | sed 's/[$]/\\&/g'` )
+
+                # Run the CMD
+                eval ${cmd[@]}
     fi
 }

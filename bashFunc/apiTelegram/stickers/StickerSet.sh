@@ -30,10 +30,16 @@ This object represents a sticker set.
   thumbnail      PhotoSize          *Optional*. Sticker set thumbnail in the .WEBP, .TGS, or .WEBM format
 	EOF
     else
-        curl --silent --location \
-          --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/StickerSet" \
-          --header "Content-Type: application/json" \
-          --header "Accept: application/json" \
-          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
+                # Construct a curl CMD string to eval
+                cmd=( "curl --silent --location --request POST" )
+                cmd+=( "--url \"https://api.telegram.org/bot${TELEGRAM_TOKEN}/StickerSet\"" )
+                cmd+=( "--header \"Content-Type: multipart/form-data\"" )
+                cmd+=( "--header \"Accept: application/json\"" )
+
+                # Prevent command injection by filtering through sed.
+                cmd+=( `jq -r 'to_entries[] | "--form \""+"\(.key)=\(.value|@text)\""' <<<"${@:-{\}}" | sed 's/[$]/\\&/g'` )
+
+                # Run the CMD
+                eval ${cmd[@]}
     fi
 }

@@ -28,10 +28,16 @@ of the topic. Returns *True* on success.
   message_thread_id   Integer             Yes        Unique identifier for the target message thread of the forum topic
 	EOF
     else
-        curl --silent --location \
-          --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/closeForumTopic" \
-          --header "Content-Type: application/json" \
-          --header "Accept: application/json" \
-          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
+                # Construct a curl CMD string to eval
+                cmd=( "curl --silent --location --request POST" )
+                cmd+=( "--url \"https://api.telegram.org/bot${TELEGRAM_TOKEN}/closeForumTopic\"" )
+                cmd+=( "--header \"Content-Type: multipart/form-data\"" )
+                cmd+=( "--header \"Accept: application/json\"" )
+
+                # Prevent command injection by filtering through sed.
+                cmd+=( `jq -r 'to_entries[] | "--form \""+"\(.key)=\(.value|@text)\""' <<<"${@:-{\}}" | sed 's/[$]/\\&/g'` )
+
+                # Run the CMD
+                eval ${cmd[@]}
     fi
 }

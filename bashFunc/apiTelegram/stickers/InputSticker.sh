@@ -27,10 +27,16 @@ This object describes a sticker to be added to a sticker set.
   keywords        Array of String       *Optional*. List of 0-20 search keywords for the sticker with total length of up to 64 characters. For "regular" and "custom_emoji" stickers only.
 	EOF
     else
-        curl --silent --location \
-          --request POST --url "https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputSticker" \
-          --header "Content-Type: multipart/form-data" \
-          --header "Accept: application/json" \
-          $(jq -jr 'keys[] as $k | "--form \($k)=\(.[$k]) "' <<<"${1:-{\}}")
+                # Construct a curl CMD string to eval
+                cmd=( "curl --silent --location --request POST" )
+                cmd+=( "--url \"https://api.telegram.org/bot${TELEGRAM_TOKEN}/InputSticker\"" )
+                cmd+=( "--header \"Content-Type: multipart/form-data\"" )
+                cmd+=( "--header \"Accept: application/json\"" )
+
+                # Prevent command injection by filtering through sed.
+                cmd+=( `jq -r 'to_entries[] | "--form \""+"\(.key)=\(.value|@text)\""' <<<"${@:-{\}}" | sed 's/[$]/\\&/g'` )
+
+                # Run the CMD
+                eval ${cmd[@]}
     fi
 }

@@ -38,14 +38,14 @@ TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
             updateLast="$(jq -c '.[]' "${cacheDir}/getUpdates.json" | awk 'END{print}' | jq -r '.update_id')"
         }
 
-        install -m 644 -D <(getUpdates '{"offset": '''${updateLast}'''}' | jq -c '.result') "${cacheDir}/getUpdates.json"
+        install -m 644 -D <(getUpdates '{"offset": '''${updateLast:-0}'''}' | jq -c '.result') "${cacheDir}/getUpdates.json"
 
         jq -r '.[] | select(.message.from.is_bot == false) | [.update_id, .message.from.username, .message.chat.id, .message.chat.type, .message.entities[0].type // "null", .message.text] | @tsv' "${cacheDir}/getUpdates.json" |\
          while read id name chat_id type is_command message; do
 
-            [[ "${id}" -gt "${updateLast:-0}" ]] && {
+            [[ "${id:-0}" -gt "${updateLast:-1}" ]] && {
 
-                echo "[$(date +'%r')] ${updateLast}/${id} ${name} ${chat_id} ${type} ${is_command} :: ${message%% *}|${message#* }"
+                echo "[$(date +'%r')] ${updateLast:-0}/${id} ${name} ${chat_id} ${type} ${is_command} :: ${message%% *}|${message#* }"
 
                 # Respond to private chats with Alpaca.
                 if [[ "${type,,}" == "private" ]] && [[ "${is_command}" == "null" ]]; then

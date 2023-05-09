@@ -28,11 +28,11 @@ awk -F'[ ><]' '/^.h/{print $2"|"$6"|"$7"|"$15,$16,$17,$18,$19,$20}' "_telegram-a
 
         rm -rf "_tmp" && pandoc --from=html --to=markdown -o "_tmp" <(lynx -source "_telegram-api.html" | sed -n '/^<h.*'''${NAME}'''/,/^<h/p' | sed '1d;$d;s/$^$/<\/p>/;s/<a[^>]\+>/<a>/g;s/<img[^>]\+>//g') | awk -F'.' '{print "\t"$0}' | sed 's/\\//g;s/`/\\`/g'
 
-        [[ -z "$(grep "InputFile" "_tmp")" ]] && {
-            content="Content-Type: application/json"
-        } || {
+#        [[ -z "$(grep "InputFile" "_tmp")" ]] && {
+#            content="Content-Type: application/json"
+#        } || {
             content="Content-Type: multipart/form-data"
-        }
+#        }
 
         # Create directory if missing.
         [[ ! -d "${category}" ]] && mkdir "${category}"
@@ -62,11 +62,17 @@ awk -F'[ ><]' '/^.h/{print $2"|"$6"|"$7"|"$15,$16,$17,$18,$19,$20}' "_telegram-a
 	$(cat "_tmp")
 	$(printf "\t")EOF
 	    else
-	        curl --silent --location \\
-	          --request POST --url "https://api.telegram.org/bot\${TELEGRAM_TOKEN}/${api}" \\
-	          --header "${content}" \\
-	          --header "Accept: application/json" \\
-	          \$(jq -jr 'keys[] as \$k | "--form \(\$k)=\(.[\$k]) "' <<<"\${1:-{\}}")
+                # Construct a curl CMD string to eval
+                cmd=( "curl --silent --location --request POST" )
+                cmd+=( "--url \"https://api.telegram.org/bot\${TELEGRAM_TOKEN}/${api}\"" )
+                cmd+=( "--header \"Content-Type: multipart/form-data\"" )
+                cmd+=( "--header \"Accept: application/json\"" )
+	#
+                # Prevent command injection by filtering through sed.
+                cmd+=( \`jq -r 'to_entries[] | "--form \""+"\(.key)=\(.value|@text)\""' <<<"\${@:-{\}}" | sed 's/[\$]/\\\&/g'\` )
+	#
+                # Run the CMD
+                eval \${cmd[@]}
 	    fi
 	}
 	EOF
