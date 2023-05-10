@@ -1,1 +1,1 @@
-# My Linux Scripts & Environment
+# My Linux Scripts & environment functions
