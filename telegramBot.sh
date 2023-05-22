@@ -44,24 +44,27 @@ OPENAI_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.OPENAI_API_KEY')"
 
         install -m 644 -D <(getUpdates '{"offset": '''${updateLast:-0}'''}' | jq -c '.result') "${cacheDir}/getUpdates.json"
 
-        jq -r '.[] | select(.message.from.is_bot == false) | [.update_id, .message.from.first_name, .message.chat.id, .message.chat.type, .message.entities[0].type // "null", .message.text] | @tsv' "${cacheDir}/getUpdates.json" |\
-         while read id name chat_id type is_command message; do
+        jq -r '.[] | select(.message.from.is_bot == false) | [.update_id, .message.message_id, .message.reply_to_message.message_id // "null", .message.from.first_name, .message.chat.id, .message.chat.type, .message.entities[0].type // "null", .message.text] | @tsv' "${cacheDir}/getUpdates.json" |\
+         while read id message_id reply_id name chat_id type is_command message; do
 
             [[ "${id:-0}" -gt "${updateLast:-1}" ]] && {
 
-                echo "[$(date +'%r')] ${updateLast:-0}/${id} ${name:-null} ${chat_id} ${type} ${is_command} :: ${message%% *}|${message#* }"
+                echo "[$(date +'%r')] ${updateLast:-0}/${id} ${name:-null} ${chat_id} ${type} ${is_command} :: ${message%% *}|${message#* }" |\
+                 tee -a "${cacheDir}/${getMe[3]/$/}.log"
 
-                # Respond to private chats with Alpaca.
-                if [[ "${type,,}" == "private" ]] && [[ "${is_command}" == "null" ]]; then
-                    reply="$(askAlpaca "${name:-null} in a ${type} chat asked: ${message}")"
-                    #reply="$(askOpenAI "${name:-null} in a ${type} chat asked: ${message}" | jq -r '.choices[0].text')"
+                # Respond to chats with Alpaca.
+                if [[ "${is_command}" == "null" ]]; then
+                    prompt+=( "${name:-null} in a ${type/super/} chat is asking: ${message}" )
+
+                    reply="$(askAlpaca "${prompt[@]}")"
+                    #reply="$(askOpenAI "${prompt[@]}" | jq -r '.choices[0].text')"
 
                     json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
                     json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
 
                     sendMessage "${json}" | jq -c '.'
 
-                # Respond to /ask command with Alpaca.
+                # Command: /ask - Respond with responce from Alpaca.
                 elif [[ "${message%% *}" == "/ask" ]]; then
                    reply="$(askAlpaca "${name:-null} in a public group chat asked: ${message#* }")"
 
@@ -70,7 +73,7 @@ OPENAI_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.OPENAI_API_KEY')"
 
                    sendMessage "${json}" | jq -c '.'
 
-                # Respond to /img command with OpenAI
+                # Command: /img - Respond with OpenAI generated image.
                 elif [[ "${message%% *}" == "/img" ]]; then
                    photo="${cacheDir}/$(uuid).png"
 
@@ -88,8 +91,7 @@ OPENAI_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.OPENAI_API_KEY')"
                     json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
                     json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
 
-                    install -m 644 -D <(getChat '{"chat_id": '''${chat_id}'''}' | jq -c '.') "${cacheDir}/debug.${chat_id}-getChat.json"
-                    sendMessage "${json}" | tee "${cacheDir}/debug.${chat_id}-sendMessage.json" | jq -c '.'
+                    sendMessage "${json}" | jq -c '.'
                 fi
                 unset json
             }

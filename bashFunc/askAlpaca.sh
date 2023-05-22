@@ -23,28 +23,26 @@ function askAlpaca()
     cachePath="${HOME}/.cache/$(basename "${FUNC_SOURCE}")"
     cacheHash="$(echo "${@,,}" | md5sum -t | awk '{print $1}')"
 
-    [[ ! -z "${1}" ]] && {
+    if [[ -z "${alpaca_model}" ]] || [[ -z "${@}" ]]; then
 
-        # Check if ${alpaca_model} is set.
-        [[ ! -z "${alpaca_model}" ]] && {
+        cat <<-EOF
+	${FUNC_SOURCE} - Interface with Alpaca LLM
 
-            # Perform query & cache.
-            [[ ! -f "${cachePath}/${cacheHash}" ]] && {
-                install -m 644 -D  <(printf "[ $(date) ]\n\n${FUNCNAME[0]}:task: \"${1}\"\n\n") "${cachePath}/${cacheHash}"
-                alpaca -m "${alpaca_model}" --color --temp 0.9 \
-                 --prompt "Write a brief response that appropriately completes the request." \
-                 --file <(echo "${1}") 2>> "/dev/null" | tee -a "${cachePath}/${cacheHash}"
-            } || {
-                # Return the last query.
-                awk 'END{print}' "${cachePath}/${cacheHash}"
-            }
+	Model: \${alpaca_model} (${alpaca_model:-required})
+	Prompt: \${alpaca_prompt} (${alpaca_prompt:-optional})
+	Query: \${@} (${@:-required})
+	EOF
 
+    else
+        # Perform query & cache.
+        [[ ! -f "${cachePath}/${cacheHash}" ]] && {
+            install -m 644 -D  <(printf "[ $(date) ]\n\n${FUNCNAME[0]}:task: \"${1}\"\n\n") "${cachePath}/${cacheHash}"
+            alpaca -m "${alpaca_model}" --color --temp 0.9 \
+             --prompt "${alpaca_prompt:-Write a brief response that appropriately completes the request.}" \
+             --file <(echo "${@}") 2>> "/dev/null" | tee -a "${cachePath}/${cacheHash}"
         } || {
-            echo "${FUNCNAME[0]}: The variable \"\${alpaca_model}\" is not set..."
+            # Return the last query.
+            sed '/^$/d' <(awk '/^$/{n++} n>1' "${cachePath}/${cacheHash}")
         }
-
-    } || {
-        printf "${FUNCNAME[0]}: Query the Alpaca LLM...\n\n"
-        echo "Example>> ${FUNCNAME[0]} \"What is $(uname -s)?\""
-    }
+    fi
 }
