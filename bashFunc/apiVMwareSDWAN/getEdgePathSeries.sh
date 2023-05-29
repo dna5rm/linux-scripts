@@ -11,7 +11,7 @@ function getEdgePathSeries ()
         }
     done
 
-    if [[ -z "${vco_uri}" ]] || [[ ! -f "/home/deaves/.cache/vco_auth.cookie" ]] || [[ -z "${4}" ]]; then
+    if [[ -z "${vco_uri}" ]] || [[ ! -f "${HOME}/.cache/vco_auth.cookie" ]] || [[ -z "${4}" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Fetch path stats time series from an edge   
 	Ref: /api/sdwan/v2/enterprises/{enterpriseLogicalId}/edges/{edgeLogicalId}/pathStats/timeSeries
@@ -19,7 +19,7 @@ function getEdgePathSeries ()
 	API Base URI: \${vco_uri} (${vco_uri:-required})
 	Authentication Cookie: login_enterprise_login.sh ($(test -f "${HOME}/.cache/vco_auth.cookie" && echo "present" || echo "missing"))
 	
-	[7mParamater       Input   Req.    Type     Description(B[m
+	[3mParamater       Input   Req.    Type     Description[m
 	enterpriseLogicalId path    true    false    The `logicalId` GUID for the target enterprise
 	edgeLogicalId   path    true    false    The `logicalId` GUID for the target edge
 	include         query   false   false    A comma-separated list of field names corresponding to linked resources. Where supported, the server will resolve resource attributes for the specified resources.
@@ -31,7 +31,7 @@ function getEdgePathSeries ()
 	limit           query   false   false    Limits the maximum size of the result set.
 	groupBy         query   false   false    groupBy criteria according to which the result set is grouped. For example, a groupBy value of link produces an API response wherein each element corresponds to a distinct link record for which aggregate values are reported.
 	
-	[7mCode  Description(B[m
+	[3mCode  Description[m
 	200   Request successfully processed
 	400   ValidationError
 	401   Unauthorized

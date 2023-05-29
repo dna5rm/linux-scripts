@@ -11,7 +11,7 @@ function getEnterpriseAlerts ()
         }
     done
 
-    if [[ -z "${vco_uri}" ]] || [[ ! -f "/home/deaves/.cache/vco_auth.cookie" ]] || [[ -z "${1}" ]]; then
+    if [[ -z "${vco_uri}" ]] || [[ ! -f "${HOME}/.cache/vco_auth.cookie" ]] || [[ -z "${1}" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Fetch past triggered alerts for the specified enterprise   
 	Ref: /api/sdwan/v2/enterprises/{enterpriseLogicalId}/alerts
@@ -19,7 +19,7 @@ function getEnterpriseAlerts ()
 	API Base URI: \${vco_uri} (${vco_uri:-required})
 	Authentication Cookie: login_enterprise_login.sh ($(test -f "${HOME}/.cache/vco_auth.cookie" && echo "present" || echo "missing"))
 	
-	[7mParamater       Input   Req.    Type     Description(B[m
+	[3mParamater       Input   Req.    Type     Description[m
 	enterpriseLogicalId path    true    false    The `logicalId` GUID for the target enterprise
 	start           query   false   false    Query interval start time represented as a 13-digit, millisecond-precision epoch timestamp.
 	end             query   false   false    Query interval end time represented as a 13-digit, millisecond-precision epoch timestamp.
@@ -42,7 +42,7 @@ function getEnterpriseAlerts ()
 	enterpriseAlertConfigurationId[isNull] query   false   false    Filter by enterpriseAlertConfigurationId[isNull]
 	enterpriseAlertConfigurationId[isNotNull] query   false   false    Filter by enterpriseAlertConfigurationId[isNotNull]
 	
-	[7mCode  Description(B[m
+	[3mCode  Description[m
 	200   Request successfully processed
 	400   ValidationError
 	401   Unauthorized

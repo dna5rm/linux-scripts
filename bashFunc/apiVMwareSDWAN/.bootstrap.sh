@@ -55,7 +55,7 @@ for path in ${paths[@]}; do
 	        }
 	    done
 	
-	    if [[ -z "\${vco_uri}" ]] || [[ ! -f "${HOME}/.cache/vco_auth.cookie" ]]` [[ ${inputs:-0} != "0" ]] && { echo " || [[ -z \"\\\${${inputs}}\" ]]"; }`; then
+	    if [[ -z "\${vco_uri}" ]] || [[ ! -f "\${HOME}/.cache/vco_auth.cookie" ]]` [[ ${inputs:-0} != "0" ]] && { echo " || [[ -z \"\\\${${inputs}}\" ]]"; }`; then
 	$(printf "\t")cat <<-EOF
 	$(printf "\t")\$(basename "\${0}" 2> /dev/null):\${FUNCNAME[0]} - ${description}
 	$(printf "\t")Ref: ${path:-null}

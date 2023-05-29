@@ -11,7 +11,7 @@ function operator_user_update_operator_user ()
         }
     done
 
-    if [[ -z "${vco_uri}" ]] || [[ ! -f "/home/deaves/.cache/vco_auth.cookie" ]]; then
+    if [[ -z "${vco_uri}" ]] || [[ ! -f "${HOME}/.cache/vco_auth.cookie" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Update operator user
 	Ref: /operatorUser/updateOperatorUser
@@ -19,10 +19,10 @@ function operator_user_update_operator_user ()
 	API Base URI: \${vco_uri} (${vco_uri:-required})
 	Authentication Cookie: login_enterprise_login.sh ($(test -f "${HOME}/.cache/vco_auth.cookie" && echo "present" || echo "missing"))
 	
-	[7mParamater       Input   Req.    Type     Description(B[m
+	[3mParamater       Input   Req.    Type     Description[m
 	body            body    true    false    
 	
-	[7mCode  Description(B[m
+	[3mCode  Description[m
 	200   Request was successfully processed
 	400   null
 	500   null

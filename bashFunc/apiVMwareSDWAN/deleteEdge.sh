@@ -11,7 +11,7 @@ function deleteEdge ()
         }
     done
 
-    if [[ -z "${vco_uri}" ]] || [[ ! -f "/home/deaves/.cache/vco_auth.cookie" ]] || [[ -z "${2}" ]]; then
+    if [[ -z "${vco_uri}" ]] || [[ ! -f "${HOME}/.cache/vco_auth.cookie" ]] || [[ -z "${2}" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - Delete an Edge device   
 	Ref: /api/sdwan/v2/enterprises/{enterpriseLogicalId}/edges/{edgeLogicalId}/
@@ -19,11 +19,11 @@ function deleteEdge ()
 	API Base URI: \${vco_uri} (${vco_uri:-required})
 	Authentication Cookie: login_enterprise_login.sh ($(test -f "${HOME}/.cache/vco_auth.cookie" && echo "present" || echo "missing"))
 	
-	[7mParamater       Input   Req.    Type     Description(B[m
+	[3mParamater       Input   Req.    Type     Description[m
 	enterpriseLogicalId path    true    false    The `logicalId` GUID for the target enterprise
 	edgeLogicalId   path    true    false    The `logicalId` GUID for the target edge
 	
-	[7mCode  Description(B[m
+	[3mCode  Description[m
 	204   Resource deleted successfully
 	401   Unauthorized
 	404   Resource not found

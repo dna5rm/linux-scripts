@@ -11,7 +11,7 @@ function getEnterprises ()
         }
     done
 
-    if [[ -z "${vco_uri}" ]] || [[ ! -f "/home/deaves/.cache/vco_auth.cookie" ]]; then
+    if [[ -z "${vco_uri}" ]] || [[ ! -f "${HOME}/.cache/vco_auth.cookie" ]]; then
 	cat <<-EOF
 	$(basename "${0}" 2> /dev/null):${FUNCNAME[0]} - List Customers   
 	Ref: /api/sdwan/v2/enterprises/
@@ -19,7 +19,7 @@ function getEnterprises ()
 	API Base URI: \${vco_uri} (${vco_uri:-required})
 	Authentication Cookie: login_enterprise_login.sh ($(test -f "${HOME}/.cache/vco_auth.cookie" && echo "present" || echo "missing"))
 	
-	[7mParamater       Input   Req.    Type     Description(B[m
+	[3mParamater       Input   Req.    Type     Description[m
 	include         query   false   false    A comma-separated list of field names corresponding to linked resources. Where supported, the server will resolve resource attributes for the specified resources.
 	prevPageLink    query   false   false    A prevPageLink value, as fetched via a past call to a list API method. When a prevPageLink value is specified, any other query parameters that may ordinarily be used to sort or filter the result set are ignored.
 	nextPageLink    query   false   false    A nextPageLink value, as fetched via a past call to a list API method. When a nextPageLink value is specified, any other query parameters that may ordinarily be used to sort or filter the result set are ignored.
@@ -32,7 +32,7 @@ function getEnterprises ()
 	domain[contains] query   false   false    Filter by domain[contains]
 	domain[notContains] query   false   false    Filter by domain[notContains]
 	
-	[7mCode  Description(B[m
+	[3mCode  Description[m
 	200   Request successfully processed
 	400   ValidationError
 	401   Unauthorized
