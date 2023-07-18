@@ -1,7 +1,7 @@
 ## Labeldetails(bylabeltype) # Label details (by label type)
 # /groups/{type}/{groupId}.json
 
-function Labeldetails(bylabeltype) ()
+function getLabeldetails(bylabeltype) ()
 {
     # Verify function requirements
     for req in curl; do

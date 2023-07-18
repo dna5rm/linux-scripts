@@ -1,7 +1,7 @@
 ## DNS+:Mappings # DNS+: Mappings
 # /dnsp/mappings/{testId}.json
 
-function DNS+:Mappings ()
+function getDNS+:Mappings ()
 {
     # Verify function requirements
     for req in curl; do

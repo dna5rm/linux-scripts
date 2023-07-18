@@ -1,7 +1,7 @@
 ## Alertdetail # Alert detail
 # /alerts/{alertId}.json
 
-function Alertdetail ()
+function getAlertdetail ()
 {
     # Verify function requirements
     for req in curl; do

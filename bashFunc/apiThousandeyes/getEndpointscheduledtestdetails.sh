@@ -1,7 +1,7 @@
 ## Endpointscheduledtestdetails # Endpoint scheduled test details
 # /endpoint-tests/{testId}.json
 
-function Endpointscheduledtestdetails ()
+function getEndpointscheduledtestdetails ()
 {
     # Verify function requirements
     for req in curl; do

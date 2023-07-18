@@ -1,7 +1,7 @@
 ## Credentialdetails # Credential details
 # /credentials/{credentialId}.json
 
-function Credentialdetails ()
+function getCredentialdetails ()
 {
     # Verify function requirements
     for req in curl; do

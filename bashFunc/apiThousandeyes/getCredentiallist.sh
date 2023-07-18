@@ -1,7 +1,7 @@
 ## Credentiallist # Credential list
 # /credentials.json
 
-function Credentiallist ()
+function getCredentiallist ()
 {
     # Verify function requirements
     for req in curl; do

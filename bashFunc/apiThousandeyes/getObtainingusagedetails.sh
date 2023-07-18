@@ -1,7 +1,7 @@
 ## Obtainingusagedetails # Obtaining usage details
 # /usage.json
 
-function Obtainingusagedetails ()
+function getObtainingusagedetails ()
 {
     # Verify function requirements
     for req in curl; do

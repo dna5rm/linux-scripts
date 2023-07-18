@@ -1,7 +1,7 @@
 ## Labelslist # Labels list
 # /groups.json
 
-function Labelslist ()
+function getLabelslist ()
 {
     # Verify function requirements
     for req in curl; do

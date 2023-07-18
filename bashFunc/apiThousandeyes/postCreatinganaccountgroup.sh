@@ -1,7 +1,7 @@
 ## Creatinganaccountgroup # Creating an account group
 # /account-groups/new.json
 
-function Creatinganaccountgroup ()
+function postCreatinganaccountgroup ()
 {
     # Verify function requirements
     for req in curl; do

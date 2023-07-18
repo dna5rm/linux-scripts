@@ -1,7 +1,7 @@
 ## Gettinganagentbyid # Getting an agent by id
 # /endpoint-agents/{agentId}.json
 
-function Gettinganagentbyid ()
+function getGettinganagentbyid ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Endpointnetworksessionslist # Endpoint network sessions list
 # /endpoint-data/user-sessions/network.json
 
-function Endpointnetworksessionslist ()
+function getEndpointnetworksessionslist ()
 {
     # Verify function requirements
     for req in curl; do

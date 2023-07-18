@@ -1,7 +1,7 @@
 ## Creating(singleagent) # Creating (single agent)
 # /agents/{agentId}/add-to-cluster.json
 
-function Creating(singleagent) ()
+function postCreating(singleagent) ()
 {
     # Verify function requirements
     for req in curl; do

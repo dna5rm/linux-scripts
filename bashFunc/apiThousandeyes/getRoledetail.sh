@@ -1,7 +1,7 @@
 ## Roledetail # Role detail
 # /roles/{roleId}.json
 
-function Roledetail ()
+function getRoledetail ()
 {
     # Verify function requirements
     for req in curl; do

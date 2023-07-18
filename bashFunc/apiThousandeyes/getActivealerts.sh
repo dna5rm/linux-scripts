@@ -1,7 +1,7 @@
 ## Activealerts # Active alerts
 # /alerts.json
 
-function Activealerts ()
+function getActivealerts ()
 {
     # Verify function requirements
     for req in curl; do

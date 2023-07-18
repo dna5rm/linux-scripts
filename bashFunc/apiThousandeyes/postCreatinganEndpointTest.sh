@@ -1,7 +1,7 @@
 ## CreatinganEndpointTest # Creating an Endpoint Test
 # /endpoint-tests/{testType}/new.json
 
-function CreatinganEndpointTest ()
+function postCreatinganEndpointTest ()
 {
     # Verify function requirements
     for req in curl; do

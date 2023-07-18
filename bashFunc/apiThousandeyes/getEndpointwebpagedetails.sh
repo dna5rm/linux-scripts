@@ -1,7 +1,7 @@
 ## Endpointwebpagedetails # Endpoint web page details
 # /endpoint-data/user-sessions/{sessionId}/page/{pageId}.json
 
-function Endpointwebpagedetails ()
+function getEndpointwebpagedetails ()
 {
     # Verify function requirements
     for req in curl; do

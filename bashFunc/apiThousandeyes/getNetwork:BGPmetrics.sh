@@ -1,7 +1,7 @@
 ## Network:BGPmetrics # Network: BGP metrics
 # /net/bgp-metrics/{testId}.json
 
-function Network:BGPmetrics ()
+function getNetwork:BGPmetrics ()
 {
     # Verify function requirements
     for req in curl; do

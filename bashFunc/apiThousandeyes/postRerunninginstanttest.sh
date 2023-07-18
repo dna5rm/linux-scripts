@@ -1,7 +1,7 @@
 ## Rerunninginstanttest # Rerunning instant test
 # /endpoint-instant/{testId}/rerun.json
 
-function Rerunninginstanttest ()
+function postRerunninginstanttest ()
 {
     # Verify function requirements
     for req in curl; do

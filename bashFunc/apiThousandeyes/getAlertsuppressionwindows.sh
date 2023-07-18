@@ -1,7 +1,7 @@
 ## Alertsuppressionwindows # Alert suppression windows
 # /alert-suppression-windows.json
 
-function Alertsuppressionwindows ()
+function getAlertsuppressionwindows ()
 {
     # Verify function requirements
     for req in curl; do

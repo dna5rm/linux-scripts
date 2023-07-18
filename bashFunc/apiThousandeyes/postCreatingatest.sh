@@ -1,7 +1,7 @@
 ## Creatingatest # Creating a test
 # /tests/{testType}/new.json
 
-function Creatingatest ()
+function postCreatingatest ()
 {
     # Verify function requirements
     for req in curl; do

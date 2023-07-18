@@ -1,7 +1,7 @@
 ## Creatinganalertsuppressionwindow # Creating an alert suppression window
 # /alert-suppression-windows/new.json
 
-function Creatinganalertsuppressionwindow ()
+function postCreatinganalertsuppressionwindow ()
 {
     # Verify function requirements
     for req in curl; do

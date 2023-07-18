@@ -1,7 +1,7 @@
 ## Endpointusersessionlist # Endpoint user session list
 # /endpoint-data/user-sessions.json
 
-function Endpointusersessionlist ()
+function getEndpointusersessionlist ()
 {
     # Verify function requirements
     for req in curl; do

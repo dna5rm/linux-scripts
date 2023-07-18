@@ -1,7 +1,7 @@
 ## Userlist # User list
 # /users.json
 
-function Userlist ()
+function getUserlist ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Web:Pageloadcomponentdetail # Web: Page load component detail
 # /web/page-load/{testId}/{agentId}/{roundId}.json
 
-function Web:Pageloadcomponentdetail ()
+function getWeb:Pageloadcomponentdetail ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Deletinganalertrule # Deleting an alert rule
 # /alert-rules/{ruleId}/delete.json
 
-function Deletinganalertrule ()
+function postDeletinganalertrule ()
 {
     # Verify function requirements
     for req in curl; do

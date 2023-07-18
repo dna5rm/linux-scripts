@@ -1,7 +1,7 @@
 ## Voice:SIPserver # Voice: SIP server
 # /voice/sip-server/{testId}.json
 
-function Voice:SIPserver ()
+function getVoice:SIPserver ()
 {
     # Verify function requirements
     for req in curl; do

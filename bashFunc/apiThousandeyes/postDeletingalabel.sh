@@ -1,7 +1,7 @@
 ## Deletingalabel # Deleting a label
 # /groups/{groupId}/delete.json
 
-function Deletingalabel ()
+function postDeletingalabel ()
 {
     # Verify function requirements
     for req in curl; do

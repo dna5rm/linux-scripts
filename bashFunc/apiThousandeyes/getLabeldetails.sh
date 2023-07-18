@@ -1,7 +1,7 @@
 ## Labeldetails # Label details
 # /groups/{groupId}.json
 
-function Labeldetails ()
+function getLabeldetails ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Creatinginstanttest # Creating instant test
 # /endpoint-instant/{testType}.json
 
-function Creatinginstanttest ()
+function postCreatinginstanttest ()
 {
     # Verify function requirements
     for req in curl; do

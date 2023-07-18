@@ -1,7 +1,7 @@
 ## Rolelist # Role list
 # /roles.json
 
-function Rolelist ()
+function getRolelist ()
 {
     # Verify function requirements
     for req in curl; do

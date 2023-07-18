@@ -1,7 +1,7 @@
 ## Enablinganagent # Enabling an agent
 # /endpoint-agents/{agentId}/enable.json
 
-function Enablinganagent ()
+function postEnablinganagent ()
 {
     # Verify function requirements
     for req in curl; do

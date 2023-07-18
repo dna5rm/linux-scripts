@@ -1,7 +1,7 @@
 ## Createanewsnapshot # Create a new snapshot
 # /snapshot.json
 
-function Createanewsnapshot ()
+function postCreateanewsnapshot ()
 {
     # Verify function requirements
     for req in curl; do

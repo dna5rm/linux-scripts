@@ -1,7 +1,7 @@
 ## Updatinganalertrule # Updating an alert rule
 # /alert-rules/{ruleId}/update.json
 
-function Updatinganalertrule ()
+function postUpdatinganalertrule ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Network:End-to-EndMetrics # Network: End-to-End Metrics
 # /net/metrics/{testId}.json
 
-function Network:End-to-EndMetrics ()
+function getNetwork:End-to-EndMetrics ()
 {
     # Verify function requirements
     for req in curl; do

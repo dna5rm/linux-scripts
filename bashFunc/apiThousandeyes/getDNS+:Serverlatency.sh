@@ -1,7 +1,7 @@
 ## DNS+:Serverlatency # DNS+: Server latency
 # /dnsp/server-latency/{testId}.json
 
-function DNS+:Serverlatency ()
+function getDNS+:Serverlatency ()
 {
     # Verify function requirements
     for req in curl; do

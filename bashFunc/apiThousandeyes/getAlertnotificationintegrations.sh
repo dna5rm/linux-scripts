@@ -1,7 +1,7 @@
 ## Alertnotificationintegrations # Alert notification integrations
 # /integrations.json
 
-function Alertnotificationintegrations ()
+function getAlertnotificationintegrations ()
 {
     # Verify function requirements
     for req in curl; do

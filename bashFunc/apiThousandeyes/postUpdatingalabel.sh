@@ -1,7 +1,7 @@
 ## Updatingalabel # Updating a label
 # /groups/{groupId}/update.json
 
-function Updatingalabel ()
+function postUpdatingalabel ()
 {
     # Verify function requirements
     for req in curl; do

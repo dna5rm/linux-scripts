@@ -1,7 +1,7 @@
 ## DNS:Domaintrace # DNS: Domain trace
 # /dns/trace/{testId}.json
 
-function DNS:Domaintrace ()
+function getDNS:Domaintrace ()
 {
     # Verify function requirements
     for req in curl; do

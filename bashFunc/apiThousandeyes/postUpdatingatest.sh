@@ -1,7 +1,7 @@
 ## Updatingatest # Updating a test
 # /tests/{testType}/{testId}/update.json
 
-function Updatingatest ()
+function postUpdatingatest ()
 {
     # Verify function requirements
     for req in curl; do

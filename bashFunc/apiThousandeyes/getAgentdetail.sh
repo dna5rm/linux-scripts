@@ -1,7 +1,7 @@
 ## Agentdetail # Agent detail
 # /agents/{agentId}.json
 
-function Agentdetail ()
+function getAgentdetail ()
 {
     # Verify function requirements
     for req in curl; do

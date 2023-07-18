@@ -1,7 +1,7 @@
 ## BGPMonitorlist # BGP Monitor list
 # /bgp-monitors.json
 
-function BGPMonitorlist ()
+function getBGPMonitorlist ()
 {
     # Verify function requirements
     for req in curl; do

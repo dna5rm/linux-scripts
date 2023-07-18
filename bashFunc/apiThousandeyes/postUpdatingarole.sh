@@ -1,7 +1,7 @@
 ## Updatingarole # Updating a role
 # /roles/{roleId}/update.json
 
-function Updatingarole ()
+function postUpdatingarole ()
 {
     # Verify function requirements
     for req in curl; do

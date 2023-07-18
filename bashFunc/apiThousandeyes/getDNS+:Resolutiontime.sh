@@ -1,7 +1,7 @@
 ## DNS+:Resolutiontime # DNS+: Resolution time
 # /dnsp/resolution-time/{testId}.json
 
-function DNS+:Resolutiontime ()
+function getDNS+:Resolutiontime ()
 {
     # Verify function requirements
     for req in curl; do

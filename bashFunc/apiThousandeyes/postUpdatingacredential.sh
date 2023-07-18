@@ -1,7 +1,7 @@
 ## Updatingacredential # Updating a credential
 # /credentials/{credentialId}/update.json
 
-function Updatingacredential ()
+function postUpdatingacredential ()
 {
     # Verify function requirements
     for req in curl; do

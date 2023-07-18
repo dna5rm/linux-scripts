@@ -1,7 +1,7 @@
 ## Updatinganaccountgroup # Updating an account group
 # /account-groups/{aid}/update.json
 
-function Updatinganaccountgroup ()
+function postUpdatinganaccountgroup ()
 {
     # Verify function requirements
     for req in curl; do

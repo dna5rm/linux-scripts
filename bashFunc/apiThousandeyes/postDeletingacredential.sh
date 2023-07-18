@@ -1,7 +1,7 @@
 ## Deletingacredential # Deleting a credential
 # /credentials/{credentialId}/delete.json
 
-function Deletingacredential ()
+function postDeletingacredential ()
 {
     # Verify function requirements
     for req in curl; do

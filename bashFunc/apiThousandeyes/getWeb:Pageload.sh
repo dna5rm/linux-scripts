@@ -1,7 +1,7 @@
 ## Web:Pageload # Web: Page load
 # /web/page-load/{testId}.json
 
-function Web:Pageload ()
+function getWeb:Pageload ()
 {
     # Verify function requirements
     for req in curl; do

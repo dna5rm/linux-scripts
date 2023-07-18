@@ -1,7 +1,7 @@
 ## Deletingauser # Deleting a user
 # /users/{uid}/delete.json
 
-function Deletingauser ()
+function postDeletingauser ()
 {
     # Verify function requirements
     for req in curl; do

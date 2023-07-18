@@ -1,7 +1,7 @@
 ## Updatingauser # Updating a user
 # /users/{uid}/update.json
 
-function Updatingauser ()
+function postUpdatingauser ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Addingauser # Adding a user
 # /users/new.json
 
-function Addingauser ()
+function postAddingauser ()
 {
     # Verify function requirements
     for req in curl; do

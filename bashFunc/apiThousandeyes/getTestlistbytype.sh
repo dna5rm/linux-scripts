@@ -1,7 +1,7 @@
 ## Testlistbytype # Test list by type
 # /tests/{testType}.json
 
-function Testlistbytype ()
+function getTestlistbytype ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Web:WebTransactions # Web: Web Transactions
 # /web/web-transactions/{testId}.json
 
-function Web:WebTransactions ()
+function getWeb:WebTransactions ()
 {
     # Verify function requirements
     for req in curl; do

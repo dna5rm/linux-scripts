@@ -1,7 +1,7 @@
 ## PostUpdatinganagent # Updating an agent
 # /agents/{agentId}/update.json
 
-function PostUpdatinganagent ()
+function postPostUpdatinganagent ()
 {
     # Verify function requirements
     for req in curl; do

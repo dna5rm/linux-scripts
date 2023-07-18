@@ -1,7 +1,7 @@
 ## Disablinganagent # Disabling an agent
 # /endpoint-agents/{agentId}/disable.json
 
-function Disablinganagent ()
+function postDisablinganagent ()
 {
     # Verify function requirements
     for req in curl; do

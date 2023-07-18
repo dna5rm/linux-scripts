@@ -1,7 +1,7 @@
 ## Voice:RTPstream # Voice: RTP stream
 # /voice/rtp-stream/{testId}.json
 
-function Voice:RTPstream ()
+function getVoice:RTPstream ()
 {
     # Verify function requirements
     for req in curl; do

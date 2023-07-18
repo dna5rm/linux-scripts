@@ -1,7 +1,7 @@
 ## Accountgrouplist # Account group list
 # /account-groups.json
 
-function Accountgrouplist ()
+function getAccountgrouplist ()
 {
     # Verify function requirements
     for req in curl; do

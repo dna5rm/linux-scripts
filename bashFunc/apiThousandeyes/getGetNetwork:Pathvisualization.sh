@@ -1,7 +1,7 @@
 ## GetNetwork:Pathvisualization # Network: Path visualization
 # /endpoint-data/tests/net/path-vis/{testId}.json
 
-function GetNetwork:Pathvisualization ()
+function getGetNetwork:Pathvisualization ()
 {
     # Verify function requirements
     for req in curl; do

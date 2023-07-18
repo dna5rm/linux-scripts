@@ -1,7 +1,7 @@
 ## Network:Detailedpathtrace # Network: Detailed path trace
 # /net/path-vis/{testId}/{agentId}/{roundId}.json
 
-function Network:Detailedpathtrace ()
+function getNetwork:Detailedpathtrace ()
 {
     # Verify function requirements
     for req in curl; do

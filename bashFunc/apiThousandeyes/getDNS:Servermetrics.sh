@@ -1,7 +1,7 @@
 ## DNS:Servermetrics # DNS: Server metrics
 # /dns/server/{testId}/{serverId}.json
 
-function DNS:Servermetrics ()
+function getDNS:Servermetrics ()
 {
     # Verify function requirements
     for req in curl; do

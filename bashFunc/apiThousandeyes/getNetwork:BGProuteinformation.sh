@@ -1,7 +1,7 @@
 ## Network:BGProuteinformation # Network: BGP route information
 # /net/bgp-routes/{testId}/{prefixId}/{roundId}.json
 
-function Network:BGProuteinformation ()
+function getNetwork:BGProuteinformation ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Testlist # Test list
 # /tests.json
 
-function Testlist ()
+function getTestlist ()
 {
     # Verify function requirements
     for req in curl; do

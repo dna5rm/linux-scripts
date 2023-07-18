@@ -1,7 +1,7 @@
 ## Reportslist # Reports list
 # /reports.json
 
-function Reportslist ()
+function getReportslist ()
 {
     # Verify function requirements
     for req in curl; do

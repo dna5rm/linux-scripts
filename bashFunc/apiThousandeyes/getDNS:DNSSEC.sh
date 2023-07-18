@@ -1,7 +1,7 @@
 ## DNS:DNSSEC # DNS: DNSSEC
 # /dns/dnssec/{testId}.json
 
-function DNS:DNSSEC ()
+function getDNS:DNSSEC ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Labelslistbytype # Labels list by type
 # /groups/{type}.json
 
-function Labelslistbytype ()
+function getLabelslistbytype ()
 {
     # Verify function requirements
     for req in curl; do

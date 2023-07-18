@@ -1,7 +1,7 @@
 ## Removingmembers(singleagent) # Removing members (single agent)
 # /agents/{agentId}/remove-from-cluster.json
 
-function Removingmembers(singleagent) ()
+function postRemovingmembers(singleagent) ()
 {
     # Verify function requirements
     for req in curl; do

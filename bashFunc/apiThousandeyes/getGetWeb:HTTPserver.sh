@@ -1,7 +1,7 @@
 ## GetWeb:HTTPserver # Web: HTTP server
 # /endpoint-data/tests/web/http-server/{testId}.json
 
-function GetWeb:HTTPserver ()
+function getGetWeb:HTTPserver ()
 {
     # Verify function requirements
     for req in curl; do

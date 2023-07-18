@@ -42,11 +42,11 @@ for path in ${paths[@]}; do
         inputs=`awk '/ path / {count++} END{print count}' "parameters.${operationId}.tmp"`
 
 ######### Generate API function script.
-        cat <<-EOF | awk '{gsub(/\r/, ""); print}' > "${method}${operationId}.sh"
+        cat <<-EOF | awk '{gsub(/\r/, ""); print}' > "${method,,}${operationId}.sh"
 	## ${operationId} # ${summary}
 	# ${path}
 	
-	function ${operationId} ()
+	function ${method,,}${operationId} ()
 	{
 	    # Verify function requirements
 	    for req in curl; do

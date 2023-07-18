@@ -1,7 +1,7 @@
 ## Web:HTTPserver # Web: HTTP server
 # /web/http-server/{testId}.json
 
-function Web:HTTPserver ()
+function getWeb:HTTPserver ()
 {
     # Verify function requirements
     for req in curl; do

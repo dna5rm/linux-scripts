@@ -1,7 +1,7 @@
 ## Transferringanagent # Transferring an agent
 # /endpoint-agents/transfer.json
 
-function Transferringanagent ()
+function postTransferringanagent ()
 {
     # Verify function requirements
     for req in curl; do

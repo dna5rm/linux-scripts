@@ -1,7 +1,7 @@
 ## Activitylog # Activity log
 # /audit/user-events/search.json
 
-function Activitylog ()
+function getActivitylog ()
 {
     # Verify function requirements
     for req in curl; do

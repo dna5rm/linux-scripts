@@ -1,7 +1,7 @@
 ## Reportsnapshotslist # Report snapshots list
 # /report-snapshots.json
 
-function Reportsnapshotslist ()
+function getReportsnapshotslist ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Deletingareportsnapshot # Deleting a report snapshot
 # /report-snapshot/{snapshotId}/delete.json
 
-function Deletingareportsnapshot ()
+function postDeletingareportsnapshot ()
 {
     # Verify function requirements
     for req in curl; do

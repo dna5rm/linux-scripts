@@ -1,7 +1,7 @@
 ## AgentNotificationRuleDetail # Agent Notification Rule Detail
 # /agent-notification-rules/{ruleId}.json
 
-function AgentNotificationRuleDetail ()
+function getAgentNotificationRuleDetail ()
 {
     # Verify function requirements
     for req in curl; do

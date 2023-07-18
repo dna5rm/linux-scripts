@@ -1,7 +1,7 @@
 ## Creatingarole # Creating a role
 # /roles/new.json
 
-function Creatingarole ()
+function postCreatingarole ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Accountgroupdetail # Account group detail
 # /account-groups/{aid}.json
 
-function Accountgroupdetail ()
+function getAccountgroupdetail ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Creatingalabel # Creating a label
 # /groups/tests/new.json
 
-function Creatingalabel ()
+function postCreatingalabel ()
 {
     # Verify function requirements
     for req in curl; do

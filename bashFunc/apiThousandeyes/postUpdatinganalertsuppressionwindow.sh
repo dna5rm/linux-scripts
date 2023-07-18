@@ -1,7 +1,7 @@
 ## Updatinganalertsuppressionwindow # Updating an alert suppression window
 # /alert-suppression-windows/{alertSuppressionWindowId}/update.json
 
-function Updatinganalertsuppressionwindow ()
+function postUpdatinganalertsuppressionwindow ()
 {
     # Verify function requirements
     for req in curl; do

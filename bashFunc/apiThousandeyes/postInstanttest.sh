@@ -1,7 +1,7 @@
 ## Instanttest # Instant test
 # /instant/{testType}
 
-function Instanttest ()
+function postInstanttest ()
 {
     # Verify function requirements
     for req in curl; do

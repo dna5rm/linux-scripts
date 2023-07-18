@@ -1,7 +1,7 @@
 ## Instanttestrerun # Instant test rerun
 # /instant/{testId}/rerun
 
-function Instanttestrerun ()
+function postInstanttestrerun ()
 {
     # Verify function requirements
     for req in curl; do

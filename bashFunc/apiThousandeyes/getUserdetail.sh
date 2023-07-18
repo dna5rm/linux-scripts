@@ -1,7 +1,7 @@
 ## Userdetail # User detail
 # /users/{uid}.json
 
-function Userdetail ()
+function getUserdetail ()
 {
     # Verify function requirements
     for req in curl; do

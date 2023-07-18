@@ -1,7 +1,7 @@
 ## Deletingatest # Deleting a test
 # /tests/{testType}/{testId}/delete.json
 
-function Deletingatest ()
+function postDeletingatest ()
 {
     # Verify function requirements
     for req in curl; do

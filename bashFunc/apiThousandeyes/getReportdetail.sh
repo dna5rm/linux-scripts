@@ -1,7 +1,7 @@
 ## Reportdetail # Report detail
 # /reports/{reportId}.json
 
-function Reportdetail ()
+function getReportdetail ()
 {
     # Verify function requirements
     for req in curl; do

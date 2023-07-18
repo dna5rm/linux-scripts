@@ -1,7 +1,7 @@
 ## Deletingareport # Deleting a report
 # /reports/{reportId}/delete.json
 
-function Deletingareport ()
+function postDeletingareport ()
 {
     # Verify function requirements
     for req in curl; do

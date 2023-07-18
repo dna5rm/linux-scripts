@@ -1,7 +1,7 @@
 ## Deletinganalertsuppressionwindow # Deleting an alert suppression window
 # /alert-suppression-windows/{alertSuppressionWindowId}/delete.json
 
-function Deletinganalertsuppressionwindow ()
+function postDeletinganalertsuppressionwindow ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Endpointnetworks # Endpoint networks
 # /endpoint-data/networks.json
 
-function Endpointnetworks ()
+function getEndpointnetworks ()
 {
     # Verify function requirements
     for req in curl; do

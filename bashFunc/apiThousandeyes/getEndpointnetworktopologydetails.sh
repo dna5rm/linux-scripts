@@ -1,7 +1,7 @@
 ## Endpointnetworktopologydetails # Endpoint network topology details
 # /endpoint-data/network-topology/{networkProbeId}.json
 
-function Endpointnetworktopologydetails ()
+function getEndpointnetworktopologydetails ()
 {
     # Verify function requirements
     for req in curl; do

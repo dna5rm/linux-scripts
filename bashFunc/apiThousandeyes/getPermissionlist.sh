@@ -1,7 +1,7 @@
 ## Permissionlist # Permission list
 # /permissions.json
 
-function Permissionlist ()
+function getPermissionlist ()
 {
     # Verify function requirements
     for req in curl; do

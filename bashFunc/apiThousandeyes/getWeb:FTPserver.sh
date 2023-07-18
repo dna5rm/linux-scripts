@@ -1,7 +1,7 @@
 ## Web:FTPserver # Web: FTP server
 # /web/ftp-server/{testId}.json
 
-function Web:FTPserver ()
+function getWeb:FTPserver ()
 {
     # Verify function requirements
     for req in curl; do

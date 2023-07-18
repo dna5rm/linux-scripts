@@ -1,7 +1,7 @@
 ## Reportdata # Report data
 # /reports/{reportId}/{dataComponentId}.json
 
-function Reportdata ()
+function getReportdata ()
 {
     # Verify function requirements
     for req in curl; do

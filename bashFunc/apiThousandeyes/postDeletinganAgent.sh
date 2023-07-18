@@ -1,7 +1,7 @@
 ## DeletinganAgent # Deleting an Agent
 # /agents/{agentId}/delete.json
 
-function DeletinganAgent ()
+function postDeletinganAgent ()
 {
     # Verify function requirements
     for req in curl; do

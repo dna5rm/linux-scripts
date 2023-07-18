@@ -1,7 +1,7 @@
 ## Endpointscheduledtestlistbytype # Endpoint scheduled test list by type
 # /endpoint-tests/{testType}.json
 
-function Endpointscheduledtestlistbytype ()
+function getEndpointscheduledtestlistbytype ()
 {
     # Verify function requirements
     for req in curl; do

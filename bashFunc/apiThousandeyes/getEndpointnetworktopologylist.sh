@@ -1,7 +1,7 @@
 ## Endpointnetworktopologylist # Endpoint network topology list
 # /endpoint-data/network-topology.json
 
-function Endpointnetworktopologylist ()
+function getEndpointnetworktopologylist ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Web:Transactioncomponentdetail # Web: Transaction component detail
 # /web/transactions/{testId}/{agentId}/{roundId}/{pageNum}.json
 
-function Web:Transactioncomponentdetail ()
+function getWeb:Transactioncomponentdetail ()
 {
     # Verify function requirements
     for req in curl; do

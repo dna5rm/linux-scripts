@@ -1,7 +1,7 @@
 ## Listingallagents # Listing all agents
 # /endpoint-agents.json
 
-function Listingallagents ()
+function getListingallagents ()
 {
     # Verify function requirements
     for req in curl; do

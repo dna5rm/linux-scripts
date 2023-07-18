@@ -1,7 +1,7 @@
 ## Endpointwebpageslist # Endpoint web pages list
 # /endpoint-data/user-sessions/web.json
 
-function Endpointwebpageslist ()
+function getEndpointwebpageslist ()
 {
     # Verify function requirements
     for req in curl; do

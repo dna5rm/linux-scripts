@@ -1,7 +1,7 @@
 ## Creatinganalertrule # Creating an alert rule
 # /alert-rules/new.json
 
-function Creatinganalertrule ()
+function postCreatinganalertrule ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Creatingacredential # Creating a credential
 # /credentials/new.json
 
-function Creatingacredential ()
+function postCreatingacredential ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Testdetails # Test details
 # /tests/{testId}.json
 
-function Testdetails ()
+function getTestdetails ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## Deletinganaccountgroup # Deleting an account group
 # /account-groups/{aid}/delete.json
 
-function Deletinganaccountgroup ()
+function postDeletinganaccountgroup ()
 {
     # Verify function requirements
     for req in curl; do

@@ -1,7 +1,7 @@
 ## DNS+:Availability # DNS+: Availability
 # /dnsp/availability/{testId}.json
 
-function DNS+:Availability ()
+function getDNS+:Availability ()
 {
     # Verify function requirements
     for req in curl; do

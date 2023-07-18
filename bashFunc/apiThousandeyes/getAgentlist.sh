@@ -1,7 +1,7 @@
 ## Agentlist # Agent list
 # /agents.json
 
-function Agentlist ()
+function getAgentlist ()
 {
     # Verify function requirements
     for req in curl; do

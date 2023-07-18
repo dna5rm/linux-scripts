@@ -1,7 +1,7 @@
 ## Alertrules # Alert rules
 # /alert-rules.json
 
-function Alertrules ()
+function getAlertrules ()
 {
     # Verify function requirements
     for req in curl; do
