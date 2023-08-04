@@ -37,7 +37,7 @@ function askAlpaca()
         # Perform query & cache.
         [[ ! -f "${cachePath}/${cacheHash}" ]] && {
             install -m 644 -D  <(printf "[ $(date) ]\n\n${FUNCNAME[0]}:task: \"${1}\"\n\n") "${cachePath}/${cacheHash}"
-            alpaca -m "${alpaca_model}" --color --temp 0.9 \
+            alpaca -m "${alpaca_model}" --color --temp 0.9 --threads $(( ($(nproc --all) * 3) / 4 )) \
              --prompt "${alpaca_prompt:-Write a brief response that appropriately completes the request.}" \
              --file <(echo "${@}") 2>> "/dev/null" | tee -a "${cachePath}/${cacheHash}"
         } || {
