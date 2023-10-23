@@ -6,7 +6,7 @@
 #set -x
 
 # Verify script requirements
-for req in ansible-vault curl glow jq yq; do
+for req in ansible-vault curl glow tput jq yq; do
     type ${req} >/dev/null 2>&1 || {
         echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
         exit 1
