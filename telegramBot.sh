@@ -3,7 +3,6 @@
 ## Bash functions to load.
 bashFunc=(
     "askAlpaca"
-    "askOpenAI"
     "y2j"
     "apiTelegram/getMe"
     "apiTelegram/getChat"
@@ -22,11 +21,18 @@ for func in ${bashFunc[@]}; do
     }
 done || exit 1
 
+## Read credentials from vault.
+[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
+    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+    TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
+} || {
+    echo "$(basename "${0}"): Unable to get creds from vault."
+    exit 1;
+}
+
 ## Set variables.
 alpaca_model="${HOME}/opt/ggml-alpaca-7b-q4.bin"
 cacheDir="${HOME}/.cache/$(basename "${0}")"
-TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
-OPENAI_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.OPENAI_API_KEY')"
 
 ## Main Script - Initialization
 [[ ! -f "${cacheDir}/getme.json" ]] && {

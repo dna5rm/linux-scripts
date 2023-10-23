@@ -5,7 +5,13 @@
 [[ ! -f "_swagger.json" ]] && {
     . "${HOME}/bin/bashFunc/y2j.sh"
 
-    auth_key="$(jq -r '.tacacs | "\(.username):\(.password)" | @base64' <(y2j <"${HOME}/.loginrc.yaml"))"
+    # Read credentials from vault.
+    [[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
+        auth_key=`yq -r '.tacacs | "\(.username):\(.password)" | @base64' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+    } || {
+        echo "$(basename "${0}"): Unable to get creds from vault."
+        exit 1;
+    }
 
     curl --silent --insecure --location --request GET --url "https://${1}/api/docs/swagger.yaml" \
          --header "Content-Type: application/json" --header "Authorization: Basic ${auth_key}" | y2j | tee _swagger.json

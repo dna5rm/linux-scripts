@@ -10,7 +10,6 @@ bashFunc=(
     "boxText"
     "cacheExec"
     "containsElement"
-    "y2j"
     "apiMeraki/getOrganizationNetworks"
     "apiMeraki/getNetworkDevices"
     "apiMeraki/getDeviceSwitchPorts"
@@ -28,17 +27,24 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 ## Verify required commands & function requirements.
-for req in curl jq python3 boxText cacheExec containsElement y2j
+for req in curl jq python3 boxText cacheExec containsElement yq
  do type ${req} >/dev/null 2>&1 || {
      echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
      exit 1
     }
 done && umask 002
 
+# Read credentials from vault.
+[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
+    auth_key=`yq -r '.meraki.auth_key' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+    organization_id=`yq -r '.meraki.organization_id' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+} || {
+    echo "$(basename "${0}"): Unable to get creds from vault."
+    exit 1;
+}
+
 ## Set script variables.
 meraki_uri="https://api.meraki.com/api/v1"
-auth_key="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.auth_key')"
-organization_id="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.meraki.organization_id')"
 
 ## Define each TAG policy as ( "TAG" "VAR" "VALUE" )
 # Common TAG: INFRASTRUCTURE

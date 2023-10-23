@@ -15,7 +15,6 @@ extFunc=(
     "apiVMwareVCO/login_enterprise_login"
     "apiVMwareVCO/logout"
     "cacheExec"
-    "y2j"
 )
 
 # Load external functions
@@ -28,15 +27,22 @@ for func in ${extFunc[@]}; do
 done
 
 ### Verify requirements ###
-for req in curl jq tput y2j; do
+for req in curl jq tput yq; do
     type ${req} >/dev/null 2>&1 || {
         echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
         exit 1
     }
 done
 
+# Read credentials from vault.
+[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
+    vco_auth=`yq -r '.velocloud' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+} || {
+    echo "$(basename "${0}"): Unable to get creds from vault."
+    exit 1;
+}
+
 ### Variables ###
-vco_auth="$(y2j < "${HOME}/.loginrc.yaml" | jq '.velocloud')"
 vco_uri="https://vco109-usca1.velocloud.net/portal/rest"
 
 ARCHIVE="$(dirname "${0}")" # Location for archival storage.

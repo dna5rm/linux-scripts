@@ -2,7 +2,7 @@
 ## Vultr DNS updater.
 
 ### Verify requirements ###
-for req in curl jq; do
+for req in curl jq yq; do
     type ${req} >/dev/null 2>&1 || {
         echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
         exit 1
@@ -15,7 +15,6 @@ done
 bashFunc=(
     "cacheExec"
     "validate"
-    "y2j"
     "apiVultr/list-dns-domains"
     "apiVultr/list-dns-domain-records"
     "apiVultr/create-dns-domain-record"
@@ -33,8 +32,15 @@ for func in ${bashFunc[@]}; do
     }
 done || exit 1
 
+# Read credentials from vault.
+[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
+    VULTR_API_KEY=`yq -r '.vultr' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+} || {
+    echo "$(basename "${0}"): Unable to get creds from vault."
+    exit 1;
+}
+
 ### Variables ###
-VULTR_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.vultr')"
 VULTR_API_URI="https://api.vultr.com/v2"
 
 fqdn="${1,,}"

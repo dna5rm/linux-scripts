@@ -17,7 +17,7 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 # Verify script requirements
-for req in curl glow jq; do
+for req in ansible-vault curl glow jq yq; do
     type ${req} >/dev/null 2>&1 || {
         echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
         exit 1
@@ -30,7 +30,13 @@ Migrate before January 4, 2024 to avoid disruption of service.
 [LINK](https://platform.openai.com/docs/deprecations)
 EOF
 
-OPENAI_API_KEY="$(y2j < "${HOME}/.loginrc.yaml" | jq -r '.OPENAI_API_KEY')"
+# Read credentials from vault.
+[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
+    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+} || {
+    echo "$(basename "${0}"): Unable to get creds from vault."
+    exit 1;
+}
 
 function askOpenAI() {
     # askOpenAI # Will query the OpenAI API's to complete a given task.
