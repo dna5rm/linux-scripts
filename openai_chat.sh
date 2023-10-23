@@ -30,7 +30,7 @@ function openai_chat() {
 
     # Start chat_data if none exists.
     [[ -z "${chat_data}" ]] && {
-        chat_data="$(jq --null-input --arg model "${OPENAI_MODEL:-gpt-4}" \
+        chat_data="$(jq --null-input --arg model "${OPENAI_MODEL:-gpt-3.5-turbo}" \
             --arg prompt "${OPENAI_PROMPT:-You are a helpful assistant.}" \
             --arg temp "${OPENAI_TEMP:-0.7}" \
             --arg tokens "${OPENAI_TOKENS:-256}" \
@@ -126,7 +126,7 @@ function openai_chat() {
     # Multi-turn conversation.
     cat <<-EOF | sed 's/^[ \t]*//' | glow
 	# $(basename "${0}")
-	> MODEL: **${OPENAI_MODEL:-gpt-4}**
+	> MODEL: **${OPENAI_MODEL:-gpt-3.5-turbo}**
 	> PROMPT: *${OPENAI_PROMPT:-You are a helpful assistant.}*
 	
 	Paste your multi-line text into the terminal, press \`CTRL+D\` when finished.
