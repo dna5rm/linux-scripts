@@ -1,21 +1,6 @@
 #!/bin/bash
 ## Use the askOpenAI bash function. *deprecated*
 
-# List of functions.
-bashFunc=(
-    "y2j"
-)
-
-# Load Bash functions.
-for func in ${bashFunc[@]}; do
-    [[ ! -e "$(dirname "${0}")/bashFunc/${func}.sh" ]] && {
-        echo "$(basename "${0}"): ${func} not found!"
-        exit 1
-    } || {
-        . "$(dirname "${0}")/bashFunc/${func}.sh"
-    }
-done || exit 1
-
 # Verify script requirements
 for req in ansible-vault curl glow jq yq; do
     type ${req} >/dev/null 2>&1 || {
@@ -23,12 +8,6 @@ for req in ansible-vault curl glow jq yq; do
         exit 1
     }
 done && umask 0077
-
-cat <<-EOF | glow
-# This model version is deprecated.
-Migrate before January 4, 2024 to avoid disruption of service.
-[LINK](https://platform.openai.com/docs/deprecations)
-EOF
 
 # Read credentials from vault.
 [[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
@@ -65,7 +44,7 @@ function askOpenAI() {
         > prompt: \${@} (${@:-required})
         ### Creates a completion for the provided prompt and parameters.
         - https://platform.openai.com/docs/api-reference/completions/create
-        > model: \${OPENAI_MODEL} (${OPENAI_MODEL:-text-davinci-003})
+        > model: \${OPENAI_MODEL} (${OPENAI_MODEL:-gpt-3.5-turbo-instruct})
         > temperature: \${OPENAI_TEMP} (${OPENAI_TEMP:-0.7})
         > max_tokens: \${OPENAI_TOKENS} (${OPENAI_TOKENS:-1900})
         ### Creates an image given a prompt.
@@ -102,7 +81,7 @@ function askOpenAI() {
         [[ ! -f "${cachePath}/${cacheHash}" ]] && {
             prompt="${@}"
             jsonPost="{\"echo\": false}"
-            jsonPost="$(jq --arg model "${OPENAI_MODEL:-text-davinci-003}" '. + {"model": $model}' <<<${jsonPost})"
+            jsonPost="$(jq --arg model "${OPENAI_MODEL:-gpt-3.5-turbo-instruct}" '. + {"model": $model}' <<<${jsonPost})"
             jsonPost="$(jq --arg prompt "${prompt}" '. + {"prompt": $prompt}' <<<${jsonPost})"
             jsonPost="$(jq --arg temperature "${OPENAI_TEMP:-0.7}" '. + {"temperature": $temperature|tonumber}' <<<${jsonPost})"
             jsonPost="$(jq --arg max_tokens "${OPENAI_TOKENS:-1900}" '. + {"max_tokens": $max_tokens|tonumber}' <<<${jsonPost})"
