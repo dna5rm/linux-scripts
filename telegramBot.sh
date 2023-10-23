@@ -80,16 +80,16 @@ cacheDir="${HOME}/.cache/$(basename "${0}")"
                    sendMessage "${json}" | jq -c '.'
 
                 # Command: /img - Respond with OpenAI generated image.
-                elif [[ "${message%% *}" == "/img" ]]; then
-                   photo="${cacheDir}/$(uuid).png"
-
-                   install -m 644 -D <(askOpenAI "image ${message#* }" | jq -r '.data[0].b64_json' | base64 -d) "${photo}"
-
-                   json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
-                   json="$(jq --arg photo "@${photo}" '. + {"photo": $photo}' <<<${json:-{\}})"
-                   json="$(jq --arg caption "$(file -b "${photo}")" '. + {"caption": $caption}' <<<${json:-{\}})"
-
-                   sendPhoto "${json}" | jq -c '.'
+#                elif [[ "${message%% *}" == "/img" ]]; then
+#                   photo="${cacheDir}/$(uuid).png"
+#
+#                   install -m 644 -D <(askOpenAI "image ${message#* }" | jq -r '.data[0].b64_json' | base64 -d) "${photo}"
+#
+#                   json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
+#                   json="$(jq --arg photo "@${photo}" '. + {"photo": $photo}' <<<${json:-{\}})"
+#                   json="$(jq --arg caption "$(file -b "${photo}")" '. + {"caption": $caption}' <<<${json:-{\}})"
+#
+#                   sendPhoto "${json}" | jq -c '.'
 
                 else
                     reply="Sorry, I do not understand."
