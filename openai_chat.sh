@@ -131,7 +131,7 @@ function openai_chat() {
         user_input=$(</dev/stdin)
     }
 
-    # Return a model response using chat.
+    # Return a model responses from interactive chat.
     if [[ -z "${user_input}" ]]; then
     ## Multi-turn conversation.
     cat <<-EOF | sed 's/^[ \t]*//' | glow
