@@ -1,6 +1,6 @@
 #!/bin/env -S bash
 # Shell script to interface to the OpenAI chat models.
-# It build a message list from input and returns model-generated messages.
+# This script works by building a message list from input and interacts with the openai model to returns generated messages.
 
 # Enable for debuging
 #set -x
