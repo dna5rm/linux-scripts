@@ -145,10 +145,7 @@ function openai_chat() {
 	EOF
 
         # Loop the chat function.
-        while true; do
-            openai_chat
-        done
-
+        while true; do openai_chat; done
     else
         ## Single-turn without any conversation.
         openai_chat
