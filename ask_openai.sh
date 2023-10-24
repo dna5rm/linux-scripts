@@ -159,7 +159,8 @@ function openai_completions() {
             case "${http_code}" in
                 200)
                     # Add prompt used to the response.
-                    response=`jq -c --arg prompt "${user_input}" '. += {"prompt": $prompt|tostring}' <(sed '$ d' <<<${response})`
+                    response=`jq -c --arg prompt "${user_input}" '. += {"prompt": $prompt|tostring}' \
+                      <(sed '$ d' <<<${response})`
 
                     # Cache the response (fresh).
                     install -m 644 -D <(jq -c '.' <<<${response}) "${CACHE:openai_completions}/${HASH}"
@@ -285,7 +286,7 @@ function openai_images() {
         > TEMPRATURE: \${OPENAI_TEMP} (${OPENAI_TEMP:-0.7})
         > MAX_TOKENS: \${OPENAI_TOKENS} (${OPENAI_TOKENS:-1900})
         
-        Paste your multi-line text into the terminal, press \`CTRL+D\` when finished.
+        Enter your multi-line text. Press \`CTRL+D\` on a newline when finished or \`CTRL+C\` to cancel.
 	EOF
 
         # Loop the chat function.
