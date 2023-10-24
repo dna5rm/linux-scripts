@@ -292,7 +292,7 @@ function openai_images() {
         while true; do openai_chat; done
 
     elif [[ "${user_input,,}" == "image"* ]]; then
-        ## generate a new image
+        ## generate a new image (256x256, 512x512, or 1024x1024)
         OPENAI_FORMAT=url
         openai_images
 
