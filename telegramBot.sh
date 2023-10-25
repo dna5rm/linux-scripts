@@ -2,7 +2,6 @@
 
 ## Bash functions to load.
 bashFunc=(
-    "askAlpaca"
     "y2j"
     "apiTelegram/getMe"
     "apiTelegram/getChat"
@@ -62,8 +61,8 @@ cacheDir="${HOME}/.cache/$(basename "${0}")"
                 if [[ "${is_command}" == "null" ]]; then
                     prompt+=( "${name:-null} in a ${type/super/} chat is asking: ${message}" )
 
-                    reply="$(askAlpaca "${prompt[@]}")"
-                    #reply="$(askOpenAI "${prompt[@]}" | jq -r '.choices[0].text')"
+                    reply="$(ask_alpaca.sh "${prompt[@]}")"
+                    #reply="$(ask_openai.sh "${prompt[@]}" | jq -r '.choices[0].text')"
 
                     json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
                     json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
@@ -72,7 +71,7 @@ cacheDir="${HOME}/.cache/$(basename "${0}")"
 
                 # Command: /ask - Respond with responce from Alpaca.
                 elif [[ "${message%% *}" == "/ask" ]]; then
-                   reply="$(askAlpaca "${name:-null} in a public group chat asked: ${message#* }")"
+                   reply="$(ask_alpaca.sh "${name:-null} in a public group chat asked: ${message#* }")"
 
                    json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
                    json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"

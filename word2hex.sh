@@ -2,7 +2,6 @@
 
 # List of functions.
 bashFunc=(
-    "askAlpaca"
     "str2Hex"
 )
 
@@ -23,7 +22,6 @@ done || exit 1
 }
 
 # Variables.
-alpaca_model="${HOME}/opt/ggml-alpaca-7b-q4.bin"
 language="$(basename "${1}" | sed 's/\..*$//')"
 #words=( $(tac "${1}" | tr '[:upper:]' '['lower']' | sed -n '/^[0-9,a,b,c,d,e,f,g,i,l,o,s,t,z]\{6\}$/p' | sort) )
 words=( $(sed -n '/^.\{6\}$/p' "${1}" | tr '[:upper:]' '['lower']' | sort | uniq) )
@@ -38,7 +36,7 @@ for word in ${words[@],,}; do
         [[ "${#hex}" -eq "${#word}" ]] && {
 
             echo "[$((${count:0}+1))/${#words[@]}] ${word,,} > #${hex}"
-            def="$(askAlpaca "Provide me a single sentence definition of the ${language,,} word \"${word,,}\" in english.")"
+            def="$(ask_alpaca.sh "Provide me a single sentence definition of the ${language,,} word \"${word,,}\" in english.")"
 
             JSON="{}"
             JSON="$(jq --arg word "${word,,}" '. + {"word": $word}' <<<${JSON})"
