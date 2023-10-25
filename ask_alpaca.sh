@@ -71,6 +71,16 @@ function alpaca_completions() {
     }
 }
 
+function wait_animation() {
+    # Read PID of the last command and displays a rolling ball it finishes.
+
+    PID=${!}; sp="◐◓◑◒"; i=1
+    while [ -d "/proc/${PID}" ]; do
+        printf "\b\b ${sp:i++%${#sp}:1} "
+        sleep 1
+    done; printf "\033[2K\r"
+}
+
 # Entry point to script functions.
 [[ -f "${ALPACA_MODEL:-/opt/ggml-alpaca-7b-q4.bin}" ]] && {
 
@@ -81,7 +91,8 @@ function alpaca_completions() {
         user_input=$(</dev/stdin)
     }
 
-    alpaca_completions
+    alpaca_completions &
+    wait_animation
 
 } || {
     echo "$(basename "${0}"): \${ALPACA_MODEL} is not set or missing."
