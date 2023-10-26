@@ -47,7 +47,8 @@ function alpaca_completions() {
 
             # Fetch the response from Alpaca.
             local response="$(alpaca -m "${model}" --color --prompt "${prompt}" \
-              --temp "${temp}" --threads "${threads}" --file <(echo "${user_input[@]}") 2>> "/dev/null" | sed "s/\[[0-9]\+\]//g")"
+              --temp "${temp}" --threads "${threads}" --file <(echo "${user_input[@]}") 2>> "/dev/null" \
+              | sed "s/\[[0-9]\+\]//g")"
 
             # Append the request & response to alpaca_data.
             local alpaca_data="$(jq -n --arg model "${model}" --arg prompt "${prompt}" \
