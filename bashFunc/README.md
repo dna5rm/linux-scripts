@@ -12,8 +12,8 @@ Paste the following snippet at the start of your script. Any function in the
 ```bash
 # List of functions.
 bashFunc=(
-    "boxText"
-    "cacheExec"
+    "box_text"
+    "cache_exec"
 )
 
 # Load Bash functions.

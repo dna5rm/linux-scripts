@@ -3,7 +3,7 @@
 function selfGeoIP ()
 {
     # Verify function requirements
-    for req in boxText curl; do
+    for req in box_text curl; do
         type ${req} >/dev/null 2>&1 || {
             echo >&2 "$(basename "${0}"):${FUNCNAME[0]} - cmd/function \"${req}\" is required!"
             exit 1
@@ -12,7 +12,7 @@ function selfGeoIP ()
 
     # Print reference if conditions missing.
     if [[ -z "${crc1net_auth}" ]]; then
-        boxText "$(basename "${0}"):${FUNCNAME[0]} - Get self GeoIP info."
+        box_text "$(basename "${0}"):${FUNCNAME[0]} - Get self GeoIP info."
 	    echo "User Auth: \${crc1net_auth} (${crc1net_auth:-missing})
         IPv4 Resolve: \${1} (${1:-false})
 

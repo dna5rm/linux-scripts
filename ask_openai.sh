@@ -66,14 +66,12 @@ done && umask 0077
     elif [[ "${user_input,,}" == "image"* ]]; then
         ## generate a new image (256x256, 512x512, or 1024x1024)
         OPENAI_FORMAT=url
-        openai_images &
-        wait_animation
+        wait_animation openai_images
 
     else
         ## text_completion without any conversation.
         #openai_chat
-        openai_completions &
-        wait_animation
+        wait_animation openai_completions
     fi
 
 } || {

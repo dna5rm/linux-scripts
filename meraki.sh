@@ -7,9 +7,9 @@
 
 ## Bash functions to load.
 bashFunc=(
-    "boxText"
-    "cacheExec"
-    "containsElement"
+    "box_text"
+    "cache_exec"
+    "contains_element"
     "apiMeraki/getOrganizationNetworks"
     "apiMeraki/getNetworkDevices"
     "apiMeraki/getDeviceSwitchPorts"
@@ -27,7 +27,7 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 ## Verify required commands & function requirements.
-for req in curl jq python3 boxText cacheExec containsElement yq
+for req in curl jq python3 box_text cache_exec contains_element yq
  do type ${req} >/dev/null 2>&1 || {
      echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
      exit 1
@@ -96,7 +96,7 @@ done
 	EOF
 
     # Display Required Variables
-    tput sgr0 && boxText "Script Variables..."
+    tput sgr0 && box_text "Script Variables..."
 
     cat  <<-EOF
 	Meraki API Base URI: \${meraki_uri} (${meraki_uri:-missing})
@@ -106,7 +106,7 @@ done
 	EOF
 
     # Display Script Arguments
-    tput sgr0 && boxText "Script Arguments..."
+    tput sgr0 && box_text "Script Arguments..."
 
     cat  <<-EOF
 	Device or Site Name: \${1} (${1:-required})
@@ -117,20 +117,20 @@ done
 
     # Get the network id for the site.
     # Switch site names are always uppercase with "_sw" appended.
-    network_id="$(jq --arg site "$(awk '{print toupper($1)"_sw"}' <<< ${1:0:4})" -r '.[] | select( .name == $site ).id' <(cacheExec getOrganizationNetworks ${organization_id}))"
+    network_id="$(jq --arg site "$(awk '{print toupper($1)"_sw"}' <<< ${1:0:4})" -r '.[] | select( .name == $site ).id' <(cache_exec getOrganizationNetworks ${organization_id}))"
 
     # Get network devices and store in array.
-    cacheExec getNetworkDevices ${network_id} | jq -r '(.[] | [.name, .serial]) | @tsv' | sort | while read switch serial; do
+    cache_exec getNetworkDevices ${network_id} | jq -r '(.[] | [.name, .serial]) | @tsv' | sort | while read switch serial; do
 
     # Display if input matches the switch name.
     [[ "${switch^^}" == "${1^^}"* ]] && {
 
         ### HEADER ###
-        boxText "${switch} - ${serial}"
+        box_text "${switch} - ${serial}"
         printf "%-4s %-15s %-7s %-16s %-8s %-10s %-35s\n" "PORT" "STATUS" "TYPE" "VLAN(s)" "DUPLEX" "SPEED" "DESCRIPTION" | sed "1 s,.*,$(tput smso)&$(tput sgr0),"
 
         # Get device switch ports and store in array.
-        cacheExec getDeviceSwitchPortsStatuses ${serial} | jq -rc '.[] | [.portId,.enabled,.status,.isUplink,.speed,.duplex,(.cdp or .lldp)] | @csv' | sed ';s/\"//g' | while IFS=, read -r portId enabled status isUplink speed duplex discovery; do
+        cache_exec getDeviceSwitchPortsStatuses ${serial} | jq -rc '.[] | [.portId,.enabled,.status,.isUplink,.speed,.duplex,(.cdp or .lldp)] | @csv' | sed ';s/\"//g' | while IFS=, read -r portId enabled status isUplink speed duplex discovery; do
 
             # Do not query port if its disabled.
             [[ "${enabled,,}" == "false" ]] && {
@@ -141,10 +141,10 @@ done
                 # Query switch port configuration & store in array.
 
                 ## Get individual port on each loop itteration. [SLOW/lots of small get requests]
-                #IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.rstpEnabled,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
+                #IFS=',' read -r -a port < <(cache_exec getDeviceSwitchPort ${serial} ${portId} | jq -r '. | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.rstpEnabled,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
 
-                ## Get all ports and select the port; rely on cacheExec. [FAST/single get request]
-                IFS=',' read -r -a port < <(cacheExec getDeviceSwitchPorts ${serial} | jq -r --arg portId "${portId}" '.[] | select(.portId == $portId) | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.rstpEnabled,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
+                ## Get all ports and select the port; rely on cache_exec. [FAST/single get request]
+                IFS=',' read -r -a port < <(cache_exec getDeviceSwitchPorts ${serial} | jq -r --arg portId "${portId}" '.[] | select(.portId == $portId) | [.type,.name,.vlan,.voiceVlan,.allowedVlans,.rstpEnabled,.stpGuard,.stormControlEnabled,.udld,.tags] | flatten | @csv' | awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ".", $i) } 1' | sed 's/\"//g')
 
                 # Select status indicator icon [DIAMOND]
                 if [[ "${discovery,,}" == "true" ]]; then
@@ -192,7 +192,7 @@ done
                         done
 
                         # Notify if TAG has no policy.
-                        containsElement "${TAG^^}" "${port[@]:9}" || {
+                        contains_element "${TAG^^}" "${port[@]:9}" || {
                             printf "     [$(tput setaf 3)INFO:$(tput setaf 4)${TAG^^}$(tput sgr0)] Missing TAG policy\n"
                         }
 

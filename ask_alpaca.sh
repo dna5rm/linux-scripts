@@ -37,8 +37,7 @@ done && umask 0077
         user_input=$(</dev/stdin)
     }
 
-    alpaca_completions &
-    wait_animation
+    wait_animation alpaca_completions
 
 } || {
     echo "$(basename "${0}"): \${ALPACA_MODEL} is not set or missing."

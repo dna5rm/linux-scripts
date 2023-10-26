@@ -1,7 +1,7 @@
 ## Cache a functions output
 # Both display and cache API output for performance increase.
 
-function cacheExec ()
+function cache_exec ()
 {
     # Variable of where this function is being called from.
     FUNC_SOURCE="$(basename "${0}" 2> /dev/null)$([[ ! -z "${FUNCNAME[0]}" ]] && { echo "/${FUNCNAME[0]}"; })"

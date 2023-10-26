@@ -13,7 +13,7 @@ done
 
 # List of functions.
 bashFunc=(
-    "cacheExec"
+    "cache_exec"
     "validate"
     "apiVultr/list-dns-domains"
     "apiVultr/list-dns-domain-records"
@@ -61,7 +61,7 @@ data="${2,,}"
 } || {
 
     # Check if domain is managed.
-    [[ `cacheExec list-dns-domains | jq -r --arg domain "${fqdn#*.}" '.domains[] | select(.domain == $domain) | any'` == "true" ]] && {
+    [[ `cache_exec list-dns-domains | jq -r --arg domain "${fqdn#*.}" '.domains[] | select(.domain == $domain) | any'` == "true" ]] && {
 
         name=`sed 's/^-//' <<<${fqdn%%.*}`
 

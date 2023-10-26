@@ -1,9 +1,9 @@
 # Dig a book by ISBN (or whatever).
 
-function digISBN ()
+function dig_isbn ()
 {
     # Verify function requirements
-    for req in boxText curl jq python3; do
+    for req in box_text curl jq python3; do
         type ${req} >/dev/null 2>&1 || {
             echo >&2 "$(basename "${0}"):${FUNCNAME[0]} - cmd/function \"${req}\" is required!"
             return 1
@@ -12,7 +12,7 @@ function digISBN ()
 
     # Print reference if conditions missing.
     if [[ -z "${1}" ]]; then
-        boxText "$(basename "${0}"):${FUNCNAME[0]} - Scrape a book by ISBN."
+        box_text "$(basename "${0}"):${FUNCNAME[0]} - Scrape a book by ISBN."
         echo "Search: \${1} (${1:-missing})
 
         Aborting..." | sed 's/^[ \t]*//g'

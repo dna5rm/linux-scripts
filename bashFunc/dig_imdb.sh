@@ -1,10 +1,10 @@
 # Dig IMDB tags from a title lookup.
 
-function digIMDB ()
+function dig_imdb ()
 {
 
     # Verify function requirements
-    for req in boxText curl jq; do
+    for req in box_text curl jq; do
         type ${req} >/dev/null 2>&1 || {
             echo >&2 "$(basename "${0}"):${FUNCNAME[0]} - cmd/function \"${req}\" is required!"
             return 1
@@ -13,7 +13,7 @@ function digIMDB ()
 
     # Print reference if conditions missing.
     if [[ -z "${omdbapi_auth}" ]] || [[ -z "${1}" ]]; then
-        boxText "$(basename "${0}"):${FUNCNAME[0]} - Fetch IMDB lookup."
+        box_text "$(basename "${0}"):${FUNCNAME[0]} - Fetch IMDB lookup."
         echo "Auth API Key: \${omdbapi_auth} (${omdbapi_auth:-missing})
         Search: \${1} (${1:-missing})
 

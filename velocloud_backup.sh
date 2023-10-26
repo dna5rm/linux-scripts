@@ -14,7 +14,7 @@ extFunc=(
     "apiVMwareVCO/enterprise_get_object_groups"
     "apiVMwareVCO/login_enterprise_login"
     "apiVMwareVCO/logout"
-    "cacheExec"
+    "cache_exec"
 )
 
 # Load external functions

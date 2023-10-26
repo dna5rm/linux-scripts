@@ -1,12 +1,14 @@
-# Use python to generate a random password
+function genpasswd () {
+# Generate a random password string.
 
-function genpasswd ()
-{
-python3 << EOF
-import random,string
-length = int('''${1:-16}''')
-chars = string.ascii_letters + string.digits + "!@#$%^&*()"
-rnd = random.SystemRandom()
-print("".join(rnd.choice(chars) for i in range(length)))
-EOF
+    # Set default length to 16 if no argument is provided
+    local length="${1:-16}"
+
+    # Use tr command to generate random characters
+    # and store them in a variable
+    local password=$(tr -dc 'a-zA-Z0-9!@#$%^&*()' < /dev/urandom | head -c "$length")
+
+    # Print the generated password
+    echo "$password"
+
 }

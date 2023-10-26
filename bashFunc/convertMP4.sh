@@ -4,7 +4,7 @@
 function convertMP4 ()
 {
     # Verify requirements
-    for req in boxText exiftool ffmpeg; do
+    for req in box_text exiftool ffmpeg; do
         type ${req} >/dev/null 2>&1 || {
             echo >&2 "$(basename "${0}"):${FUNCNAME[0]} - cmd/function \"${req}\" is required!"
             return 1

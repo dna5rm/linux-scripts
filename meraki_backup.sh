@@ -5,9 +5,9 @@
 ## Bash functions to load.
 bashFunc=(
     # Core Functions
-    "boxText"
-    "cacheExec"
-    "containsElement"
+    "box_text"
+    "cache_exec"
+    "contains_element"
     "apiMeraki/getOrganizations"
     "apiMeraki/getOrganizationNetworks"
     "apiMeraki/getNetworkDevices"
@@ -58,7 +58,7 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 ## Verify required commands & function requirements.
-for req in curl jq python3 boxText cacheExec containsElement yq
+for req in curl jq python3 box_text cache_exec contains_element yq
  do type ${req} >/dev/null 2>&1 || {
      echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
      exit 1
@@ -79,7 +79,7 @@ meraki_uri="https://api.meraki.com/api/v1"
 TARGET="$(dirname "${0}")"
 
 # List the organizations that the auth_key has privileges on.
-install -m 644 -D <(cacheExec getOrganizations | jq '.') "${TARGET}/getOrganizations.json" && {
+install -m 644 -D <(cache_exec getOrganizations | jq '.') "${TARGET}/getOrganizations.json" && {
     jq -r '.[] | select(.api.enabled) | [.id, .name] | @tsv' "${TARGET}/getOrganizations.json" | while read org_id org_name; do
 
         # Archive existing data if older then 24 hours.
@@ -92,11 +92,11 @@ install -m 644 -D <(cacheExec getOrganizations | jq '.') "${TARGET}/getOrganizat
         }
 
         # List the networks in the organization.
-        install -m 644 -D  <(cacheExec getOrganizationNetworks ${org_id} | jq '.') "${TARGET}/${org_name}/getOrganizationNetworks.json" && {
+        install -m 644 -D  <(cache_exec getOrganizationNetworks ${org_id} | jq '.') "${TARGET}/${org_name}/getOrganizationNetworks.json" && {
             jq -r '(.[] | [.id, .name]) | @tsv' "${TARGET}/${org_name}/getOrganizationNetworks.json" | while read net_id net_name; do
 
                 # List the devices in a network
-                install -m 644 -D  <(cacheExec getNetworkDevices ${net_id} | jq '.') "${TARGET}/${org_name}/${net_name}/getNetworkDevices.json" && {
+                install -m 644 -D  <(cache_exec getNetworkDevices ${net_id} | jq '.') "${TARGET}/${org_name}/${net_name}/getNetworkDevices.json" && {
                     jq -r '(.[] | [.serial, .name, .model]) | @tsv' "${TARGET}/${org_name}/${net_name}/getNetworkDevices.json" | while read serial name model; do
 
                          echo "${name^^} (${serial})"
@@ -110,7 +110,7 @@ install -m 644 -D <(cacheExec getOrganizations | jq '.') "${TARGET}/getOrganizat
                                  if [[ $(type -t ${TASK}) == "function" ]] && \
                                     [[ "${TASK}" != "getNetworkSwitchStackRoutingInterfaces" ]] && \
                                     [[ ! -e  "${TARGET}/${org_name}/${net_name}/${TASK}.json" ]]; then
-                                     install -m 644 -D  <(cacheExec ${TASK} ${net_id} | jq '.') "${TARGET}/${org_name}/${net_name}/${TASK}.json"
+                                     install -m 644 -D  <(cache_exec ${TASK} ${net_id} | jq '.') "${TARGET}/${org_name}/${net_name}/${TASK}.json"
 
                                  # Fetch getNetworkSwitchStacks tasks for site (run once).
                                  elif [[ $(type -t ${TASK}) == "function" ]] && \
@@ -119,7 +119,7 @@ install -m 644 -D <(cacheExec getOrganizations | jq '.') "${TARGET}/getOrganizat
 
                                      # List the device stacks in a network
                                      jq -r '.[] | [.id, .name] | @tsv' "${TARGET}/${org_name}/${net_name}/getNetworkSwitchStacks.json" | while read stack_id stack_name; do
-                                         install -m 644 -D  <(cacheExec ${TASK} ${net_id} ${stack_id} | jq '.') "${TARGET}/${org_name}/${net_name}/${stack_name^^}.${TASK}.json"
+                                         install -m 644 -D  <(cache_exec ${TASK} ${net_id} ${stack_id} | jq '.') "${TARGET}/${org_name}/${net_name}/${stack_name^^}.${TASK}.json"
                                      done
                                  fi
                              done
@@ -128,7 +128,7 @@ install -m 644 -D <(cacheExec getOrganizations | jq '.') "${TARGET}/getOrganizat
                              declare -F | awk '/getDeviceSwitch/{print $NF}' | while read TASK; do
                                  if [[ $(type -t ${TASK}) == "function" ]] && \
                                     [[ ! -e  "${TARGET}/${org_name}/${net_name}/${name^^}.${TASK}.json" ]]; then
-                                     install -m 644 -D  <(cacheExec ${TASK} ${serial} | jq '.') "${TARGET}/${org_name}/${net_name}/${name^^}.${TASK}.json"
+                                     install -m 644 -D  <(cache_exec ${TASK} ${serial} | jq '.') "${TARGET}/${org_name}/${net_name}/${name^^}.${TASK}.json"
                                  fi
                              done
 
@@ -140,7 +140,7 @@ install -m 644 -D <(cacheExec getOrganizations | jq '.') "${TARGET}/getOrganizat
                                  # Fetch getNetworkWireless functions for site (run once).
                                  if [[ $(type -t ${TASK}) == "function" ]] && \
                                     [[ ! -e  "${TARGET}/${org_name}/${net_name}/${TASK}.json" ]]; then
-                                     install -m 644 -D  <(cacheExec ${TASK} ${net_id} | jq '.') "${TARGET}/${org_name}/${net_name}/${TASK}.json"
+                                     install -m 644 -D  <(cache_exec ${TASK} ${net_id} | jq '.') "${TARGET}/${org_name}/${net_name}/${TASK}.json"
                                  fi
                              done
 
@@ -148,7 +148,7 @@ install -m 644 -D <(cacheExec getOrganizations | jq '.') "${TARGET}/getOrganizat
                              declare -F | awk '/getDeviceWireless/{print $NF}' | while read TASK; do
                                  if [[ $(type -t ${TASK}) == "function" ]] && \
                                     [[ ! -e  "${TARGET}/${org_name}/${net_name}/${name^^}.${TASK}.json" ]]; then
-                                     install -m 644 -D  <(cacheExec ${TASK} ${serial} | jq '.') "${TARGET}/${org_name}/${net_name}/${name^^}.${TASK}.json"
+                                     install -m 644 -D  <(cache_exec ${TASK} ${serial} | jq '.') "${TARGET}/${org_name}/${net_name}/${name^^}.${TASK}.json"
                                  fi
                              done
 

@@ -1,7 +1,7 @@
 function exifRename ()
 {
     # Verify requirements
-    for req in boxText curl exiftool jq sha1sum tput; do
+    for req in box_text curl exiftool jq sha1sum tput; do
         type ${req} >/dev/null 2>&1 || {
             echo >&2 "$(basename "${0}"):${FUNCNAME[0]} - cmd/function \"${req}\" is required!"
             return 1

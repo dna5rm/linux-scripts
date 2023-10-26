@@ -1,4 +1,4 @@
-function boxText ()
+function box_text ()
 {
     # Verify function requirements
     for req in tput; do
