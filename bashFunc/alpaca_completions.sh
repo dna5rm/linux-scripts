@@ -19,7 +19,7 @@ function alpaca_completions() {
                 alpaca_data="$(jq --null-input -c --arg model "${ALPACA_MODEL:-/opt/ggml-alpaca-7b-q4.bin}" \
                   --arg prompt "${ALPACA_PROMPT:-You are a helpful assistant.}" \
                   --arg temp "${ALPACA_TEMP:-0.7}" --arg threads "$((($(nproc --all)*3)/4))" \
-                  --arg user "$(whoami)" '{
+                  --arg user "$(whoami):${FUNC_SOURCE}" '{
                 "model": $model|tostring,
                 "prompt": $prompt|tostring,
                 "temperature": $temp|tonumber,

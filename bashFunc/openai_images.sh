@@ -18,7 +18,7 @@ function openai_images() {
         prompt_data="$(jq --null-input --arg prompt "${user_input#* }" \
             --arg response "${OPENAI_FORMAT:-b64_json}" \
             --arg size "${OPENAI_SIZE:-256x256}" \
-            --arg n "${OPENAI_N:-1}" --arg user "$(whoami)" '{
+            --arg n "${OPENAI_N:-1}" --arg user "$(whoami):${FUNC_SOURCE}" '{
           "prompt": $prompt|tostring,
           "n": $n|tonumber,
           "response_format": $response|tostring,

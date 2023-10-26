@@ -11,7 +11,7 @@ function openai_completions() {
             --arg prompt "${user_input}" \
             --arg temp "${OPENAI_TEMP:-0.7}" \
             --arg tokens "${OPENAI_TOKENS:-1900}" \
-            --arg user "$(whoami)" '{
+            --arg user "$(whoami):${FUNC_SOURCE}" '{
           "model": $model|tostring,
           "prompt": $prompt|tostring,
           "echo": false,
