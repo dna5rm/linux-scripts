@@ -51,7 +51,7 @@ function alpaca_completions() {
               | sed "s/\[[0-9]\+\]//g")"
 
             # Append the request & response to alpaca_data.
-            local alpaca_data="$(jq -n --arg model "${model}" --arg prompt "${prompt}" \
+            local alpaca_data="$(jq -c -n --arg model "${model}" --arg prompt "${prompt}" \
               --arg temp "${temp}" --arg threads "${threads}" --arg user "${user}" \
               --arg request "${user_input}" --arg response "${response}" '{
                 model: $model,
