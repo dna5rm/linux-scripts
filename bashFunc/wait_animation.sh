@@ -5,5 +5,5 @@ function wait_animation() {
     while [ -d "/proc/${PID}" ]; do
         printf "\b\b ${sp:i++%${#sp}:1} "
         sleep 1
-    done; printf "\033[2K\r"
+    done; tput el
 }
