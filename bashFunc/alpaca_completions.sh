@@ -71,9 +71,10 @@ function alpaca_completions() {
         fi
 
         # Return the response message content.
-        if type glow >/dev/null 2>&1; then
-            jq -r '. | "# " + .model, "", .response' <<< "${alpaca_data}" | glow
+        if type "${MARKDOWN:-glow}" >/dev/null 2>&1; then
+            jq -r '. | "# " + .model, "", .response' <<< "${alpaca_data}" | "${MARKDOWN:-glow}"
         else
+            # MARKDOWN cmd not found (raw output).
             jq -r '.response' <<< "${alpaca_data}"
         fi
     }
