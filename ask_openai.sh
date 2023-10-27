@@ -74,7 +74,7 @@ done && umask 0077
         # wait_animation openai_chat
 
         ## text completion.
-        OPENAI_MODEL="text-davinci-003"
+        # OPENAI_MODEL="text-davinci-003"
         wait_animation openai_completions
     fi
 
