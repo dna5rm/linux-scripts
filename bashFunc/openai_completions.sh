@@ -19,6 +19,8 @@ function openai_completions() {
         local func_error="Curl executable not found."
     elif ! type jq >/dev/null 2>&1; then
         local func_error="Jq executable not found."
+    elif [[ -z "${OPENAI_API_KEY}" ]]; then
+        local func_error="\${OPENAI_API_KEY} is not configured."
     elif [[ -z "${user_input}" ]]; then
         local func_error="Missing User input."
     fi
