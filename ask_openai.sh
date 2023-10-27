@@ -69,8 +69,12 @@ done && umask 0077
         openai_images
 
     else
-        ## text_completion without any conversation.
-        #openai_chat
+        ## Single-turn without any conversation.
+        # OPENAI_MODEL="gpt-4"
+        # wait_animation openai_chat
+
+        ## text completion.
+        OPENAI_MODEL="text-davinci-003"
         wait_animation openai_completions
     fi
 
