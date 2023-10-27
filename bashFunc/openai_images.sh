@@ -24,9 +24,9 @@ function openai_images() {
 
     # Run tests and set func_error any fail.
     if ! type curl >/dev/null 2>&1; then
-        local func_error="Curl executable not found."
+        local func_error="curl executable not found."
     elif ! type jq >/dev/null 2>&1; then
-        local func_error="Jq executable not found."
+        local func_error="jq executable not found."
     elif [[ -z "${OPENAI_API_KEY}" ]]; then
         local func_error="\${OPENAI_API_KEY} is not configured."
     elif [[ -z "${user_input}" ]]; then

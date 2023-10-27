@@ -16,9 +16,9 @@ function alpaca_completions() {
 
     # Run tests and set func_error any fail.
     if ! type alpaca >/dev/null 2>&1; then
-        local func_error="Alpaca executable not found."
+        local func_error="alpaca executable not found."
     elif ! type jq >/dev/null 2>&1; then
-        local func_error="Jq executable not found."
+        local func_error="jq executable not found."
     elif [[ -z "${user_input}" ]]; then
         local func_error="Missing User input."
     elif ! [[ -f "${ALPACA_MODEL:-/opt/ggml-alpaca-7b-q4.bin}" ]]; then
