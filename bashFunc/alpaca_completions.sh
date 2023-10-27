@@ -17,6 +17,8 @@ function alpaca_completions() {
     # Run tests and set func_error any fail.
     if ! type alpaca >/dev/null 2>&1; then
         local func_error="Alpaca executable not found."
+    elif ! type jq >/dev/null 2>&1; then
+        local func_error="Jq executable not found."
     elif [[ -z "${user_input}" ]]; then
         local func_error="Missing User input."
     elif ! [[ -f "${ALPACA_MODEL:-/opt/ggml-alpaca-7b-q4.bin}" ]]; then
@@ -43,7 +45,7 @@ function alpaca_completions() {
             local prompt="${ALPACA_PROMPT:-You are a helpful assistant.}"
             local temp="${ALPACA_TEMP:-0.7}"
             local threads="$((($(nproc --all)*3)/4))"
-            local user="$(whoami):${FUNC_SOURCE}"
+            local user="$(md5sum -t <(printf "%s:${func_source}" `whoami`) | awk '{print $1}')"
 
             # Fetch the response from Alpaca.
             local response="$(alpaca -m "${model}" --color --prompt "${prompt}" \
