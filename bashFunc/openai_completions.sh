@@ -20,9 +20,9 @@ function openai_completions() {
     elif ! type jq >/dev/null 2>&1; then
         local func_error="jq executable not found."
     elif [[ -z "${OPENAI_API_KEY}" ]]; then
-        local func_error="\${OPENAI_API_KEY} is not configured."
+        local func_error="\${OPENAI_API_KEY} is missing."
     elif [[ -z "${user_input}" ]]; then
-        local func_error="Missing User input."
+        local func_error="\${user_input} is missing."
     fi
 
     # Return if any checks failed.
@@ -93,8 +93,9 @@ function openai_completions() {
             jq -r '. | "# " + .model, "", .choices[0].text' <<< "${response}" | "${MARKDOWN:-glow}"
         else
             # MARKDOWN cmd not found (raw output).
-            jq -r '.choices[0].text' <<< "${resopnse}"
+            jq -r '.choices[0].text' <<< "${response}" | sed '/./,$!d'
         fi
+
     } || {
         # Something went wrong.
         echo >&2 "${func_source} - \${openai_data} is not valid json."
