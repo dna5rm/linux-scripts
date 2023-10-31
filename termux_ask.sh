@@ -33,6 +33,6 @@ if [[ -d "${HOME}/Projects/venv${python_ver}" ]] && [[ "${HEADSET,,}" == "true" 
     user_input=`jq -r '.text' <(termux-dialog text -t "$(basename "${0}")" -m)`
 
     # Get response and speak it through headset.
-    openai_completions | termux-tts-speak -r 1.7
+    openai_completions | tee /dev/stderr | termux-tts-speak -r 1.7
 
 fi
