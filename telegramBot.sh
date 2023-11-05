@@ -21,8 +21,8 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 ## Read credentials from vault.
-[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vault" ]] && {
-    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vault")`
+[[ -f "${HOME}/.${USER:-loginrc}.vault" && "${HOME}/.vault" ]] && {
+    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
     TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
 } || {
     echo "$(basename "${0}"): Unable to get creds from vault."
