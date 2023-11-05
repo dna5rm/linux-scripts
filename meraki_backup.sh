@@ -66,8 +66,8 @@ for req in curl jq python3 box_text cache_exec contains_element yq
 done && umask 002
 
 # Read credentials from vault.
-[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
-    auth_key=`yq -r '.meraki.auth_key' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vault" ]] && {
+    auth_key=`yq -r '.meraki.auth_key' <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vault")`
 } || {
     echo "$(basename "${0}"): Unable to get creds from vault."
     exit 1;

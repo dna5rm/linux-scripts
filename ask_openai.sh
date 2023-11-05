@@ -29,9 +29,9 @@ for req in ansible-vault curl glow tput jq yq; do
 done && umask 0077
 
 # Read credentials from vault.
-[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vaultpw" ]] && {
+[[ -f "${HOME}/.loginrc.vault" && "${HOME}/.vault" ]] && {
     OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' \
-      <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vaultpw")`
+      <(ansible-vault view "${HOME}/.loginrc.vault" --vault-password-file "${HOME}/.vault")`
 } || {
     echo "$(basename "${0}"): Unable to get creds from vault."
     exit 1;
