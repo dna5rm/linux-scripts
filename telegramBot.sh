@@ -69,25 +69,26 @@ MARKDOWN=null
 
         # Get latest telegram updates.
         jq -rc '.[]' <(getUpdates "{\"offset\": ${offset:-0}}") | while read update; do
-
-            # Store the latest update_id+1 for offset.
-            install -m 644 -D <(jq '.update_id+1' <<< "${update}") "${HOME}/.cache/$(basename "${0%.*}").offset"
-
             log_message getUpdates "${update}"
 
-            # Set loop variables from latest update.
-            chat_id=`jq '.message.chat.id' <<< "${update}"`
-            command=`jq -r '.message.entities[0].type // empty' <<< "${update}"`
-            message=`jq -r '.message.text' <<< "${update}"`
-            message_id=`jq '.message.message_id' <<< "${update}"`
-            name=`jq -r '.message.from.first_name' <<< "${update}"`
-            type=`jq -r '.message.chat.type' <<< "${update}"`
-            reply=`jq -r 'try(.message.reply_to_message.text) // empty' <<< "${update}"`
+            if jq -e . >/dev/null 2>&1 <<< "${update:-ERR}"; then
+                # Store the latest update_id+1 for offset.
+                install -m 644 -D <(jq '.update_id+1' <<< "${update}") "${HOME}/.cache/$(basename "${0%.*}").offset"
+
+                # Set loop variables from latest update.
+                chat_id=`jq '.message.chat.id' <<< "${update}"`
+                command=`jq -r '.message.entities[0].type // empty' <<< "${update}"`
+                message=`jq -r '.message.text' <<< "${update}"`
+                message_id=`jq '.message.message_id' <<< "${update}"`
+                name=`jq -r '.message.from.first_name' <<< "${update}"`
+                type=`jq -r '.message.chat.type' <<< "${update}"`
+                reply=`jq -r 'try(.message.reply_to_message.text) // empty' <<< "${update}"`
+            fi
 
             # command is missing / private chat.
             if [[ -z "${command}" ]]; then
 
-                tg_chatbot
+                [[ ! -z "${message}" ]] && { tg_chatbot; }
 
             elif [[ "${command}" == "bot_command" ]]; then
 
@@ -106,7 +107,7 @@ MARKDOWN=null
 
                 sendMessage "${json}" | jq -c '.'
             fi
-            unset json reply
+            unset json message reply
 
         # Sleep 15 seconds before next run.
         done && sleep 15
