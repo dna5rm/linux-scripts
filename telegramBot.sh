@@ -2,15 +2,16 @@
 
 ## Bash functions to load.
 bashFunc=(
-    "y2j"
+    "alpaca_completions"
+    "openai_completions"
+    "err_report"
+    "log_message"
     "apiTelegram/getMe"
-    "apiTelegram/getChat"
     "apiTelegram/getUpdates"
     "apiTelegram/sendMessage"
-    "apiTelegram/sendPhoto"
 )
 
-## Load Bash functions.
+## Load external functions.
 for func in ${bashFunc[@]}; do
     [[ ! -e "$(dirname "${0}")/bashFunc/${func}.sh" ]] && {
         echo "$(basename "${0}"): ${func} not found!"
@@ -20,88 +21,94 @@ for func in ${bashFunc[@]}; do
     }
 done || exit 1
 
-## Read credentials from vault.
+# Load internal functions.
+function tg_chatbot() {
+    # build prompt from input.
+    [[ -z "${reply}" ]] && {
+        local user_input="${name:-null} in a ${type/super/} chat is asking... ${message} ... You are direct, to the point and will never exceed 4000 charcters!"
+    } || {
+        local user_input="You just posted... ${reply} ... ${name:-null} in a ${type/super/} chat responded... ${message} ... You are direct, to the point and will never exceed 4000 charcters!"
+    }
+
+    #reply=`alpaca_completions`
+    reply=`openai_completions`
+
+    json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
+    json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
+
+    output=`jq -c '.' <(sendMessage "${json}")`
+    jq -c '.' <<< "${output}" && log_message sendMessage "${output}"
+
+}
+
+# Read credentials from vault.
 [[ -f "${HOME}/.${USER:-loginrc}.vault" && "${HOME}/.vault" ]] && {
-    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
-    TELEGRAM_TOKEN="$(awk '/telegram/{print $NF}' ~/.netrc)"
+    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' \
+      <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
+    TELEGRAM_TOKEN=`yq -r '.TELEGRAM_TOKEN' \
+      <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
 } || {
     echo "$(basename "${0}"): Unable to get creds from vault."
     exit 1;
 }
 
-## Set variables.
-alpaca_model="${HOME}/opt/ggml-alpaca-7b-q4.bin"
-cacheDir="${HOME}/.cache/$(basename "${0}")"
+# Set script vars.
+getMe=`getMe`
+MARKDOWN=null
 
-## Main Script - Initialization
-[[ ! -f "${cacheDir}/getme.json" ]] && {
-    install -m 644 -D <(getMe | jq '.') "${cacheDir}/getMe.json"
-} && getMe=( $(jq -r '[ .ok, .result.id, .result.is_bot, .result.first_name ] | @tsv' "${cacheDir}/getMe.json") )
+# Test if access token is good and start script.
+[[ "$(jq '.is_bot' <<< "${getMe}")" != "true" ]] && {
+    echo >&2 "$(basename "${0}") - Telegram bot access token failure."
+} || {
 
-[[ "${getMe[0]}" == "true" ]] && {
-
+    # Run within an infinite loop.
     while true; do
 
-        # Get the most recent update_id.
-        [[ -s "${cacheDir}/getUpdates.json" ]] && {
-            updateLast="$(jq -c '.[]' "${cacheDir}/getUpdates.json" | awk 'END{print}' | jq -r '.update_id')"
-        }
+        # Load previously stored offset variable.
+        test -f "${HOME}/.cache/$(basename "${0%.*}").offset" && read offset < "${HOME}/.cache/$(basename "${0%.*}").offset" || unset offset
 
-        install -m 644 -D <(getUpdates '{"offset": '''${updateLast:-0}'''}' | jq -c '.result') "${cacheDir}/getUpdates.json"
+        # Get latest telegram updates.
+        jq -rc '.[]' <(getUpdates "{\"offset\": ${offset:-0}}") | while read update; do
 
-        jq -r '.[] | select(.message.from.is_bot == false) | [.update_id, .message.message_id, .message.reply_to_message.message_id // "null", .message.from.first_name, .message.chat.id, .message.chat.type, .message.entities[0].type // "null", .message.text] | @tsv' "${cacheDir}/getUpdates.json" |\
-         while read id message_id reply_id name chat_id type is_command message; do
+            # Store the latest update_id+1 for offset.
+            install -m 644 -D <(jq '.update_id+1' <<< "${update}") "${HOME}/.cache/$(basename "${0%.*}").offset"
 
-            [[ "${id:-0}" -gt "${updateLast:-1}" ]] && {
+            log_message getUpdates "${update}"
 
-                echo "[$(date +'%r')] ${updateLast:-0}/${id} ${name:-null} ${chat_id} ${type} ${is_command} :: ${message%% *}|${message#* }" |\
-                 tee -a "${cacheDir}/${getMe[3]/$/}.log"
+            # Set loop variables from latest update.
+            chat_id=`jq '.message.chat.id' <<< "${update}"`
+            command=`jq -r '.message.entities[0].type // empty' <<< "${update}"`
+            message=`jq -r '.message.text' <<< "${update}"`
+            message_id=`jq '.message.message_id' <<< "${update}"`
+            name=`jq -r '.message.from.first_name' <<< "${update}"`
+            type=`jq -r '.message.chat.type' <<< "${update}"`
+            reply=`jq -r 'try(.message.reply_to_message.text) // empty' <<< "${update}"`
 
-                # Respond to chats with Alpaca.
-                if [[ "${is_command}" == "null" ]]; then
-                    prompt+=( "${name:-null} in a ${type/super/} chat is asking: ${message}" )
+            # command is missing / private chat.
+            if [[ -z "${command}" ]]; then
 
-                    reply="$(ask_alpaca.sh "${prompt[@]}")"
-                    #reply="$(ask_openai.sh "${prompt[@]}" | jq -r '.choices[0].text')"
+                tg_chatbot
 
-                    json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
-                    json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
+            elif [[ "${command}" == "bot_command" ]]; then
 
-                    sendMessage "${json}" | jq -c '.'
+                case "${message%% *}" in
+                    "/ask")
+                        message="${message#* }"
+                        tg_chatbot
+                        ;;
+                esac
 
-                # Command: /ask - Respond with responce from Alpaca.
-                elif [[ "${message%% *}" == "/ask" ]]; then
-                   reply="$(ask_alpaca.sh "${name:-null} in a public group chat asked: ${message#* }")"
+            else
+                reply="Sorry, I do not understand."
 
-                   json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
-                   json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
+                json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
+                json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
 
-                   sendMessage "${json}" | jq -c '.'
+                sendMessage "${json}" | jq -c '.'
+            fi
+            unset json reply
 
-                # Command: /img - Respond with OpenAI generated image.
-#                elif [[ "${message%% *}" == "/img" ]]; then
-#                   photo="${cacheDir}/$(uuid).png"
-#
-#                   install -m 644 -D <(askOpenAI "image ${message#* }" | jq -r '.data[0].b64_json' | base64 -d) "${photo}"
-#
-#                   json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
-#                   json="$(jq --arg photo "@${photo}" '. + {"photo": $photo}' <<<${json:-{\}})"
-#                   json="$(jq --arg caption "$(file -b "${photo}")" '. + {"caption": $caption}' <<<${json:-{\}})"
-#
-#                   sendPhoto "${json}" | jq -c '.'
-
-                else
-                    reply="Sorry, I do not understand."
-
-                    json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
-                    json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
-
-                    sendMessage "${json}" | jq -c '.'
-                fi
-                unset json
-            }
-
-        done
-
+        # Sleep 15 seconds before next run.
+        done && sleep 15
     done
 }
