@@ -36,7 +36,7 @@ function tg_chatbot() {
     json="$(jq --arg chat_id "${chat_id}" '. + {"chat_id": $chat_id}' <<<${json:-{\}})"
     json="$(jq --arg text "${reply:0:4096}" '. + {"text": $text}' <<<${json:-{\}})"
 
-    output=`jq -c '.' <(sendMessage "${json}")`
+    output=`jq -c --raw-input '.' <(sendMessage "${json}")`
     jq -c '.' <<< "${output}" && log_message sendMessage "${output}"
 
 }
