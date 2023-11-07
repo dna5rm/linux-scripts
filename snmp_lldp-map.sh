@@ -1,4 +1,6 @@
 #!/bin/env -S bash
+# Generating a GraphViz file that displays LLDP (Link Layer Discovery Protocol) data for a list of hosts.
+## Only works against NXOS & IOS devices.
 
 community="public"
 
