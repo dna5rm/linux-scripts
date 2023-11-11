@@ -25,12 +25,12 @@ function crypt () {
     } || {
 
         # Set passphrase to element[0] otherwise default to user@host
-        if [[ ! -z "${passphrase}" ]] && [[ ! -f "${user_input[0]}" ]]; then
+        [[ ! -f "${user_input[0]}" ]] && {
             local passphrase="${user_input[0]}"
             unset user_input[0]
-        else
+        } || {
             local passphrase="$(base64 -w0 <(echo "`whoami`@`hostname -f`"))"
-        fi
+        }
 
         # loop through all files.
         for file in "${user_input[@]}"; do

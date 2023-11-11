@@ -33,8 +33,8 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 # Read credentials from vault.
-[[ -f "${HOME}/.${USER:-loginrc}.vault" && "${HOME}/.vault" ]] && {
-    VULTR_API_KEY=`yq -r '.vultr' <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
+[[ -f "${HOME}/.${USER:-loginrc}.vault" && "${TMPDIR}/.vault" ]] && {
+    VULTR_API_KEY=`yq -r '.vultr' <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${TMPDIR}/.vault")`
 } || {
     echo "$(basename "${0}"): Unable to get creds from vault."
     exit 1;

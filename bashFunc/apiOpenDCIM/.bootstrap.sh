@@ -6,8 +6,8 @@
     . "${HOME}/bin/bashFunc/y2j.sh"
 
     # Read credentials from vault.
-    [[ -f "${HOME}/.${USER:-loginrc}.vault" && "${HOME}/.vault" ]] && {
-        auth_key=`yq -r '.tacacs | "\(.username):\(.password)" | @base64' <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
+    [[ -f "${HOME}/.${USER:-loginrc}.vault" && "${TMPDIR}/.vault" ]] && {
+        auth_key=`yq -r '.tacacs | "\(.username):\(.password)" | @base64' <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${TMPDIR}/.vault")`
     } || {
         echo "$(basename "${0}"): Unable to get creds from vault."
         exit 1;
