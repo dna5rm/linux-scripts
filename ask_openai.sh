@@ -7,6 +7,7 @@ bashFunc=(
     "openai_chat"
     "openai_completions"
     "openai_images"
+    "vault"
     "wait_animation"
 )
 
@@ -29,12 +30,12 @@ for req in ansible-vault curl glow tput jq yq; do
 done && umask 0077
 
 # Read credentials from vault.
-[[ -f "${HOME}/.${USER:-loginrc}.vault" && "${TMPDIR}/.vault" ]] && {
-    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${TMPDIR}/.vault")`
-} || {
-    echo "$(basename "${0}"): Unable to get creds from vault."
+if type ansible-vault >/dev/null 2>&1; then
+    OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(vault_view)`
+else
+    echo "[$(basename "${0}")] Unable to get creds from vault."
     exit 1;
-}
+fi
 
 # Entry point to script functions.
 [[ "${OPENAI_API_KEY}" = "sk-"* ]] && {
