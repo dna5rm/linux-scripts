@@ -18,9 +18,9 @@ if [[ -d "${HOME}/Projects/venv${python_ver}" ]] && [[ "${HEADSET,,}" == "true" 
     source "${HOME}/Projects/venv${python_ver}/bin/activate"
 
     # Read credentials from vault.
-    [[ -f "${HOME}/.${USER:-loginrc}.vault" && "${HOME}/.vault" ]] && {
+    [[ -f "${HOME}/.${USER:-loginrc}.vault" && "${TMPDIR}/.vault" ]] && {
         OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' \
-          <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
+          <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${TMPDIR}/.vault")`
     } || {
         echo "Unable to get creds from vault." | termux-tts-speak
         exit 1;

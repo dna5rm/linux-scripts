@@ -42,11 +42,11 @@ function tg_chatbot() {
 }
 
 # Read credentials from vault.
-[[ -f "${HOME}/.${USER:-loginrc}.vault" && "${HOME}/.vault" ]] && {
+[[ -f "${HOME}/.${USER:-loginrc}.vault" && "${TMPDIR}/.vault" ]] && {
     OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' \
-      <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
+      <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${TMPDIR}/.vault")`
     TELEGRAM_TOKEN=`yq -r '.TELEGRAM_TOKEN' \
-      <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${HOME}/.vault")`
+      <(ansible-vault view "${HOME}/.${USER:-loginrc}.vault" --vault-password-file "${TMPDIR}/.vault")`
 } || {
     echo "$(basename "${0}"): Unable to get creds from vault."
     exit 1;
