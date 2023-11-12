@@ -30,9 +30,9 @@ for req in ansible-vault curl glow tput jq yq; do
 done && umask 0077
 
 # Read credentials from vault.
-if type ansible-vault >/dev/null 2>&1; then
+if [[ -z "$OPENAI_API_KEY" ]] && [[ `type ansible-vault >/dev/null 2>&1` ]]; then
     OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(vault_view)`
-else
+elif [[ -z "$OPENAI_API_KEY" ]]; then
     echo "[$(basename "${0}")] Unable to get creds from vault."
     exit 1;
 fi
@@ -50,7 +50,7 @@ fi
     # Return a model responses from interactive chat.
     if [[ -z "${user_input}" ]]; then
     ## Multi-turn conversation.
-    cat <<-EOF | sed 's/^[ \t]*//' | glow
+    sed 's/^[ \t]*//' <<-EOF | glow
         # $(basename "${0}")
         > MODEL: \${OPENAI_MODEL} **(${OPENAI_MODEL:-gpt-3.5-turbo})**
         > PROMPT: \${OPENAI_PROMPT} *(${OPENAI_PROMPT:-You are a helpful assistant.})*
