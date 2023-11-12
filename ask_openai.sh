@@ -22,7 +22,7 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 # Verify script requirements.
-for req in ansible-vault curl glow tput jq yq; do
+for req in curl glow vault_view; do
     type ${req} >/dev/null 2>&1 || {
         echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
         exit 1
@@ -30,9 +30,9 @@ for req in ansible-vault curl glow tput jq yq; do
 done && umask 0077
 
 # Read credentials from vault.
-if [[ -z "$OPENAI_API_KEY" ]] && [[ `type ansible-vault >/dev/null 2>&1` ]]; then
+if [[ -z "${OPENAI_API_KEY}" ]] && type vault_view >/dev/null 2>&1; then
     OPENAI_API_KEY=`yq -r '.OPENAI_API_KEY' <(vault_view)`
-elif [[ -z "$OPENAI_API_KEY" ]]; then
+elif [[ -z "${OPENAI_API_KEY}" ]]; then
     echo "[$(basename "${0}")] Unable to get creds from vault."
     exit 1;
 fi
