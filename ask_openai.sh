@@ -1,4 +1,4 @@
-#!/bin/env -S bash
+#!/bin/bash
 # Shell script to interface to the OpenAI API's.
 # This script builds json from user input and returns model generated messages.
 
