@@ -70,12 +70,12 @@ fi
 
     else
         ## Single-turn without any conversation.
-        # OPENAI_MODEL="gpt-4"
-        # wait_animation openai_chat
+        OPENAI_MODEL="gpt-4-turbo-preview"
+        wait_animation openai_chat
 
-        ## text completion.
+        ## text completion (legacy).
         # OPENAI_MODEL="text-davinci-003"
-        wait_animation openai_completions
+        #wait_animation openai_completions
     fi
 
 } || {
