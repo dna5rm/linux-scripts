@@ -38,7 +38,7 @@ function openai_completions() {
         local openai_data="$(jq --null-input --arg model "${OPENAI_MODEL:-gpt-3.5-turbo-instruct}" \
           --arg prompt "${user_input}" \
           --arg temp "${OPENAI_TEMP:-0.7}" \
-          --arg tokens "${OPENAI_TOKENS:-4024}" \
+          --arg tokens "${OPENAI_TOKENS:-2048}" \
           --arg user "$(md5sum -t <(printf "%s:${func_source}" `whoami`) | awk '{print $1}')" '{
             "model": $model|tostring,
             "prompt": $prompt|tostring,
