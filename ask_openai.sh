@@ -22,7 +22,7 @@ for func in ${bashFunc[@]}; do
 done || exit 1
 
 # Verify script requirements.
-for req in curl glow vault_view; do
+for req in curl vault_view; do
     type ${req} >/dev/null 2>&1 || {
         echo >&2 "$(basename "${0}"): I require ${req} but it's not installed. Aborting."
         exit 1
@@ -49,10 +49,13 @@ fi
 
     # Return a model responses from interactive chat.
     if [[ -z "${user_input}" ]]; then
+
+    OPENAI_MODEL="gpt-4o"
+
     ## Multi-turn conversation.
-    sed 's/^[ \t]*//' <<-EOF | glow
+    sed 's/^[ \t]*//' <<-EOF | bat -l md
         # $(basename "${0}")
-        > MODEL: \${OPENAI_MODEL} **(${OPENAI_MODEL:-gpt-3.5-turbo})**
+        > MODEL: \${OPENAI_MODEL} **(${OPENAI_MODEL:-gpt-4o})**
         > PROMPT: \${OPENAI_PROMPT} *(${OPENAI_PROMPT:-You are a helpful assistant.})*
         > TEMPRATURE: \${OPENAI_TEMP} (${OPENAI_TEMP:-0.7})
         > MAX_TOKENS: \${OPENAI_TOKENS} (${OPENAI_TOKENS:-1900})
@@ -70,12 +73,9 @@ fi
 
     else
         ## Single-turn without any conversation.
-        # OPENAI_MODEL="gpt-4-turbo-preview"
-        OPENAI_MODEL="gpt-4o"
         wait_animation openai_chat
 
         ## text completion (legacy).
-        # OPENAI_MODEL="text-davinci-003"
         #wait_animation openai_completions
     fi
 

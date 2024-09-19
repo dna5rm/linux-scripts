@@ -89,12 +89,12 @@ function openai_completions() {
         fi
 
         # Return the response message content.
-        if type "${MARKDOWN:-glow}" >/dev/null 2>&1; then
-            jq -r '. | "# " + .model, "", .choices[0].text' <<< "${response}" | "${MARKDOWN:-glow}"
-        else
-            # MARKDOWN cmd not found (raw output).
+#        if type "${MARKDOWN:-glow}" >/dev/null 2>&1; then
+#            jq -r '. | "# " + .model, "", .choices[0].text' <<< "${response}" | "${MARKDOWN:-glow}"
+#        else
+#            # MARKDOWN cmd not found (raw output).
             jq -r '.choices[0].text' <<< "${response}" | sed '/./,$!d'
-        fi
+#        fi
 
     } || {
         # Something went wrong.

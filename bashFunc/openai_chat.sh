@@ -114,14 +114,16 @@ function openai_chat() {
               <<< "${OPENAI_CHAT}"`
         fi
 
-        # Return the response message content.
-        if type "${MARKDOWN:-glow}" >/dev/null 2>&1; then
-            jq -r '.messages|last|.content' <<< "${OPENAI_CHAT}" | "${MARKDOWN:-glow}"
+        # Return the response message content
+        if command -v glow &> /dev/null; then
+            # Syntax highlighted via glow.
+            glow <(echo -e "\n\n$(jq -r '.messages|last|.content' <<< "${OPENAI_CHAT}")\n")
+        elif command -v bat &> /dev/null; then
+            # Syntax highlighted via bat.
+            bat -l md <(echo -e "\n\n$(jq -r '.messages|last|.content' <<< "${OPENAI_CHAT}")\n")
         else
-            # MARKDOWN cmd not found (raw output).
-            echo
-            jq -r '.messages|last|.content' <<< "${OPENAI_CHAT}"
-            echo
+            # Raw output - no highlighting.
+            cat <(echo -e "\n\n$(jq -r '.messages|last|.content' <<< "${OPENAI_CHAT}")\n")
         fi
 
     } || {

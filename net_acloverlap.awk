@@ -1,4 +1,4 @@
-#!/bin/env -S awk -f
+#!/bin/env -S gawk -f
 ## Report network CIDR overlaps from a list.
 ## 2018 (v.01) - Script from www.davideaves.com
 
