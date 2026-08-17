@@ -111,7 +111,7 @@ class PDFDoc:
 
 from rich.text import Text
 from textual.app import App
-from textual.containers import Container
+from textual.containers import Container, ScrollableContainer
 from textual.widgets import Header, Footer, Static
 from textual.binding import Binding
 
@@ -193,7 +193,7 @@ class PDFViewer(App):
 
     def compose(self):
         yield Header(show_clock=False)
-        yield Container(id="pdf-container")
+        yield ScrollableContainer(id="pdf-container")
         yield Static("", id="status")
         yield Footer()
 
