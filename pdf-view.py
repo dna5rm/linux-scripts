@@ -23,10 +23,14 @@ import subprocess
 import importlib
 
 REQUIRED_PACKAGES = {
-    "pymupdf": "pymupdf",
     "textual": "textual",
     "rich": "rich",
 }
+# pymupdf is preferred but fails to build on Termux (Android); pdfminer.six is the fallback.
+PDF_PACKAGES = [
+    ("pymupdf", "pymupdf"),
+    ("pdfminer", "pdfminer.six"),
+]
 
 
 def ensure_dependencies():
@@ -36,6 +40,28 @@ def ensure_dependencies():
             importlib.import_module(import_name)
         except ImportError:
             missing.append(pip_name)
+    # Try pymupdf first; if it won't import or install, fall back to pdfminer.six
+    pdf_ok = False
+    for import_name, pip_name in PDF_PACKAGES:
+        try:
+            importlib.import_module(import_name)
+            pdf_ok = True
+            break
+        except ImportError:
+            pass
+    if not pdf_ok:
+        for import_name, pip_name in PDF_PACKAGES:
+            try:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", pip_name],
+                                     stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+                importlib.import_module(import_name)
+                pdf_ok = True
+                break
+            except (subprocess.CalledProcessError, ImportError):
+                continue
+        if not pdf_ok:
+            print("[FATAL] Could not install pymupdf or pdfminer.six")
+            sys.exit(1)
     if not missing:
         return
     print(f"Missing required packages: {', '.join(missing)}")
@@ -50,7 +76,39 @@ def ensure_dependencies():
 
 ensure_dependencies()
 
-import pymupdf
+# --- PDF backend abstraction: pymupdf (preferred) or pdfminer.six (fallback) ---
+try:
+    import pymupdf
+    _PDF_BACKEND = "pymupdf"
+except ImportError:
+    from pdfminer.high_level import extract_text as _pdfminer_extract
+    from pdfminer.pdfparser import PDFParser as _PDFParser
+    from pdfminer.pdfdocument import PDFDocument as _PDFDocument
+    from pdfminer.pdfpage import PDFPage as _PDFPage
+    _PDF_BACKEND = "pdfminer"
+
+
+class PDFDoc:
+    """Thin wrapper: pymupdf if available, pdfminer.six as Termux fallback."""
+    def __init__(self, path):
+        self.path = path
+        if _PDF_BACKEND == "pymupdf":
+            self._doc = pymupdf.open(path)
+            self.page_count = self._doc.page_count
+        else:
+            with open(path, "rb") as f:
+                self.page_count = sum(1 for _ in _PDFPage.get_pages(f))
+
+    def get_page_text(self, pno):
+        if _PDF_BACKEND == "pymupdf":
+            return self._doc[pno].get_text("text")
+        else:
+            return _pdfminer_extract(self.path, page_numbers=[pno])
+
+    def close(self):
+        if _PDF_BACKEND == "pymupdf" and self._doc:
+            self._doc.close()
+
 from rich.text import Text
 from textual.app import App
 from textual.containers import Container
@@ -140,7 +198,7 @@ class PDFViewer(App):
         yield Footer()
 
     def on_mount(self) -> None:
-        self.doc = pymupdf.open(self.pdf_path)
+        self.doc = PDFDoc(self.pdf_path)
         self.total_pages = self.doc.page_count
         self.title = f"PDF View: {self.pdf_path.split('/')[-1]}"
         self.sub_title = f"Page 1/{self.total_pages}"
@@ -150,8 +208,7 @@ class PDFViewer(App):
         container = self.query_one("#pdf-container")
         container.remove_children()
 
-        page = self.doc[self.current_page]
-        text = page.get_text("text")
+        text = self.doc.get_page_text(self.current_page)
 
         # Parse and format the text
         rich_text = self._format_text(text)
@@ -235,7 +292,7 @@ class PDFViewer(App):
         """Search all pages for term, return list of (page_num, line_num)."""
         matches = []
         for pno in range(self.total_pages):
-            page_text = self.doc[pno].get_text("text")
+            page_text = self.doc.get_page_text(pno)
             for i, line in enumerate(page_text.split("\n")):
                 if term.lower() in line.lower():
                     matches.append((pno, i))
@@ -381,7 +438,7 @@ def _text_to_markdown(text: str) -> str:
 
 def convert_to_markdown(pdf_path: str, output_path: str | None = None) -> None:
     """Extract all pages from PDF and output as markdown."""
-    doc = pymupdf.open(pdf_path)
+    doc = PDFDoc(pdf_path)
     parts = []
 
     # Title from filename
@@ -389,7 +446,7 @@ def convert_to_markdown(pdf_path: str, output_path: str | None = None) -> None:
     parts.append(f"# {filename}\n")
 
     for pno in range(doc.page_count):
-        page_text = doc[pno].get_text("text")
+        page_text = doc.get_page_text(pno)
         md = _text_to_markdown(page_text)
         parts.append(f"\n<!-- Page {pno + 1} / {doc.page_count} -->\n")
         parts.append(md)
