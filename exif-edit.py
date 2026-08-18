@@ -152,9 +152,9 @@ def run_tui(path: str, current: dict[str, str], exiftool: str, kind: str) -> Non
 
     class ExifEditApp(App):
         CSS = """
-        Screen { background: #282a36; color: #f8f8f2; }
-        Header { background: #21222c; color: #8be9fd; text-style: bold; }
-        Footer { background: #21222c; color: #6272a4; }
+        Screen { background: #1c1c1c; color: #d0d0d0; }
+        Header { background: #262626; color: #00afff; text-style: bold; }
+        Footer { background: #262626; color: #808080; }
         #form {
             padding: 1 2;
             height: 1fr;
@@ -162,20 +162,20 @@ def run_tui(path: str, current: dict[str, str], exiftool: str, kind: str) -> Non
         .row { height: 3; }
         .tag {
             width: 14;
-            color: #8be9fd;
+            color: #00afff;
             content-align: left middle;
         }
         Input {
-            background: #21222c;
-            color: #f8f8f2;
-            border: tall #44475a;
+            background: #262626;
+            color: #d0d0d0;
+            border: tall #3a3a3a;
         }
-        Input:focus { border: tall #8be9fd; }
+        Input:focus { border: tall #00afff; }
         #buttons {
             height: 1;
             width: 100%;
             align: center middle;
-            background: #21222c;
+            background: #262626;
             padding: 0;
         }
         #buttons Button {

@@ -350,66 +350,66 @@ def open_doc(path: str, kind: str):
     return PDFDoc(path) if kind == "pdf" else EpubDoc(path)
 
 
-# Dracula (matches study-test / study-flash). Rich styles use hex, not $tokens.
+# Glamour dark (glow). Rich styles use hex, not $tokens.
 _D = {
-    "bg": "#282a36",
-    "bg2": "#21222c",
-    "sel": "#44475a",
-    "fg": "#f8f8f2",
-    "comment": "#6272a4",
-    "cyan": "#8be9fd",
-    "green": "#50fa7b",
-    "orange": "#ffb86c",
-    "pink": "#ff79c6",
-    "purple": "#bd93f9",
-    "red": "#ff5555",
-    "yellow": "#f1fa8c",
+    "bg": "#1c1c1c",
+    "bg2": "#262626",
+    "sel": "#3a3a3a",
+    "fg": "#d0d0d0",
+    "comment": "#808080",
+    "cyan": "#00afff",
+    "green": "#00d787",
+    "orange": "#ff875f",
+    "pink": "#ff5fd2",
+    "purple": "#5f5fff",
+    "red": "#ff5f5f",
+    "yellow": "#ffff87",
 }
 
 
 class DocViewer(App):
     CSS = """
     Screen {
-        background: #282a36;
-        color: #f8f8f2;
+        background: #1c1c1c;
+        color: #d0d0d0;
     }
     Header {
-        background: #21222c;
-        color: #8be9fd;
+        background: #262626;
+        color: #00afff;
         text-style: bold;
     }
     Footer {
-        background: #21222c;
-        color: #6272a4;
+        background: #262626;
+        color: #808080;
     }
     #doc-container {
         padding: 1 2;
         height: 1fr;
         width: 1fr;
-        scrollbar-background: #282a36;
-        scrollbar-color: #6272a4;
-        scrollbar-color-hover: #bd93f9;
+        scrollbar-background: #1c1c1c;
+        scrollbar-color: #808080;
+        scrollbar-color-hover: #5f5fff;
     }
     .doc-page {
         padding: 0 1;
         margin: 0 0 1 0;
-        border: round #44475a;
-        background: #21222c;
-        color: #f8f8f2;
+        border: round #3a3a3a;
+        background: #262626;
+        color: #d0d0d0;
         height: auto;
     }
     .page-header {
-        color: #8be9fd;
+        color: #00afff;
         text-style: bold;
         padding: 0 1 0 0;
     }
     #status {
         dock: bottom;
         height: 1;
-        background: #21222c;
-        color: #6272a4;
+        background: #262626;
+        color: #808080;
         padding: 0 1;
-        border-top: tall #44475a;
+        border-top: tall #3a3a3a;
     }
     """
 
@@ -653,19 +653,19 @@ class DocViewer(App):
 
         class SearchScreen(ModalScreen):
             CSS = """
-            SearchScreen { align: center middle; background: #282a36 60%; }
+            SearchScreen { align: center middle; background: #1c1c1c 60%; }
             SearchScreen > Vertical {
                 width: 60; height: auto; padding: 1 2;
-                border: round #8be9fd; background: #21222c;
+                border: round #00afff; background: #262626;
             }
-            SearchScreen Label { margin-bottom: 1; color: #8be9fd; }
+            SearchScreen Label { margin-bottom: 1; color: #00afff; }
             SearchScreen Input {
                 margin-top: 1;
-                background: #282a36;
-                color: #f8f8f2;
-                border: tall #44475a;
+                background: #1c1c1c;
+                color: #d0d0d0;
+                border: tall #3a3a3a;
             }
-            SearchScreen Input:focus { border: tall #8be9fd; }
+            SearchScreen Input:focus { border: tall #00afff; }
             """
 
             def compose(self):
