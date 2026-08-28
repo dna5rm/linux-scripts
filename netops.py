@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-NetOps Portal TUI - Textual frontend for wanportal API (netops.citco.com)
+NetOps Portal TUI - Textual frontend for wanportal API (https://github.com/dna5rm/wanportal)
 Public read-only API - no authentication required.
 
 Navigation:
